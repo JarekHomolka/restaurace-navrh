@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Administrace – Na Městečku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Administrace: na telefonu jeden sloupec se spodní navigací, na počítači boční panel a živý náhled vpravo. */
+body { background: #f4efe8; padding-bottom: 140px; }
+.adm-top { position: sticky; top: 0; z-index: 30; background: #24150f; color: #fff; }
+.adm-top .wrap { display: flex; align-items: center; gap: 12px; height: 56px; }
+.adm-top .brand { color: #fff; }
+.adm-top .brand-text small { color: rgba(255,255,255,.6); }
+.adm-top .brand-mark { width: 34px; height: 34px; font-size: 17px; }
+.adm-user { display: none; font-size: 14px; color: rgba(255,255,255,.75); }
+.adm-top a.view { color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 6px 12px; white-space: nowrap; }
+.adm { display: grid; gap: 0; }
+.adm-side { display: none; }
+.adm-main { padding: 16px 0 24px; min-width: 0; }
+.adm-tabs { position: fixed; z-index: 35; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+.adm-tabs button, .adm-side button { appearance: none; border: 0; background: none; font: inherit; cursor: pointer; color: var(--muted); }
+.adm-tabs button { display: grid; justify-items: center; gap: 2px; padding: 8px 0 9px; font-size: 12px; font-weight: 600; position: relative; }
+.adm-tabs svg, .adm-side svg { width: 22px; height: 22px; }
+.adm-tabs button.on { color: var(--wine); }
+.cnt { position: absolute; top: 4px; left: calc(50% + 6px); background: var(--wine); color: #fff; border-radius: 999px; font-size: 10px; font-weight: 700; padding: 1px 6px; }
+.view-pane { display: none; }
+.view-pane.on { display: block; }
+
+.adm-head { display: grid; gap: 12px; margin-bottom: 14px; }
+.adm-head h1 { font-size: 28px; }
+.week-nav { display: flex; align-items: center; gap: 8px; }
+.week-nav button { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 18px; color: var(--ink); }
+.week-nav b { font-size: 16px; flex: 1; text-align: center; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status.draft { color: #a8650b; }
+.quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quick .btn { min-height: 44px; font-size: 14px; padding: 6px 12px; background: #fff; white-space: normal; justify-content: flex-start; text-align: left; line-height: 1.2; }
+.quick .btn svg { color: var(--wine); }
+.tip { display: flex; gap: 10px; align-items: flex-start; background: var(--gold-soft); border-radius: 12px; padding: 10px 12px; font-size: 14px; color: #6a4708; margin-bottom: 14px; }
+.tip b { color: #4d3305; }
+
+.editor { display: grid; gap: 16px; }
+.dayed { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: visible; }
+.dayed .day-tabs { padding: 10px 10px 0; }
+.dayed .day-tab.filled span::after { content: " ✓"; color: var(--green); font-weight: 700; }
+.dayed .day-tab[aria-selected="true"].filled span::after { color: #b8f0cd; }
+.dayed-body { padding: 14px; display: grid; gap: 14px; }
+.row-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.row-head h2 { font-size: 21px; }
+.sw { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.sw input { width: 40px; height: 22px; appearance: none; background: #ddd2c5; border-radius: 999px; position: relative; cursor: pointer; transition: background .15s; flex: none; }
+.sw input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.sw input:checked { background: var(--wine); }
+.sw input:checked::after { transform: translateX(18px); }
+.lbl2 { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.ac { position: relative; }
+.ac input, .price input { width: 100%; height: 48px; border-radius: 12px; border: 1px solid #d9ccbd; background: #fff; padding: 0 12px; font: inherit; font-size: 16px; color: var(--ink); }
+.ac input:focus, .price input:focus { outline: 2px solid var(--wine); outline-offset: 1px; border-color: transparent; }
+.ac-list { position: absolute; z-index: 25; left: 0; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); list-style: none; margin: 0; padding: 6px; display: none; max-height: 300px; overflow: auto; }
+.ac-list.open { display: block; }
+.ac-list li { padding: 9px 10px; border-radius: 8px; cursor: pointer; display: grid; gap: 2px; }
+.ac-list li:hover, .ac-list li.hl { background: var(--chip); }
+.ac-list li b { font-weight: 600; font-size: 15px; }
+.ac-list li small { color: var(--muted); font-size: 12px; }
+.ac-list li mark { background: var(--gold-soft); color: inherit; border-radius: 3px; }
+.ac-head { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 6px 10px 4px; }
+.soup-ed { display: grid; gap: 8px; }
+.meal-ed { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fdfaf6; }
+.meal-ed .meal-no { width: 28px; height: 28px; margin-top: 10px; }
+.meal-fields { display: grid; gap: 8px; min-width: 0; }
+.meal-line2 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.price { position: relative; width: 110px; }
+.price input { padding-right: 34px; text-align: right; }
+.price::after { content: "Kč"; position: absolute; right: 12px; top: 14px; color: var(--muted); font-size: 14px; }
+.alg-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px dashed #cdbca8; background: #fff; font: inherit; font-size: 13px; color: var(--muted); cursor: pointer; }
+.alg-btn .alg span { background: var(--wine-soft); color: var(--wine); }
+.veg { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.veg input { width: 18px; height: 18px; accent-color: var(--green); }
+.del { margin-left: auto; width: 36px; height: 36px; border-radius: 10px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 20px; }
+.del:hover { background: var(--wine-soft); color: var(--wine); }
+.alg-pick { display: none; grid-template-columns: repeat(7, 1fr); gap: 4px; padding-top: 4px; }
+.alg-pick.open { display: grid; }
+.alg-pick button { height: 38px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font: 600 13px/1 var(--f-body); cursor: pointer; color: var(--muted); display: grid; gap: 1px; place-items: center; padding: 2px 0; }
+.alg-pick button small { font-size: 8.5px; font-weight: 500; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
+.alg-pick button.on { background: var(--wine); border-color: var(--wine); color: #fff; }
+.add-meal { min-height: 46px; border-radius: 12px; border: 1.5px dashed #cdbca8; background: transparent; font: 600 15px/1 var(--f-body); color: var(--wine); cursor: pointer; }
+.closed-note { display: none; }
+.is-closed .closed-note { display: block; }
+.is-closed .open-only { display: none; }
+
+.save-bar { position: fixed; z-index: 34; left: 0; right: 0; bottom: calc(58px + env(safe-area-inset-bottom)); padding: 10px var(--gutter); background: rgba(244,239,232,.96); border-top: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
+.save-bar .btn-primary { flex: 1; }
+.save-bar small { display: none; color: var(--muted); font-size: 13px; }
+
+.preview { display: none; }
+.preview-phone { width: 340px; border: 10px solid #24150f; border-radius: 34px; background: var(--bg); overflow: hidden; box-shadow: var(--shadow); }
+.preview-phone .daily { box-shadow: none; border-radius: 0; }
+.preview h3 { font-size: 15px; font-family: var(--f-body); font-weight: 700; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; }
+
+.toast { position: fixed; z-index: 60; left: 50%; bottom: 140px; transform: translate(-50%, 20px); opacity: 0; transition: .2s; background: #24150f; color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 600; max-width: calc(100% - 32px); pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+dialog { border: 0; border-radius: 18px; padding: 0; width: min(720px, calc(100% - 24px)); max-height: calc(100% - 24px); box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+dialog::backdrop { background: rgba(36,21,15,.55); }
+.dlg { display: grid; gap: 12px; padding: 18px; }
+.dlg h2 { font-size: 24px; }
+.dlg p { color: var(--muted); font-size: 14px; }
+.dlg textarea { width: 100%; min-height: 220px; border-radius: 12px; border: 1px solid #d9ccbd; padding: 12px; font: 14px/1.5 ui-monospace, Consolas, monospace; }
+.parsed { display: grid; gap: 8px; max-height: 260px; overflow: auto; }
+.parsed div { background: var(--chip); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
+.parsed b { display: block; }
+.dlg-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+.list-ed { display: grid; gap: 12px; }
+.list-cat { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 4px; }
+.list-cat h2 { font-size: 20px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.list-row { display: grid; grid-template-columns: 18px minmax(0, 1fr) 96px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.list-row:last-child { border-bottom: 0; }
+.list-row .grip { color: #c7b8a6; cursor: grab; }
+.list-row .price input { height: 40px; }
+.list-row .price::after { top: 10px; }
+.list-row .price { width: 96px; }
+.inq { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 6px; }
+.inq-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.inq p { color: var(--muted); font-size: 14px; }
+.inq .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+
+@media (min-width: 1000px) {
+  body { padding-bottom: 0; }
+  .adm-user { display: block; margin-left: auto; }
+  .adm { grid-template-columns: 230px minmax(0, 1fr); min-height: calc(100vh - 56px); }
+  .adm-side { display: grid; align-content: start; gap: 4px; padding: 20px 12px; background: #fff; border-right: 1px solid var(--line); position: sticky; top: 56px; height: calc(100vh - 56px); }
+  .adm-side button { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; font-weight: 600; font-size: 15px; text-align: left; position: relative; }
+  .adm-side button.on { background: var(--wine-soft); color: var(--wine); }
+  .adm-side .cnt { position: static; margin-left: auto; }
+  .adm-tabs { display: none; }
+  .adm-main { padding: 28px 32px 40px; }
+  .adm-main > .wrap { padding: 0; max-width: 1180px; margin: 0; }
+  .adm-head { grid-template-columns: 1fr auto; align-items: end; }
+  .quick { grid-template-columns: repeat(4, auto); justify-content: start; }
+  .editor { grid-template-columns: minmax(0, 1fr) 360px; align-items: start; gap: 28px; }
+  .preview { display: block; position: sticky; top: 84px; }
+  .save-bar { position: sticky; bottom: 0; margin-top: 16px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+  .save-bar small { display: block; flex: 1; }
+  .save-bar .btn-primary { flex: none; }
+  .toast { bottom: 40px; }
+  .dayed-body { padding: 20px; }
+  .meal-line2 { flex-wrap: nowrap; }
+}
+
+/* Tisk týdenního menu na A4 (tlačítko „Vytisknout A4“) */
+#tisk { display: none; }
+@media print {
+  @page { size: A4; margin: 16mm; }
+  body { background: #fff; padding: 0; }
+  body > *:not(#tisk) { display: none !important; }
+  #tisk { display: block; font-family: var(--f-body); color: #000; }
+  #tisk h1 { font-size: 34pt; text-align: center; color: var(--wine); }
+  #tisk .sub { text-align: center; font-size: 12pt; margin: 4pt 0 14pt; }
+  #tisk .pday { break-inside: avoid; border-top: 2px solid var(--wine); padding: 8pt 0 10pt; }
+  #tisk .pday h2 { font-size: 15pt; margin-bottom: 4pt; }
+  #tisk .pday p { margin: 2pt 0; font-size: 11.5pt; display: flex; justify-content: space-between; gap: 10pt; }
+  #tisk .foot { margin-top: 12pt; text-align: center; font-size: 10pt; }
+}
+
+/* Návrh menu z historie */
+.quick .btn.hl { background: var(--gold-soft); border-color: var(--gold); }
+.quick .btn.hl svg { color: #8a5d0b; }
+#dlg-navrh { width: min(1280px, calc(100% - 24px)); overflow: auto; }
+#dlg-navrh .dlg-actions { position: sticky; bottom: 0; background: #fff; padding: 10px 0 4px; margin-bottom: -4px; display: grid; grid-template-columns: 1fr 1fr; }
+#dlg-navrh .dlg-actions .btn-primary { grid-column: 1 / -1; }
+@media (max-width: 999px) { .nv-days { max-height: none; overflow: visible; } }
+.nv-days { display: grid; gap: 10px; max-height: min(58vh, 620px); overflow: auto; padding-right: 2px; }
+.nv-day { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 4px; background: #fdfaf6; }
+.nv-day h3 { font-size: 16px; font-family: var(--f-body); font-weight: 700; }
+.nv-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) 36px; gap: 8px; align-items: center; padding: 5px 0; border-top: 1px dashed var(--line); }
+.nv-row:first-of-type { border-top: 0; }
+.nv-row .k { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; }
+.nv-row b { font-size: 14.5px; font-weight: 600; display: block; line-height: 1.3; }
+.nv-row small { font-size: 12px; color: var(--muted); }
+.nv-row .bm { color: var(--green); font-weight: 700; }
+.lock { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 15px; color: var(--muted); }
+.lock.on { background: var(--wine); border-color: var(--wine); color: #fff; }
+.nv-info { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (min-width: 1000px) {
+  .quick { grid-template-columns: repeat(5, auto); }
+  .nv-days { grid-template-columns: repeat(5, minmax(0, 1fr)); max-height: none; }
+  #dlg-navrh .dlg-actions { display: flex; position: static; }
+  .nv-row { grid-template-columns: minmax(0, 1fr) 34px; }
+  .nv-row .k { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="adm-top">
+  <div class="wrap">
+    <a class="brand" href="admin.html"><span class="brand-mark">M</span><span class="brand-text"><b style="font-size:17px">Administrace</b><small>Na Městečku</small></span></a>
+    <span class="adm-user">Přihlášena: obsluha</span>
+    <a class="view" href="uvod.html" target="_blank">Zobrazit web ↗</a>
+  </div>
+</header>
+
+<div class="adm">
+  <nav class="adm-side" aria-label="Sekce">
+    <button class="on" data-view="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Denní menu</button>
+    <button data-view="listek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M8 11h8M8 15h8M8 7h4"/></svg>Jídelní lístek</button>
+    <button data-view="poptavky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/></svg>Poptávky<span class="cnt">2</span></button>
+    <button data-view="vice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Fotky a texty</button>
+  </nav>
+
+  <main class="adm-main">
+    <div class="wrap">
+
+      <!-- ===== Denní menu ===== -->
+      <section class="view-pane on" id="v-menu">
+        <div class="adm-head">
+          <div style="display:grid;gap:6px">
+            <h1>Denní menu</h1>
+            <span class="status" id="status">Zveřejněno</span>
+          </div>
+          <div class="week-nav"><button id="prev" aria-label="Předchozí týden">‹</button><b id="week-label" class="num">16.–20. 11. 2026</b><button id="next" aria-label="Další týden">›</button></div>
+        </div>
+
+        <div class="quick" style="margin-bottom:14px">
+          <button class="btn btn-ghost hl" id="b-navrh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>Navrhnout menu</button>
+          <button class="btn btn-ghost" id="b-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>Kopie minulého týdne</button>
+          <button class="btn btn-ghost" id="b-paste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4h6v3H9z"/><path d="M15 5h3v16H6V5h3"/><path d="M9 12h6M9 16h4"/></svg>Vložit text</button>
+          <button class="btn btn-ghost" id="b-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Vytisknout A4</button>
+          <button class="btn btn-ghost" id="b-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Vrátit ukázku</button>
+        </div>
+
+        <p class="tip"><span>💡</span><span><b>Stačí začít psát.</b> Nabídneme jídla, která už jste vařili, a doplníme k nim alergeny i cenu. Celý týden můžete také vložit najednou z Wordu nebo e-mailu.</span></p>
+
+        <div class="editor">
+          <div>
+            <div class="dayed" id="dayed">
+              <div class="day-tabs" role="tablist" id="ed-tabs"></div>
+              <div class="dayed-body" id="ed-body"></div>
+            </div>
+            <div class="save-bar">
+              <small id="save-hint">Změny se na webu ukážou hned po uložení.</small>
+              <a class="btn btn-ghost" href="uvod.html" target="_blank" style="background:#fff">Náhled</a>
+              <button class="btn btn-primary" id="b-save">Uložit a zveřejnit</button>
+            </div>
+          </div>
+          <aside class="preview">
+            <h3><span>Takhle to uvidí hosté na mobilu</span></h3>
+            <div class="preview-phone"><article class="daily" id="pv"><div class="daily-head"><h2>Denní menu</h2><small class="num" id="pv-range"></small></div><div class="daily-body" id="pv-body"></div><div class="daily-foot"><a class="btn btn-primary btn-block" href="#" onclick="return false">Objednat s sebou · 516 472 188</a></div></article></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ===== Jídelní lístek ===== -->
+      <section class="view-pane" id="v-listek">
+        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Jídelní lístek</h1><span class="status">Zveřejněno · upraveno 12. 11.</span></div><button class="btn btn-primary btn-sm">+ Nové jídlo</button></div>
+        <p class="tip"><span>💡</span><span>Cenu změníte přímo v řádku, pořadí přetažením. Jídlo, které dočasně nevaříte, stačí skrýt, smazat ho nemusíte.</span></p>
+        <div class="list-ed" id="list-ed"></div>
+      </section>
+
+      <!-- ===== Poptávky ===== -->
+      <section class="view-pane" id="v-poptavky">
+        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Poptávky</h1><span class="status draft">2 nové</span></div></div>
+        <div class="list-ed">
+          <div class="inq"><div class="inq-top"><h3>Zájezd · 48 osob</h3><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 23. 5. 2027</span><span class="badge">příjezd 12:30</span><span class="badge">oběd po prohlídce zámku</span></div><p>„Dobrý den, chystáme zájezd na zámek Lysice, prosíme o nabídku obědového menu, 3 vegetariáni.“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
+          <div class="inq"><div class="inq-top"><h3>Svatba · 70 osob</h3><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 12. 6. 2027</span><span class="badge">sál + zahrádka</span></div><p>„Zajímá nás svatební hostina a večerní raut, máte v tento termín volno?“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
+          <div class="inq" style="opacity:.7"><div class="inq-top"><h3>Oslava 60. narozenin · 25 osob</h3><span class="badge green">Vyřízeno</span></div><div class="meta"><span class="badge">Pá 4. 12. 2026</span></div></div>
+        </div>
+      </section>
+
+      <!-- ===== Fotky a texty ===== -->
+      <section class="view-pane" id="v-vice">
+        <div class="adm-head"><h1>Fotky a texty</h1></div>
+        <div class="list-ed">
+          <div class="list-cat"><h2>Fotogalerie <button class="btn btn-primary btn-sm">Nahrát fotky</button></h2><p style="color:var(--muted);font-size:14px">Fotky z telefonu se samy zmenší pro rychlý web.</p>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
+              <img src="assets/foto/svatba-sal.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/predkrm.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/zahradka.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/sladke-mameni.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px">
+            </div></div>
+          <div class="list-cat"><h2>Otevírací doba a oznámení</h2><p style="color:var(--muted);font-size:14px">Např. „24. 12. zavřeno“ nebo „Tento týden máme dovolenou“. Oznámení se ukáže nahoře na webu.</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<nav class="adm-tabs" aria-label="Sekce">
+  <button class="on" data-view="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Denní menu</button>
+  <button data-view="listek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M8 11h8M8 15h8M8 7h4"/></svg>Lístek</button>
+  <button data-view="poptavky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/></svg>Poptávky<span class="cnt">2</span></button>
+  <button data-view="vice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Fotky</button>
+</nav>
+
+<dialog id="dlg-paste">
+  <div class="dlg">
+    <h2>Vložit celý týden najednou</h2>
+    <p>Zkopírujte menu z Wordu, e-mailu nebo zprávy a vložte sem. Dny, polévky, jídla, ceny i alergeny v závorce rozpoznáme sami. Před uložením vše uvidíte.</p>
+    <textarea id="paste-text" spellcheck="false"></textarea>
+    <div class="parsed" id="parsed"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost" id="paste-cancel">Zrušit</button>
+      <button class="btn btn-primary" id="paste-ok">Použít pro tento týden</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-navrh">
+  <div class="dlg">
+    <h2 id="nv-title">Návrh menu</h2>
+    <p id="nv-sub"></p>
+    <div class="nv-info" id="nv-info"></div>
+    <div class="nv-days" id="nv-days"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost" id="nv-cancel">Zrušit</button>
+      <button class="btn btn-ghost" id="nv-again">↻ Jiný návrh</button>
+      <button class="btn btn-primary" id="nv-ok">Použít pro tento týden</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<div id="tisk"></div>
+
+<script src="app.js"></script>
+<script src="historie-data.js"></script>
+<script src="navrh-tydne.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

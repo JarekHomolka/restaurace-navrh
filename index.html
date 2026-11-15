@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Návrh nového webu Na Městečku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Dokument s návrhem: jeden sloupec (max 1080 px), galerie screenshotů v mřížce, tabulky v posuvných kontejnerech. Tisk do PDF A4. */
+:root {
+  --bg: #fbf7f1; --surface: #ffffff; --fg: #2b1d16; --muted: #6f6056; --line: #ebe1d5;
+  --wine: #7d1f22; --gold: #d9a441; --ok: #2f7a4d; --bad: #b3261e; --chip: #f3eadf;
+  --f-display: "Fraunces", Georgia, serif; --f-body: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
+.page { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.08; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(36px, 6vw, 60px); }
+h2 { font-size: clamp(26px, 3.6vw, 36px); }
+h3 { font-size: 20px; }
+p { margin: 0; max-width: 70ch; }
+a { color: var(--wine); }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--wine); }
+section { display: grid; gap: 18px; }
+.lead { font-size: 17px; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+header.intro { display: grid; gap: 14px; }
+.meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.meta span { background: var(--chip); color: var(--wine); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 2px; align-content: start; }
+.stat b { font-family: var(--f-display); font-size: 34px; color: var(--wine); line-height: 1.05; }
+.stat small { color: var(--muted); font-size: 13px; }
+.stat .vs { font-size: 12px; font-weight: 700; color: var(--ok); }
+
+.issues { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; list-style: none; padding: 0; margin: 0; }
+.issues li { display: flex; gap: 10px; align-items: baseline; }
+.issues li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--bad); transform: translateY(-1px); }
+
+.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.shot { display: grid; gap: 8px; margin: 0; align-content: start; }
+.shot img { width: 100%; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+.shot figcaption { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; flex-wrap: wrap; }
+.shot figcaption b { color: var(--fg); }
+.shot figcaption span { color: var(--muted); }
+.mobiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mobiles img { border-radius: 16px; }
+.old { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 16px; align-items: start; }
+.old img { filter: saturate(.9); }
+
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.box p, .box li { color: var(--muted); font-size: 14px; }
+.box ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.box .tag { font-size: 12px; font-weight: 700; color: var(--wine); text-transform: uppercase; letter-spacing: .08em; }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--chip); }
+tr:last-child td { border-bottom: 0; }
+td.total { font-weight: 700; color: var(--wine); }
+.pill { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 4px; padding: 2px 7px; background: var(--chip); color: var(--wine); }
+.pill.rec { background: var(--wine); color: #fff; }
+
+.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.steps li::before { content: counter(s); width: 36px; height: 36px; border-radius: 50%; background: var(--wine); color: #fff; display: grid; place-items: center; font-family: var(--f-display); font-size: 18px; font-weight: 700; }
+.steps li.done::before { content: "✓"; background: var(--ok); }
+.steps b { color: var(--fg); }
+.steps p { color: var(--muted); font-size: 14px; }
+.phone { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 24px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.qr { width: 148px; height: 148px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
+.qr img, .qr canvas { width: 100% !important; height: 100% !important; }
+.phone-text { display: grid; gap: 8px; }
+.phone .url { font-family: ui-monospace, Consolas, monospace; font-size: 13px; color: var(--wine); user-select: all; overflow-wrap: anywhere; }
+@media (max-width: 820px) { .phone { grid-template-columns: 1fr; justify-items: start; } }
+.questions { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.note { font-size: 13px; color: var(--muted); }
+
+@media (max-width: 820px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .issues, .shots, .cols, .split { grid-template-columns: 1fr; }
+  .old { grid-template-columns: 1fr 1fr; }
+  .old .shot:first-child { grid-column: 1 / -1; }
+  .mobiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media print {
+  @page { size: A4; margin: 14mm 14mm 16mm; }
+  :root { --bg: #fff; }
+  body { font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { max-width: none; padding: 0; gap: 24px; }
+  h1 { font-size: 36pt; } h2 { font-size: 22pt; }
+  .shot figcaption a { display: none; }
+  .box, .stat, .steps li, .tablewrap, figure, .stats, .issues, .cols { break-inside: avoid; }
+  .tablewrap { overflow: visible; } table { min-width: 0; }
+  section:has(.tablewrap), section:has(.steps) { break-inside: avoid; }
+  section.long, section.long .tablewrap { break-inside: auto; }
+  section.long { display: block; } /* Chromium špatně láme grid přes strany */
+  section.long > * + * { margin-top: 14px; }
+  tr { break-inside: avoid; }
+  h2, h3, .eyebrow { break-after: avoid; }
+  .break-before { break-before: page; }
+  .page .stats { grid-template-columns: repeat(4, 1fr); }
+  .page .issues, .page .split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .page .old { grid-template-columns: 1.6fr 1fr 1fr; }
+  .page .old .shot:first-child { grid-column: auto; }
+  .page .old img { max-height: 62mm; object-fit: cover; object-position: top; }
+  section:has(.mobiles) { break-inside: avoid; }
+  .page .mobiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .page .phone { grid-template-columns: 120px minmax(0, 1fr); justify-items: stretch; }
+  .page .qr { width: 120px; height: 120px; }
+  .phone { break-inside: avoid; }
+  section:has(> .split) { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="intro">
+    <div class="eyebrow">Návrh nového webu · listopad 2026</div>
+    <h1>Restaurace Na Městečku: nový web</h1>
+    <p class="lead">Web, na kterém lidé z Lysic a okolí rychle najdou dnešní menu, a který vedoucím zájezdů a snoubencům „prodá“ sál. Menu přitom obsluha doplní sama během pár minut, klidně z telefonu. Na stránce je rozbor současného webu, návrh designu pro mobil i počítač, administrace menu, technické řešení a náklady.</p>
+    <div class="meta"><span>restauracenamestecku.cz</span><span>Komenského 589, Lysice</span><span>Denní menu · Jídelní lístek · Zájezdy a akce</span></div>
+  </header>
+
+  <section class="phone">
+    <div id="qr" class="qr" aria-label="QR kód s odkazem na návrh"></div>
+    <div class="phone-text">
+      <div class="eyebrow">Proklikejte si to v telefonu</div>
+      <h3>Naskenujte QR kód fotoaparátem</h3>
+      <p>Odkaz otevře návrh v běžném prohlížeči, bez přihlášení. U obrazovek je odkaz „Otevřít mockup“ a administraci si můžete vyzkoušet: návrh menu na příští týden, našeptávač i vložení textu.</p>
+      <p class="url">jarekhomolka.github.io/restaurace-navrh</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Výchozí stav</div>
+    <h2>Co jsme našli na současném webu</h2>
+    <div class="stats">
+      <div class="stat"><b class="num">6,4 s</b><small>načtení úvodní stránky (jedno měření)</small><span class="vs">cíl pod 1,5 s</span></div>
+      <div class="stat"><b class="num">5 skenů</b><small>jídelní lístek jsou obrázky stránek A4</small><span class="vs">cíl: text s cenami a alergeny</span></div>
+      <div class="stat"><b>Rozpadá se</b><small>na telefonu: rozdělená slova, ořezaný text</small><span class="vs">cíl: nejdřív mobil</span></div>
+      <div class="stat"><b class="num">1 den</b><small>denní menu je jen na jeden den, ručně do textu</small><span class="vs">cíl: celý týden za pár minut</span></div>
+    </div>
+    <ul class="issues">
+      <li>Na telefonu se název rozdělí na „RESTA / URACE / NA / MĚSTE / ČKU“ a řádky menu se ořezávají.</li>
+      <li>Jídelní lístek je 5 malých náhledů naskenovaných stran. Na mobilu se nedají přečíst a Google je nevidí.</li>
+      <li>Denní menu je obyčejný text na úvodu bez cen a alergenů, zobrazuje se jen jeden den.</li>
+      <li>Pro zájezdy a oslavy je jen jeden odstavec. Chybí fotky sálu s popisem, kapacita, ukázka menu i formulář poptávky.</li>
+      <li>Dvě telefonní čísla pro různé účely jsou schovaná v textu a nedají se na mobilu rovnou vytočit.</li>
+      <li>Web běží na starém webovém editoru Yola (šablona z doby Internet Exploreru, jQuery 1.11 z roku 2014).</li>
+    </ul>
+    <div class="old">
+      <figure class="shot"><img src="screenshots/soucasny-web-listek.png" alt="Současný jídelní lístek – pět malých náhledů naskenovaných stran"><figcaption><b>Současný jídelní lístek</b><span>5 náhledů skenů</span></figcaption></figure>
+      <figure class="shot"><img src="screenshots/soucasny-web-mobil.png" alt="Současný web na mobilu – název rozdělený uprostřed slov"><figcaption><b>Současný mobil</b><span>rozdělená slova</span></figcaption></figure>
+      <figure class="shot"><img src="screenshots/soucasny-web-listek-mobil.png" alt="Současný jídelní lístek na mobilu"><figcaption><b>Lístek na mobilu</b><span>nečitelné</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Pro koho web je</div>
+    <h2>Dva typy návštěvníků, dvě hlavní cesty</h2>
+    <div class="split">
+      <div class="box"><span class="tag">Každý den · hlavně z mobilu</span><h3>„Co je dneska k obědu?“</h3><p>Místní, řemeslníci, lidé z kanceláří. Chtějí za pět vteřin vidět dnešní menu a zavolat si o jídlo s sebou.</p><ul><li>Menu hned na první obrazovce telefonu, dnešní den předvybraný, přepínání Po–Pá.</li><li>Cena a alergeny u každého jídla, štítek „bez masa“.</li><li>Tlačítko „Objednat jídlo“ (516 472 188) stále dole na displeji.</li><li>„Teď otevřeno · do 22:00“ podle aktuálního času.</li></ul></div>
+      <div class="box"><span class="tag">V sezoně · mobil i počítač</span><h3>„Kam se zájezdem na oběd?“</h3><p>Vedoucí zájezdů, cestovní kanceláře, snoubenci, firmy. Prostor si chtějí prohlédnout a rychle se domluvit.</p><ul><li>Samostatná stránka Zájezdy a oslavy s fotkami sálu, svateb a rautů.</li><li>Argumenty: náměstí kousek od zámku, menu předem, jídlo hned po příjezdu.</li><li>Ukázky skupinových menu a postup ve 4 krocích.</li><li>Formulář poptávky (datum, počet osob, čas příjezdu) a přímé číslo 775 206 577.</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow break-before">Návrh designu</div>
+    <h2>Nejdřív telefon</h2>
+    <p>Design je dělaný pro mobil a na počítači jen přidává sloupce. Barvy vychází ze současného webu (vínová) a ze žluté fasády restaurace. Všechny fotky jsou ze současného webu. Jídelní lístek je přepsaný ze skenů do textu, takže se v něm dá hledat a filtrovat bezmasá jídla.</p>
+    <div class="mobiles">
+      <figure class="shot"><img src="screenshots/mobil-uvod.png" alt="Mobil – úvod s denním menu"><figcaption><b>Úvod s menu</b></figcaption></figure>
+      <figure class="shot"><img src="screenshots/mobil-listek.png" alt="Mobil – jídelní lístek"><figcaption><b>Jídelní lístek</b></figcaption></figure>
+      <figure class="shot"><img src="screenshots/mobil-skupiny.png" alt="Mobil – zájezdy a oslavy"><figcaption><b>Zájezdy a oslavy</b></figcaption></figure>
+      <figure class="shot"><img src="screenshots/mobil-admin.png" alt="Mobil – administrace denního menu"><figcaption><b>Administrace</b></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>A na počítači</h2>
+    <div class="shots">
+      <figure class="shot"><img src="screenshots/desktop-uvod.png" alt="Návrh – úvod s denním menu"><figcaption><b>Úvod: denní menu na týden</b><a href="uvod.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-listek.png" alt="Návrh – jídelní lístek s kategoriemi a hledáním"><figcaption><b>Jídelní lístek s hledáním</b><a href="listek.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-skupiny.png" alt="Návrh – zájezdy a oslavy"><figcaption><b>Zájezdy, svatby, oslavy</b><a href="skupiny.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/full-skupiny-d.png" alt="Návrh – celá stránka zájezdů s formulářem poptávky" style="max-height:520px;object-fit:cover;object-position:top"><figcaption><b>Celá stránka zájezdů s poptávkou</b><a href="skupiny.html#poptavka" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow break-before">Administrace</div>
+    <h2>Menu na celý týden za pár minut</h2>
+    <p>Kdo dnes menu ručně přepisuje do webu, dostane jednoduchou obrazovku jen pro denní menu. Funguje na počítači i na telefonu a vpravo hned ukazuje, jak to uvidí hosté. Po kliknutí na „Uložit a zveřejnit“ je menu na webu.</p>
+    <div class="cols">
+      <div class="box"><span class="tag">1 · Psaní s našeptávačem</span><h3>Stačí začít psát</h3><p>Po napsání „guláš“ web nabídne jídla, která se už vařila, i s alergeny a poslední cenou. Jedním klepnutím je vše vyplněné.</p></div>
+      <div class="box"><span class="tag">2 · Vložit text</span><h3>Celý týden najednou</h3><p>Menu napsané ve Wordu, e-mailu nebo zprávě stačí zkopírovat a vložit. Dny, polévky, jídla, ceny i alergeny v závorce se rozpoznají samy a před uložením je vše vidět.</p></div>
+      <div class="box"><span class="tag">3 · Kopie a tisk</span><h3>Minulý týden a A4</h3><p>„Kopie minulého týdne“ připraví týden k úpravě. „Vytisknout A4“ udělá papírové menu na dveře a tabuli ze stejných dat.</p></div>
+    </div>
+    <div class="shots">
+      <figure class="shot"><img src="screenshots/desktop-admin.png" alt="Administrace – našeptávač jídel s alergeny a živý náhled"><figcaption><b>Našeptávač a živý náhled</b><a href="admin.html" target="_blank" rel="noopener">Vyzkoušet ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-admin-vlozit.png" alt="Administrace – vložení celého týdne z textu"><figcaption><b>Vložení týdne z Wordu</b><a href="admin.html#vlozit" target="_blank" rel="noopener">Vyzkoušet ↗</a></figcaption></figure>
+    </div>
+    <p class="note">V mockupu se dá administrace opravdu vyzkoušet: změna uložená v admin.html se objeví na úvodní stránce (v tom samém prohlížeči). Tlačítko „Vrátit ukázku“ vrátí původní data. Dál administrace obsahuje jídelní lístek (cena přímo v řádku, skrytí jídla), poptávky ze zájezdového formuláře, fotky a oznámení typu „24. 12. zavřeno“.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow break-before">Návrh menu z historie</div>
+    <h2>Web sám navrhne menu na příští týden</h2>
+    <p>Menu se v čase opakuje, a to se dá využít. Z webového archivu (web.archive.org) jsme ze současného webu vytáhli <b>52 skutečných denních menu od září 2019 do listopadu 2026</b>. Tlačítko „Navrhnout menu“ z nich sestaví celý týden: polévku a tři jídla na každý den. U každého jídla je napsané, proč ho vybralo. Co se líbí, se zamkne, a zbytek se nechá navrhnout znovu.</p>
+    <div class="split">
+      <div class="box"><span class="tag">Podle čeho vybírá</span>
+        <ul>
+          <li><b>Oblíbenost:</b> jak často se jídlo vařilo.</li>
+          <li><b>Místo v menu:</b> jídlo č. 2 je u vás skoro vždy smažené bez masa (sýr, hermelín, žampiony, květák).</li>
+          <li><b>Roční období:</b> co se vařilo v podobnou dobu, „letní“ saláty jen v létě.</li>
+          <li><b>Odstup:</b> co bylo minulý týden, odsune. Co dlouho nebylo, posune dopředu.</li>
+          <li><b>Pestrost:</b> v týdnu se nic neopakuje a v jednom dni nejsou dva knedlíky ani dvě rýže.</li>
+        </ul>
+        <p>Nejde o umělou inteligenci ani placenou službu. Je to pár desítek řádků výpočtu nad vlastními daty restaurace. Ověřeno na 3 000 vygenerovaných dnech: každý den má polévku, tři jídla a jedno bez masa.</p>
+      </div>
+      <div class="box"><span class="tag">Co se u vás vaří nejčastěji (52 dní)</span>
+        <div class="tablewrap" style="border:0"><table style="min-width:0">
+          <tbody>
+            <tr><td>Vepřový guláš, houskový knedlík</td><td class="num">14×</td></tr>
+            <tr><td>Smažené žampiony, vařený brambor</td><td class="num">12×</td></tr>
+            <tr><td>Smažený sýr (i NIVA)</td><td class="num">10×</td></tr>
+            <tr><td>Smažený vepřový řízek</td><td class="num">9×</td></tr>
+            <tr><td>Vepřové výpečky, zelí, knedlík</td><td class="num">8×</td></tr>
+            <tr><td>Smažený hermelín</td><td class="num">7×</td></tr>
+            <tr><td><i>Polévky:</i> hovězí vývar s nudlemi 12×, frankfurtská 8×, čočková 5×</td><td></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="shots">
+      <figure class="shot"><img src="screenshots/desktop-admin-navrh.png" alt="Administrace – návrh menu na příští týden z historie"><figcaption><b>Návrh na celý týden s důvody</b><a href="admin.html#navrh" target="_blank" rel="noopener">Vyzkoušet ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-admin.png" alt="Našeptávač se skutečnou historií jídel"><figcaption><b>Našeptávač zná skutečnou historii</b><span>„naposledy 20. 7. 2026“</span></figcaption></figure>
+    </div>
+    <div class="cols">
+      <div class="box"><h3>1. Z archivu</h3><p>Jednorázově staženo: 52 dní menu z let 2019–2026. Archiv ale ukládal web jen občas (zhruba jednou za 1–2 měsíce), proto je to jen vzorek.</p></div>
+      <div class="box"><h3>2. Od teď každý den</h3><p>V soukromém repozitáři běží automat (GitHub Actions), který každý den kromě neděle uloží menu ze současného webu. Do spuštění nového webu se tak nasbírá souvislá historie.</p></div>
+      <div class="box"><h3>3. V novém webu</h3><p>Každé uložení menu v administraci se zapíše do historie i s alergeny a cenou. Návrhy i našeptávač se tak s každým týdnem zpřesňují. Pokud má restaurace staré menu ve Wordu nebo v e-mailech, dají se nahrát přes „Vložit text“.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Jak to bude fungovat</div>
+    <h2>Technické řešení</h2>
+    <div class="cols">
+      <div class="box"><h3>Web</h3><p>Next.js. Stránky se předgenerují a po uložení menu se obnoví, takže se načítají okamžitě i na slabém signálu. Fotky se samy zmenší pro mobil. Stejná technologie jako u nového KiviSailingu, takže oba weby se udržují stejně.</p></div>
+      <div class="box"><h3>Administrace</h3><p>Payload CMS na adrese /admin, s vlastní obrazovkou pro denní menu (našeptávač, vložení textu, tisk). Spravuje se v ní:</p><ul><li>denní menu po týdnech</li><li>jídelní lístek a nápoje</li><li>poptávky, fotky a oznámení</li></ul></div>
+      <div class="box"><h3>Vyhledávače</h3><p>Lístek bude text místo obrázků, takže ho Google najde (např. „oběd Lysice“). Přidáme profil restaurace pro Google a Mapy.cz s otevírací dobou a odkazem na menu. Staré adresy (contact-us.php, jídelní lístek) se přesměrují.</p></div>
+    </div>
+  </section>
+
+  <section class="long">
+    <div class="eyebrow break-before">Inspirace z jiných webů</div>
+    <h2>Co dalšího by se hodilo</h2>
+    <p>Prošli jsme weby restaurací a portálů s denním menu. Tohle jsou nápady, které v návrhu zatím nejsou, seřazené podle užitku pro restauraci tohoto typu. Náročnost: <b>M</b> malá, <b>S</b> střední.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Nápad</th><th>Proč se hodí</th><th>Náročnost</th></tr></thead>
+      <tbody>
+        <tr><td><b>Denní menu i na Meníčka.cz</b> <span class="pill rec">doporučuji</span></td><td>Meníčka.cz umí každé ráno (v 6:00, s opakováním do 13:00) stáhnout menu z webu restaurace přes <a href="https://www.menicka.cz/xml-feed.html" target="_blank" rel="noopener">XML feed</a>. Podle jejich stránek pak menu jde i na Mapy.cz/Firmy.cz, Facebook a e-mailem odběratelům. Obsluha menu zadá jednou a objeví se všude. Podmínky a cenu je potřeba ověřit, zápis restaurace na meníčkách jsme nenašli.</td><td>M</td></tr>
+        <tr><td><b>Kalendář akcí a sezónních nabídek</b> <span class="pill rec">doporučuji</span></td><td>Svatomartinská husa, zabijačka, zvěřinové hody nebo hody. Na takové akce se rezervuje dopředu. Stačí seznam s datem a tlačítkem „Rezervovat“. Kalendář akcí má např. <a href="https://www.zamek-liblice.cz/" target="_blank" rel="noopener">Zámek Liblice</a>.</td><td>M</td></tr>
+        <tr><td><b>QR kód na tištěném menu a na stolech</b> <span class="pill rec">doporučuji</span></td><td>Tisk A4 z administrace dostane QR kód na aktuální menu a lístek. Odkaz se nemění, stačí jednou vytisknout.</td><td>M</td></tr>
+        <tr><td><b>Praktické informace pro skupiny</b> <span class="pill rec">doporučuji</span></td><td>Parkování autobusu, bezbariérový vstup, platba kartou a stravenkami, dětská židlička, psi, Wi-Fi. Vedoucí zájezdů tohle řeší jako první. Údaje musí dodat restaurace.</td><td>M</td></tr>
+        <tr><td><b>Nabídka pro cestovní kanceláře v PDF</b></td><td>Jedna strana s fotkami, kapacitou, ukázkovými menu a kontaktem, kterou si CK přepošle. Vygeneruje se z webu, takže je vždy aktuální.</td><td>M</td></tr>
+        <tr><td><b>Pruh s oznámením</b></td><td>„24. 12. zavřeno“, „Tento týden dovolená“, „V sobotu uzavřená společnost“. Místní nejčastěji řeší, jestli je otevřeno. Napojí se na „Teď otevřeno“.</td><td>M</td></tr>
+        <tr><td><b>Strukturovaná data pro Google</b></td><td>Otevírací doba, adresa, menu a telefon ve formátu, kterému rozumí Google a mapy. Nic to nestojí.</td><td>M</td></tr>
+        <tr><td><b>Předobjednávka jídla s časem vyzvednutí</b> <span class="pill">později</span></td><td>Formulář „jídlo + čas vyzvednutí“ bez placení, potvrzení e-mailem nebo SMS. Uleví telefonu v poledne.</td><td>S</td></tr>
+        <tr><td><b>Dárkové poukazy</b> <span class="pill">později</span></td><td>Poukaz na oběd nebo večeři, objednávka e-mailem a vystavení ručně, bez platební brány. Prodává je např. Zámek Liblice.</td><td>M–S</td></tr>
+        <tr><td><b>Německý a anglický lístek</b> <span class="pill">později</span></td><td>Lístek už má anglické názvy. Pro turisty na zámku stačí přepínač jazyka u lístku a u stránky pro skupiny. Překlad zkontroluje člověk.</td><td>S</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><b>Spíš ne:</b> vlastní platby a rozvoz (provoz je nezvládne a telefon stačí), widget s Google recenzemi (zpomalí web, stačí odkaz), vlastní aplikace nebo věrnostní program. Rezervační systém Restu.cz podle zpráv z roku 2020 skončil, na běžné stoly stačí tlačítko „Zavolat“.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Provozní náklady</div>
+    <h2>Dvě varianty provozu</h2>
+    <p>Web nepotřebuje platební bránu ani e-shop, takže provoz je levný. Pokud poběží nový KiviSailing na vlastním serveru (varianta B), restaurace se k němu dá přidat bez dalších nákladů.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Položka</th><th>A: zdarma</th><th>B: vlastní server</th></tr></thead>
+      <tbody>
+        <tr><td>Hosting webu</td><td>Cloudflare Workers Free</td><td>Hetzner VPS ~5 €/měs., sdílený s KiviSailingem</td></tr>
+        <tr><td>Databáze (menu, lístek, poptávky)</td><td>Cloudflare D1 Free</td><td>PostgreSQL na stejném serveru</td></tr>
+        <tr><td>Fotky</td><td>Cloudflare R2 (10 GB zdarma)</td><td>Disk serveru</td></tr>
+        <tr><td>E-maily s poptávkami</td><td>Resend Free (3 000/měs.)</td><td>Resend Free</td></tr>
+        <tr><td>Doména restauracenamestecku.cz</td><td>Stávající, ~250 Kč/rok</td><td>Stávající, ~250 Kč/rok</td></tr>
+        <tr><td class="total">Celkem měsíčně</td><td class="total num">0 Kč</td><td class="total num">0 Kč navíc ke KiviSailingu (samostatně ~125 Kč)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Ověřit: kolik se dnes platí za Yolu. Po přechodu se tento poplatek ušetří. Doménu je potřeba mít pod kontrolou (kdo ji platí a u koho je registrovaná).</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Před dalším krokem</div>
+    <h2>Co potřebujeme od restaurace</h2>
+    <p>Údaje označené v mockupu žlutě (<b>doplnit</b>, <b>ověřit</b>) jsou zatím odhad nebo ukázka:</p>
+    <ul class="questions">
+      <li>Kapacita sálu a zahrádky (počet míst) a jestli u restaurace může zastavit nebo parkovat autobus.</li>
+      <li>Ceny skupinových menu, případně zda mají řidič a průvodce oběd zdarma.</li>
+      <li>Ceny denního menu a čas výdeje (v návrhu ukázkově 129–159 Kč, 11:00–14:00). Úterý až pátek jsou v návrhu ukázková jídla, pondělí je opsané z webu.</li>
+      <li>Do kdy vaří kuchyně a jestli se menu podává i v sobotu.</li>
+      <li>Nápojový lístek (na webu chybí úplně) a aktuálnost cen v jídelním lístku.</li>
+      <li>Logo, pokud existuje, a nové fotky jídel. Stačí z telefonu, web je sám upraví.</li>
+      <li>Kdo bude menu zadávat a jestli raději z telefonu, nebo z počítače.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Postup</div>
+    <h2>Další kroky</h2>
+    <ol class="steps">
+      <li class="done"><div><b>Rozbor a návrh designu</b><p>Mockupy úvodu, jídelního lístku, stránky pro zájezdy a administrace denního menu na této stránce.</p></div></li>
+      <li><div><b>Připomínky a doplnění údajů</b><p>Zpětná vazba od restaurace, vyplnění otázek výše a výběr varianty provozu A nebo B.</p></div></li>
+      <li><div><b>Kostra webu a administrace</b><p>Next.js a Payload, datový model (týdenní menu, jídelní lístek, poptávky, fotky, oznámení), převod lístku a fotek.</p></div></li>
+      <li><div><b>Zaškolení obsluhy</b><p>Krátká ukázka zadávání menu (cca 15 minut), týden souběžného provozu se starým webem.</p></div></li>
+      <li><div><b>Spuštění</b><p>Test na zkušební adrese, přesměrování starých stránek, přepnutí domény a zápis do Google a Mapy.cz.</p></div></li>
+    </ol>
+  </section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // QR kód s odkazem na veřejný náhled návrhu
+  try { new QRCode(document.getElementById('qr'), { text: 'https://jarekhomolka.github.io/restaurace-navrh/', width: 256, height: 256, colorDark: '#2b1d16', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) {}
+</script>
+</body>
+</html>

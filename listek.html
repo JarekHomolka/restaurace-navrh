@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jídelní lístek – Restaurace Na Městečku Lysice</title>
+<meta name="description" content="Speciality, víkendová nabídka, minutky, bezmasá jídla, pizza 33 cm, přílohy a dezerty. Ceny a alergeny.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body class="has-bar">
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+    <nav class="nav" aria-label="Hlavní">
+      <a href="uvod.html#menu">Denní menu</a>
+      <a href="listek.html" aria-current="page">Jídelní lístek</a>
+      <a href="skupiny.html">Zájezdy a oslavy</a>
+      <a href="uvod.html#kontakt">Kontakt</a>
+    </nav>
+    <a class="btn btn-primary btn-sm header-call" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>516 472 188</a>
+    <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <nav class="mobile-nav" aria-label="Mobilní">
+    <a href="uvod.html#menu">Denní menu</a>
+    <a href="listek.html">Jídelní lístek a pizza</a>
+    <a href="skupiny.html">Zájezdy, oslavy a svatby</a>
+    <a href="uvod.html#kontakt">Kontakt a otevírací doba</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap page-head">
+    <div class="eyebrow">Stálá nabídka</div>
+    <h1>Jídelní lístek</h1>
+    <p class="lead">Všechno připravíme i s sebou. Hledáte polední menu? <a href="uvod.html#menu">Denní menu je na úvodní stránce →</a></p>
+  </div>
+
+  <div class="menu-tools">
+    <div class="wrap">
+      <nav class="chips" aria-label="Kategorie">
+        <a class="chip active" href="#speciality">Speciality</a>
+        <a class="chip" href="#vikend">Víkend</a>
+        <a class="chip" href="#minutky">Minutky</a>
+        <a class="chip" href="#bezmasa">Bez masa</a>
+        <a class="chip" href="#pizza">Pizza</a>
+        <a class="chip" href="#prilohy">Přílohy</a>
+        <a class="chip" href="#salaty">Saláty</a>
+        <a class="chip" href="#dezerty">Dezerty</a>
+      </nav>
+      <div class="search-row">
+        <label class="search"><span class="sr">Hledat jídlo</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="hledat" type="search" placeholder="Hledat, např. řízek"></label>
+        <label class="toggle"><input id="bezmasa" type="checkbox">Bez masa</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap menu-layout">
+    <div class="menu-main">
+      <div id="listek" class="menu-main"></div>
+      <p id="nic" class="cat-note hidden">Nic jsme nenašli. Zkuste jiné slovo.</p>
+    </div>
+    <aside class="menu-side">
+      <div class="side-daily">
+        <h3>Polední menu</h3>
+        <p>Každý všední den polévka a tři jídla na výběr. Aktuální nabídka je na úvodní stránce.</p>
+        <a class="btn btn-light" href="uvod.html#menu">Dnešní menu</a>
+      </div>
+      <details class="legend">
+        <summary>Seznam alergenů</summary>
+        <ol>
+          <li>lepek</li><li>korýši</li><li>vejce</li><li>ryby</li><li>arašídy</li><li>sója</li><li>mléko</li>
+          <li>skořápkové plody</li><li>celer</li><li>hořčice</li><li>sezam</li><li>oxid siřičitý</li><li>vlčí bob</li><li>měkkýši</li>
+        </ol>
+      </details>
+      <p class="cat-note">Alergeny u denního menu a polévek vám řekne obsluha. Za poloviční porce účtujeme 2/3 z ceny pokrmu.</p>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div style="display:grid;gap:10px">
+      <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+      <p>Komenského 589, 679 71 Lysice</p>
+    </div>
+    <div class="foot-links"><a href="uvod.html#menu">Denní menu</a><a href="listek.html">Jídelní lístek</a><a href="skupiny.html">Zájezdy a oslavy</a><a href="uvod.html#kontakt">Kontakt</a></div>
+    <div class="foot-links"><a href="tel:+420516472188">516 472 188</a><a href="tel:+420775206577">775 206 577</a><a href="admin.html">Administrace</a></div>
+  </div>
+</footer>
+
+<div class="action-bar">
+  <a class="btn btn-primary" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat jídlo</a>
+  <a class="btn btn-ghost" href="uvod.html#menu">Denní menu</a>
+</div>
+</body>
+</html>
