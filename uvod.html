@@ -9,12 +9,17 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
 <script src="app.js" defer></script>
+<script>
+  // Varianta úvodního bloku pro porovnání: ?uvod=svetly|jidlo|sal|budova (výchozí světlá)
+  (function () { var v = new URLSearchParams(location.search).get('uvod'); try { if (!v) v = localStorage.getItem('rnm-uvod'); } catch (e) {}
+    document.documentElement.dataset.hero = ['svetly', 'jidlo', 'sal', 'budova'].indexOf(v) >= 0 ? v : 'svetly'; })();
+</script>
 </head>
 <body class="has-bar">
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+    <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
     <nav class="nav" aria-label="Hlavní">
       <a href="#menu" aria-current="page">Denní menu</a>
       <a href="listek.html">Jídelní lístek</a>
@@ -33,16 +38,26 @@
 </header>
 
 <main>
+  <div class="variant-bar" aria-label="Varianty úvodu">
+    <div class="wrap"><span>Návrh úvodu:</span>
+      <button data-v="svetly">Světlá</button><button data-v="jidlo">Jídlo</button><button data-v="sal">Sál</button><button data-v="budova">Původní (budova)</button>
+    </div>
+  </div>
   <section class="hero" id="menu">
-    <div class="hero-bg" style="background-image:url(assets/foto/budova.jpg)"></div>
+    <div class="hero-bg"></div>
     <div class="wrap">
       <div class="hero-text">
         <span class="open-pill"><i></i><span>Otevřeno</span></span>
-        <h1>Poctivá kuchyně na&nbsp;náměstí v&nbsp;Lysicích</h1>
+        <h1>Poctivá kuchyně <em>na&nbsp;náměstí</em> v&nbsp;Lysicích</h1>
         <p class="lead">Každý všední den čerstvé polední menu, k tomu minutky, pizza a víkendové speciality. Vaříme i s sebou.</p>
         <div class="hero-actions">
           <a class="btn btn-light" href="listek.html">Jídelní lístek</a>
           <a class="btn btn-ghost on-dark" href="skupiny.html">Zájezdy a oslavy</a>
+        </div>
+        <div class="hero-photos" aria-hidden="true">
+          <img src="assets/foto/svickova.jpg" alt="">
+          <img src="assets/foto/svatba-sal.jpg" alt="">
+          <img src="assets/foto/predkrm.jpg" alt="">
         </div>
       </div>
 
@@ -139,9 +154,9 @@
           <a class="phone-row" href="tel:+420775206577"><b>775 206 577</b><span>Zájezdy, oslavy, svatby a rezervace</span></a>
           <a href="mailto:restaurace.namestecku@seznam.cz" style="font-weight:600">restaurace.namestecku@seznam.cz</a>
         </div>
-        <a class="map-card" href="https://mapy.cz/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice" target="_blank" rel="noopener">
+        <a class="map-card" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener">
           <img src="assets/foto/zahradka.jpg" alt="">
-          <div><b>Komenského 589, Lysice</b><span>Navigovat přes Mapy.cz →</span></div>
+          <div><b>Komenského 589, Lysice</b><span>Navigovat přes Mapy.com →</span></div>
         </a>
       </div>
     </div>
@@ -151,7 +166,7 @@
 <footer class="site-footer">
   <div class="wrap">
     <div style="display:grid;gap:10px">
-      <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+      <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
       <p>Komenského 589, 679 71 Lysice</p>
     </div>
     <div class="foot-links"><a href="#menu">Denní menu</a><a href="listek.html">Jídelní lístek</a><a href="skupiny.html">Zájezdy a oslavy</a><a href="#kontakt">Kontakt</a></div>
@@ -161,7 +176,7 @@
 
 <div class="action-bar">
   <a class="btn btn-primary" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat jídlo</a>
-  <a class="btn btn-ghost" href="https://mapy.cz/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Navigovat</a>
+  <a class="btn btn-ghost" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Navigovat</a>
 </div>
 </body>
 </html>

@@ -211,6 +211,54 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-daily]').forEach(vykresliDenniMenu);
   const l = $('#listek'); if (l) vykresliListek(l);
   stavOtevreni();
+  // Přepínač variant úvodu (jen v návrhu)
+  const vb = $('.variant-bar');
+  if (vb) {
+    const oznac = () => $$('button', vb).forEach((b) => b.classList.toggle('on', b.dataset.v === document.documentElement.dataset.hero));
+    vb.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      document.documentElement.dataset.hero = b.dataset.v; oznac();
+      try { localStorage.setItem('rnm-uvod', b.dataset.v); } catch (er) { /* bez úložiště */ }
+    });
+    if (new URLSearchParams(location.search).has('bez-prepinace')) document.documentElement.classList.add('bez-prepinace');
+    oznac();
+  }
   const f = $('#poptavka');
   if (f) f.addEventListener('submit', (e) => { e.preventDefault(); $('.thanks').classList.add('show'); $('.thanks').scrollIntoView({ block: 'center', behavior: 'smooth' }); });
+});
+
+/* ---------- Mapa parkování (stránka pro zájezdy) ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const el = $('#park-map');
+  if (!el || typeof MAPA_OKOLI === 'undefined') return;
+  const M = MAPA_OKOLI, seznam = $('#park-list');
+  const polozky = [
+    { typ: 'bus', ikona: 'B', nazev: `Zastávka ${M.zastavka.nazev}`, popis: 'vysazení skupiny před vchodem', poloha: M.zastavka.poloha, vzd: 30 },
+    ...M.parkoviste.filter((p) => p.typ !== 'menší').map((p) => ({ typ: 'p', ikona: 'P', nazev: p.nazev, popis: `${p.pesky} min pěšky`, poloha: p.stred, vzd: p.vzdalenost, obrys: p.obrys })),
+    { typ: 'p', ikona: 'P', nazev: `Další ${M.parkoviste.filter((p) => p.typ === 'menší').length} menší parkoviště`, popis: 'do 3 minut pěšky', poloha: null, vzd: null },
+    { typ: 'castle', ikona: '♜', nazev: M.zamek.nazev, popis: `${M.zamek.pesky} min pěšky`, poloha: M.zamek.poloha, vzd: M.zamek.vzdalenost }
+  ];
+  if (seznam) seznam.innerHTML = polozky.map((p, i) => `<li data-i="${i}"><span class="ico ${p.typ === 'p' ? '' : p.typ}">${p.ikona}</span><div><b>${esc(p.nazev)}</b><small>${esc(p.popis)}</small></div><span class="dist">${p.vzd ? p.vzd + ' m' : ''}</span></li>`).join('');
+
+  const start = () => {
+    if (typeof L === 'undefined') { el.innerHTML = '<p style="padding:16px;color:var(--muted)">Mapu se nepodařilo načíst.</p>'; return; }
+    const mapa = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, zoomControl: true, attributionControl: true });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(mapa);
+    const pin = (cls, txt) => L.divIcon({ className: '', html: `<div class="pin ${cls}">${txt}</div>`, iconSize: [36, 36], iconAnchor: [18, 18] });
+    const vrstvy = [];
+    M.parkoviste.forEach((p) => {
+      L.polygon(p.obrys, { color: '#2563a8', weight: 2, fillColor: '#3b82f6', fillOpacity: p.typ === 'menší' ? .25 : .4 }).addTo(mapa).bindTooltip(`${p.nazev} · ${p.vzdalenost} m`);
+      if (p.typ !== 'menší') vrstvy.push(L.marker(p.stred, { icon: pin('p', 'P') }).addTo(mapa).bindPopup(`<b>${esc(p.nazev)}</b><br>${p.vzdalenost} m · ${p.pesky} min pěšky`));
+    });
+    L.marker(M.zastavka.poloha, { icon: pin('bus', 'B') }).addTo(mapa).bindPopup(`<b>Zastávka ${esc(M.zastavka.nazev)}</b><br>vysazení skupiny`);
+    L.marker(M.zamek.poloha, { icon: pin('castle', '♜') }).addTo(mapa).bindPopup(`<b>${esc(M.zamek.nazev)}</b><br>${M.zamek.vzdalenost} m · ${M.zamek.pesky} min pěšky`);
+    L.marker(M.restaurace, { icon: pin('rest', '★'), zIndexOffset: 1000 }).addTo(mapa).bindPopup('<b>Restaurace Na Městečku</b><br>Komenského 589').openPopup();
+    // restaurace a zámek s hlavními parkovišti; menší parkoviště dál od centra se dají odscrollovat
+    mapa.fitBounds(L.latLngBounds([M.restaurace, M.zamek.poloha, M.zastavka.poloha, ...M.parkoviste.filter((p) => p.typ === 'hlavní').map((p) => p.stred)]), { padding: [36, 36], maxZoom: 18 });
+    if (seznam) seznam.addEventListener('click', (e) => {
+      const li = e.target.closest('li'); const p = li && polozky[+li.dataset.i];
+      if (p && p.poloha) { mapa.setView(p.poloha, 18); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    });
+  };
+  if (typeof L !== 'undefined') start(); else window.addEventListener('load', start);
 });

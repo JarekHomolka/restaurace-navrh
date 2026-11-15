@@ -8,13 +8,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="parkoviste-data.js" defer></script>
 <script src="app.js" defer></script>
 </head>
 <body class="has-bar">
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+    <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
     <nav class="nav" aria-label="Hlavní">
       <a href="uvod.html#menu">Denní menu</a>
       <a href="listek.html">Jídelní lístek</a>
@@ -48,8 +51,8 @@
       <div class="facts">
         <div class="fact"><b><span class="todo">doplnit</span> míst</b><span>v sále pro hostiny a zájezdy</span></div>
         <div class="fact"><b>Zahrádka</b><span>s pergolou pro letní akce</span></div>
-        <div class="fact"><b>Bus <span class="todo">ověřit</span></b><span>parkování autobusu u restaurace</span></div>
-        <div class="fact"><b>Po–Ne</b><span>otevřeno 7 dní v týdnu</span></div>
+        <div class="fact"><b>Parkování</b><span>velká plocha přímo u restaurace, zastávka 30 m</span></div>
+        <a class="fact" href="https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html" target="_blank" rel="noopener"><b>4,3 ★</b><span>hodnocení hostů na Mapy.cz (120+)</span></a>
       </div>
     </div>
   </section>
@@ -70,13 +73,27 @@
     <div class="wrap">
       <div class="section-head"><div class="eyebrow">Proč k nám</div><h2>Na co se můžete spolehnout</h2></div>
       <div class="why">
-        <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><div><h3>Přímo na náměstí</h3><p>V centru Lysic, pár kroků od zámku. Ideální zastávka na trase výletu.</p></div></div>
+        <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><div><h3>Přímo na náměstí</h3><p>V centru Lysic, zámek Lysice je 300 m (5 minut pěšky). Ideální zastávka na trase výletu.</p></div></div>
         <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><h3>Bez čekání</h3><p>Menu pro skupinu vybíráte dopředu, takže kuchyně vaří přesně na váš příjezd.</p></div></div>
         <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11h18M5 11V7a7 7 0 0 1 14 0v4M4 11l1 9h14l1-9"/></svg></span><div><h3>Poctivá česká kuchyně</h3><p>Svíčková, kachna se zelím, řízky, guláš. To, co hosté od české hospody čekají.</p></div></div>
         <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5M16 4v5"/></svg></span><div><h3>Zrekonstruovaný sál</h3><p>Moderní, světlý prostor s barem, který se dá přizpůsobit od 10 do <span class="todo">X</span> hostů.</p></div></div>
         <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8h14M5 8l-2 6h6L7 8M19 8l-2 6h6l-2-6"/></svg></span><div><h3>Příznivé ceny</h3><p>Pevná cena za osobu, žádná překvapení na účtu. Pro řidiče a průvodce oběd zdarma <span class="todo">ověřit</span>.</p></div></div>
         <div class="panel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg></span><div><h3>Venkovní zahrádka</h3><p>Při hezkém počasí oslava pod pergolou na zahrádce za restaurací.</p></div></div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" id="parkovani">
+    <div class="wrap parking">
+      <div class="parking-text">
+        <div class="eyebrow">Příjezd a parkování</div>
+        <h2>Autobus zastaví přímo u nás</h2>
+        <p class="lead">Kolem restaurace je několik parkovišť, to největší hned vedle. Skupinu můžete vysadit na zastávce před vchodem.</p>
+        <ul class="park-list" id="park-list"></ul>
+        <p class="note">Kde nejlépe zaparkuje autobus, poradíme při domluvě na <a href="tel:+420775206577">775 206 577</a>. Vzdálenosti jsou vzdušnou čarou podle OpenStreetMap, chůze je odhad.</p>
+        <a class="btn btn-ghost" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener">Otevřít v Mapy.com ↗</a>
+      </div>
+      <div class="park-map" id="park-map" role="img" aria-label="Mapa okolí restaurace s parkovišti, zastávkou a zámkem"></div>
     </div>
   </section>
 
@@ -110,6 +127,7 @@
         <h2>Napište nám, co chystáte</h2>
         <p class="lead">Ozveme se nejpozději do druhého dne. Spěcháte? Zavolejte rovnou.</p>
         <a class="phone-row" href="tel:+420775206577"><b>775 206 577</b><span>Zájezdy, oslavy, svatby a rezervace</span></a>
+        <a class="phone-row" href="https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html" target="_blank" rel="noopener"><b>4,3 ★ na Mapy.cz</b><span>Přes 120 hodnocení hostů. Chválí milou obsluhu a chutné jídlo.</span></a>
         <a class="phone-row" href="mailto:restaurace.namestecku@seznam.cz"><b style="font-size:16px">restaurace.namestecku@seznam.cz</b><span>Pro cestovní kanceláře pošleme nabídku v PDF</span></a>
         <div class="gallery mini" style="margin-top:6px">
           <img src="assets/foto/svatba-detail.jpg" alt="Detail svatební výzdoby">
@@ -149,7 +167,7 @@
 <footer class="site-footer">
   <div class="wrap">
     <div style="display:grid;gap:10px">
-      <a class="brand" href="uvod.html"><span class="brand-mark">M</span><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+      <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
       <p>Komenského 589, 679 71 Lysice</p>
     </div>
     <div class="foot-links"><a href="uvod.html#menu">Denní menu</a><a href="listek.html">Jídelní lístek</a><a href="skupiny.html">Zájezdy a oslavy</a><a href="uvod.html#kontakt">Kontakt</a></div>
