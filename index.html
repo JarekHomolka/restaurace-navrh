@@ -74,7 +74,6 @@ td.total { font-weight: 700; color: var(--wine); }
 .steps li.done::before { content: "✓"; background: var(--ok); }
 .steps b { color: var(--fg); }
 .steps p { color: var(--muted); font-size: 14px; }
-@media screen { .phone { display: none !important; } }
 /* Velké odkazy na mockupy hned na začátku (jen na obrazovce, v PDF je místo nich QR kód) */
 .try { background: var(--wine); color: #fff; border-radius: 18px; padding: 22px; display: grid; gap: 16px; }
 .try h2 { color: #fff; font-size: clamp(24px, 3.2vw, 32px); }
@@ -91,7 +90,7 @@ td.total { font-weight: 700; color: var(--wine); }
 .try-links a { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 6px 14px; }
 .try-links a:hover { background: rgba(255,255,255,.12); }
 @media (max-width: 700px) { .try-main { grid-template-columns: minmax(0, 1fr); } }
-@media print { .try { display: none !important; } }
+
 .phone { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 24px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
 .qr { width: 148px; height: 148px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
 .qr img, .qr canvas { width: 100% !important; height: 100% !important; }
@@ -169,15 +168,6 @@ td.total { font-weight: 700; color: var(--wine); }
     </div>
   </section>
 
-  <section class="phone">
-    <div id="qr" class="qr" aria-label="QR kód s odkazem na návrh"></div>
-    <div class="phone-text">
-      <div class="eyebrow">Proklikejte si to v telefonu</div>
-      <h3>Naskenujte QR kód fotoaparátem</h3>
-      <p>Odkaz otevře návrh v běžném prohlížeči, bez přihlášení. U obrazovek je odkaz „Otevřít mockup“ a administraci si můžete vyzkoušet: návrh menu na příští týden, našeptávač i vložení textu.</p>
-      <p class="url">jarekhomolka.github.io/restaurace-navrh</p>
-    </div>
-  </section>
 
   <section>
     <div class="eyebrow">Výchozí stav</div>
@@ -379,10 +369,5 @@ td.total { font-weight: 700; color: var(--wine); }
     </ol>
   </section>
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-  // QR kód s odkazem na veřejný náhled návrhu
-  try { new QRCode(document.getElementById('qr'), { text: 'https://jarekhomolka.github.io/restaurace-navrh/', width: 256, height: 256, colorDark: '#2b1d16', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch (e) {}
-</script>
 </body>
 </html>
