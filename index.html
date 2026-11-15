@@ -74,6 +74,24 @@ td.total { font-weight: 700; color: var(--wine); }
 .steps li.done::before { content: "✓"; background: var(--ok); }
 .steps b { color: var(--fg); }
 .steps p { color: var(--muted); font-size: 14px; }
+@media screen { .phone { display: none !important; } }
+/* Velké odkazy na mockupy hned na začátku (jen na obrazovce, v PDF je místo nich QR kód) */
+.try { background: var(--wine); color: #fff; border-radius: 18px; padding: 22px; display: grid; gap: 16px; }
+.try h2 { color: #fff; font-size: clamp(24px, 3.2vw, 32px); }
+.try p { color: rgba(255,255,255,.85); }
+.try-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.try-btn { display: grid; gap: 4px; padding: 18px 20px; border-radius: 14px; text-decoration: none; background: #fff; color: var(--fg); border: 2px solid #fff; }
+.try-btn b { font-family: var(--f-display); font-size: 22px; color: var(--wine); display: flex; justify-content: space-between; gap: 10px; }
+.try-btn span { font-size: 14px; color: var(--muted); }
+.try-btn.alt { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+.try-btn.alt b { color: #fff; }
+.try-btn.alt span { color: rgba(255,255,255,.8); }
+.try-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.try-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.try-links a { color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 6px 14px; }
+.try-links a:hover { background: rgba(255,255,255,.12); }
+@media (max-width: 700px) { .try-main { grid-template-columns: minmax(0, 1fr); } }
+@media print { .try { display: none !important; } }
 .phone { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 24px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
 .qr { width: 148px; height: 148px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
 .qr img, .qr canvas { width: 100% !important; height: 100% !important; }
@@ -101,20 +119,23 @@ td.total { font-weight: 700; color: var(--wine); }
   .tablewrap { overflow: visible; } table { min-width: 0; }
   section:has(.tablewrap), section:has(.steps) { break-inside: avoid; }
   section.long, section.long .tablewrap { break-inside: auto; }
-  section.long { display: block; } /* Chromium špatně láme grid přes strany */
-  section.long > * + * { margin-top: 14px; }
+  section, section.long { display: block; } /* Chromium špatně láme grid přes strany, sekce v tisku jako bloky */
+  section > * + * { margin-top: 14px; }
   tr { break-inside: avoid; }
   h2, h3, .eyebrow { break-after: avoid; }
   .break-before { break-before: page; }
   .page .stats { grid-template-columns: repeat(4, 1fr); }
   .page .issues, .page .split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .page .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page .shots { grid-template-columns: minmax(0, 1fr); gap: 10mm; }
+  .shot figcaption { font-size: 11pt; }
   .page .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .page .old { grid-template-columns: 1.6fr 1fr 1fr; }
   .page .old .shot:first-child { grid-column: auto; }
   .page .old img { max-height: 62mm; object-fit: cover; object-position: top; }
   section:has(.mobiles) { break-inside: avoid; }
-  .page .mobiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .page .mobiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8mm 10mm; padding: 0 12mm; }
+  .page .mobiles .shot { break-inside: avoid; }
+  section:has(.mobiles) { break-inside: auto; }
   .page .phone { grid-template-columns: 120px minmax(0, 1fr); justify-items: stretch; }
   .page .qr { width: 120px; height: 120px; }
   .phone { break-inside: avoid; }
@@ -130,6 +151,23 @@ td.total { font-weight: 700; color: var(--wine); }
     <p class="lead">Web, na kterém lidé z Lysic a okolí rychle najdou dnešní menu, a který vedoucím zájezdů a snoubencům „prodá“ sál. Menu přitom obsluha doplní sama během pár minut, klidně z telefonu. Na stránce je rozbor současného webu, návrh designu pro mobil i počítač, administrace menu, technické řešení a náklady.</p>
     <div class="meta"><span>restauracenamestecku.cz</span><span>Komenského 589, Lysice</span><span>Denní menu · Jídelní lístek · Zájezdy a akce</span></div>
   </header>
+
+  <section class="try" aria-label="Vyzkoušet návrh">
+    <h2>Proklikejte si nový web</h2>
+    <p>Návrh je funkční ukázka. Dá se proklikat na počítači i v telefonu a v administraci si můžete menu sami upravit a podívat se, jak se ukáže na webu.</p>
+    <div class="try-main">
+      <a class="try-btn" href="uvod.html" target="_blank" rel="noopener"><b>Otevřít nový web <span aria-hidden="true">↗</span></b><span>Úvod s denním menu, jídelní lístek, zájezdy a oslavy</span></a>
+      <a class="try-btn alt" href="admin.html" target="_blank" rel="noopener"><b>Vyzkoušet administraci <span aria-hidden="true">↗</span></b><span>Zadání menu, návrh příštího týdne, vložení textu z Wordu</span></a>
+    </div>
+    <div class="try-links">
+      <a href="listek.html" target="_blank" rel="noopener">Jídelní lístek</a>
+      <a href="skupiny.html" target="_blank" rel="noopener">Zájezdy a oslavy</a>
+      <a href="skupiny.html#parkovani" target="_blank" rel="noopener">Mapa parkování</a>
+      <a href="admin.html#navrh" target="_blank" rel="noopener">Návrh menu z historie</a>
+      <a href="uvod.html?uvod=jidlo" target="_blank" rel="noopener">Úvod – varianta Jídlo</a>
+      <a href="uvod.html?uvod=sal" target="_blank" rel="noopener">Úvod – varianta Sál</a>
+    </div>
+  </section>
 
   <section class="phone">
     <div id="qr" class="qr" aria-label="QR kód s odkazem na návrh"></div>
@@ -187,7 +225,7 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <h2>A na počítači</h2>
+    <h2 class="break-before">A na počítači</h2>
     <div class="shots">
       <figure class="shot"><img src="screenshots/desktop-uvod.png" alt="Návrh – úvod s denním menu"><figcaption><b>Úvod: denní menu na týden</b><a href="uvod.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-listek.png" alt="Návrh – jídelní lístek s kategoriemi a hledáním"><figcaption><b>Jídelní lístek s hledáním</b><a href="listek.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
@@ -200,7 +238,7 @@ td.total { font-weight: 700; color: var(--wine); }
     <div class="eyebrow break-before">Úvodní stránka</div>
     <h2>Tři varianty úvodu</h2>
     <p>Fotka budovy působí trochu staromódně, proto jsou na výběr tři úvody bez ní. V mockupu se dají přepínat lištou nahoře. Na telefonu je ve všech variantách hned pod nadpisem denní menu.</p>
-    <div class="cols">
+    <div class="shots variants">
       <figure class="shot"><img src="screenshots/desktop-uvod.png" alt="Varianta Světlá"><figcaption><b>Světlá</b> <span class="pill rec">doporučuji</span><a href="uvod.html?uvod=svetly" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-uvod-jidlo.png" alt="Varianta Jídlo"><figcaption><b>Jídlo</b><a href="uvod.html?uvod=jidlo" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-uvod-sal.png" alt="Varianta Sál"><figcaption><b>Sál</b><a href="uvod.html?uvod=sal" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
@@ -268,7 +306,7 @@ td.total { font-weight: 700; color: var(--wine); }
     <div class="eyebrow">Jak to bude fungovat</div>
     <h2>Technické řešení</h2>
     <div class="cols">
-      <div class="box"><h3>Web</h3><p>Next.js. Stránky se předgenerují a po uložení menu se obnoví, takže se načítají okamžitě i na slabém signálu. Fotky se samy zmenší pro mobil. Stejná technologie jako u nového KiviSailingu, takže oba weby se udržují stejně.</p></div>
+      <div class="box"><h3>Web</h3><p>Next.js. Stránky se předgenerují a po uložení menu se obnoví, takže se načítají okamžitě i na slabém signálu. Fotky se samy zmenší pro mobil.</p></div>
       <div class="box"><h3>Administrace</h3><p>Payload CMS na adrese /admin, s vlastní obrazovkou pro denní menu (našeptávač, vložení textu, tisk). Spravuje se v ní:</p><ul><li>denní menu po týdnech</li><li>jídelní lístek a nápoje</li><li>poptávky, fotky a oznámení</li></ul></div>
       <div class="box"><h3>Vyhledávače</h3><p>Lístek bude text místo obrázků, takže ho Google najde (např. „oběd Lysice“). Přidáme profil restaurace pro Google a Mapy.cz s otevírací dobou a odkazem na menu. Staré adresy (contact-us.php, jídelní lístek) se přesměrují.</p></div>
     </div>
@@ -299,16 +337,16 @@ td.total { font-weight: 700; color: var(--wine); }
   <section>
     <div class="eyebrow">Provozní náklady</div>
     <h2>Dvě varianty provozu</h2>
-    <p>Web nepotřebuje platební bránu ani e-shop, takže provoz je levný. Pokud poběží nový KiviSailing na vlastním serveru (varianta B), restaurace se k němu dá přidat bez dalších nákladů.</p>
+    <p>Web nepotřebuje platební bránu ani e-shop, takže provoz je levný. Varianta A je zdarma s limity bezplatných tarifů, které takovému webu stačí. Varianta B je vlastní malý server s jednoduchými zálohami.</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Položka</th><th>A: zdarma</th><th>B: vlastní server</th></tr></thead>
       <tbody>
-        <tr><td>Hosting webu</td><td>Cloudflare Workers Free</td><td>Hetzner VPS ~5 €/měs., sdílený s KiviSailingem</td></tr>
+        <tr><td>Hosting webu</td><td>Cloudflare Workers Free</td><td>Hetzner VPS ~5 €/měs.</td></tr>
         <tr><td>Databáze (menu, lístek, poptávky)</td><td>Cloudflare D1 Free</td><td>PostgreSQL na stejném serveru</td></tr>
         <tr><td>Fotky</td><td>Cloudflare R2 (10 GB zdarma)</td><td>Disk serveru</td></tr>
         <tr><td>E-maily s poptávkami</td><td>Resend Free (3 000/měs.)</td><td>Resend Free</td></tr>
         <tr><td>Doména restauracenamestecku.cz</td><td>Stávající, ~250 Kč/rok</td><td>Stávající, ~250 Kč/rok</td></tr>
-        <tr><td class="total">Celkem měsíčně</td><td class="total num">0 Kč</td><td class="total num">0 Kč navíc ke KiviSailingu (samostatně ~125 Kč)</td></tr>
+        <tr><td class="total">Celkem měsíčně</td><td class="total num">0 Kč</td><td class="total num">~125 Kč</td></tr>
       </tbody>
     </table></div>
     <p class="note">Ověřit: kolik se dnes platí za Yolu. Po přechodu se tento poplatek ušetří. Doménu je potřeba mít pod kontrolou (kdo ji platí a u koho je registrovaná).</p>
