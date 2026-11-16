@@ -36,7 +36,7 @@ body { background: #f3f0e9; padding-bottom: 140px; }
 .week-nav b { font-size: 16px; flex: 1; text-align: center; }
 .status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); }
 .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-.status.draft { color: #a8650b; }
+.status.draft { color: #8a5309; }
 .quick { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .quick .btn { min-height: 44px; font-size: 14px; padding: 6px 12px; background: #fff; white-space: normal; justify-content: flex-start; text-align: left; line-height: 1.2; }
 .quick .btn svg { color: var(--wine); }
@@ -99,7 +99,7 @@ body { background: #f3f0e9; padding-bottom: 140px; }
 .preview { display: none; }
 .preview-phone { width: 340px; border: 10px solid #231a15; border-radius: 28px; background: var(--bg); overflow: hidden; box-shadow: var(--shadow); }
 .preview-phone iframe { display: block; width: 320px; height: 600px; border: 0; background: #fbfaf6; }
-.preview h3 { font-size: 15px; font-family: var(--f-body); font-weight: 700; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; }
+.preview h2 { font-size: 15px; font-family: var(--f-body); font-weight: 700; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; }
 
 .toast { position: fixed; z-index: 60; left: 50%; bottom: 140px; transform: translate(-50%, 20px); opacity: 0; transition: .2s; background: #24150f; color: #fff; padding: 12px 18px; border-radius: 4px; font-size: 14px; font-weight: 600; max-width: calc(100% - 32px); pointer-events: none; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -126,6 +126,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 .list-row .price { width: 96px; }
 .inq { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 14px; display: grid; gap: 6px; }
 .inq-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.inq-top h2 { font-size: 20px; }
 .inq p { color: var(--muted); font-size: 14px; }
 .inq .meta { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -249,7 +250,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
             </div>
           </div>
           <aside class="preview">
-            <h3><span>Takhle to uvidí hosté na mobilu</span></h3>
+            <h2><span>Takhle to uvidí hosté na mobilu</span></h2>
             <div class="preview-phone"><iframe id="pv-frame" title="Náhled úvodní stránky na mobilu" src="uvod.html?nahled=1"></iframe></div>
           </aside>
         </div>
@@ -266,9 +267,9 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
       <section class="view-pane" id="v-poptavky">
         <div class="adm-head"><div style="display:grid;gap:6px"><h1>Poptávky</h1><span class="status draft">2 nové</span></div></div>
         <div class="list-ed">
-          <div class="inq"><div class="inq-top"><h3>Zájezd · 48 osob</h3><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 23. 5. 2027</span><span class="badge">příjezd 12:30</span><span class="badge">oběd po prohlídce zámku</span></div><p>„Dobrý den, chystáme zájezd na zámek Lysice, prosíme o nabídku obědového menu, 3 vegetariáni.“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
-          <div class="inq"><div class="inq-top"><h3>Svatba · 70 osob</h3><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 12. 6. 2027</span><span class="badge">sál + zahrádka</span></div><p>„Zajímá nás svatební hostina a večerní raut, máte v tento termín volno?“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
-          <div class="inq" style="opacity:.7"><div class="inq-top"><h3>Oslava 60. narozenin · 25 osob</h3><span class="badge green">Vyřízeno</span></div><div class="meta"><span class="badge">Pá 4. 12. 2026</span></div></div>
+          <div class="inq"><div class="inq-top"><h2>Zájezd · 48 osob</h2><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 23. 5. 2027</span><span class="badge">příjezd 12:30</span><span class="badge">oběd po prohlídce zámku</span></div><p>„Dobrý den, chystáme zájezd na zámek Lysice, prosíme o nabídku obědového menu, 3 vegetariáni.“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
+          <div class="inq"><div class="inq-top"><h2>Svatba · 70 osob</h2><span class="badge gold">Nová</span></div><div class="meta"><span class="badge">So 12. 6. 2027</span><span class="badge">sál + zahrádka</span></div><p>„Zajímá nás svatební hostina a večerní raut, máte v tento termín volno?“ (ukázková poptávka)</p><div class="quick" style="margin-top:6px"><a class="btn btn-ghost btn-sm" href="#">Zavolat</a><a class="btn btn-ghost btn-sm" href="#">Odpovědět e-mailem</a></div></div>
+          <div class="inq" style="opacity:.7"><div class="inq-top"><h2>Oslava 60. narozenin · 25 osob</h2><span class="badge green">Vyřízeno</span></div><div class="meta"><span class="badge">Pá 4. 12. 2026</span></div></div>
         </div>
       </section>
 
