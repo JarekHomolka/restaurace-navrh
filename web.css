@@ -1,5 +1,5 @@
-/* Restaurace Na Městečku – moderní hospoda na náměstí (Archivo, vínová plocha s dnešním menu)
-   Barvy z místa: žlutá fasáda (jen tabule denního menu), vínový malovaný nápis, inkoust, papír.
+/* Restaurace Na Městečku – klidný moderní web hospody na náměstí (Archivo, vínová jako akcent)
+   Barvy z místa: vínový malovaný nápis jako akcent, inkoust a papír.
    Mobil na prvním místě, jeden boční okraj 16 px pro všechno. Bez stínů, bez pilulek, bez textu přes fotky. */
 :root {
   --papir: #fbfaf6;
@@ -69,61 +69,62 @@ p { margin: 0; }
 main { padding-bottom: calc(var(--lista) + env(safe-area-inset-bottom)); }
 @media (min-width: 900px) { .lista { display: none; } main { padding-bottom: 0; } }
 
-/* ---------- Úvod: vínová plocha s dnešním menu, bez fotky ---------- */
-.uvod { background: var(--vino); color: #fff; padding-block: 26px 30px; }
-.uvod .wrap { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+/* ---------- Úvod: světlý, klidný; vlevo nadpis a prokliky, vpravo karta denního menu ---------- */
+.uvod { padding-block: 24px 32px; }
+.uvod .wrap { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
 .uvod-text { display: grid; gap: 12px; align-content: start; }
-.uvod h1 { font-size: clamp(46px, 12.5vw, 112px); line-height: .92; letter-spacing: -.035em; font-weight: 800; font-stretch: 112%; color: #fff; }
-.uvod-pod { font-size: 18px; color: rgba(255,255,255,.88); max-width: 36ch; }
+.uvod h1 { font-size: 32px; line-height: 1.05; letter-spacing: -.025em; font-weight: 800; }
+.uvod-pod { font-size: 18px; color: var(--tlumeny); max-width: 40ch; }
 .stav { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--zelena); }
 .stav::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; flex: none; }
 .stav.zavreno { color: var(--vino); }
-.uvod .stav { color: #fff; }
-.uvod .stav::before { background: #7ddc9a; box-shadow: 0 0 0 4px rgba(125, 220, 154, .22); }
-.uvod .stav.zavreno::before { background: #f3a1a1; box-shadow: 0 0 0 4px rgba(243, 161, 161, .22); }
 .uvod .akce-radek { margin-top: 4px; }
-@media (max-width: 899px) { .uvod .btn.svetla { display: none; } .uvod .akce-radek .btn { width: 100%; } }
-.btn.zluta { background: var(--fasada); border-color: var(--fasada); color: var(--inkoust); }
-.btn.zluta:hover { background: #f6d36c; border-color: #f6d36c; }
-.btn.svetla { background: transparent; border-color: rgba(255, 255, 255, .55); color: #fff; }
-.btn.svetla:hover { background: #fff; color: var(--vino); }
+.zajezdy-odkaz { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1px solid var(--linka); border-radius: 6px; background: #fff; color: var(--inkoust); text-decoration: none; min-height: 56px; }
+.zajezdy-odkaz b { display: block; font-size: 17px; }
+.zajezdy-odkaz span { font-size: 15px; color: var(--tlumeny); }
+.zajezdy-odkaz::after { content: "→"; color: var(--vino); font-weight: 800; font-size: 20px; }
+.zajezdy-odkaz:hover { border-color: var(--vino); }
+@media (max-width: 899px) { .uvod .akce-radek { display: none; } }
 @media (min-width: 900px) {
-  .uvod { padding-block: 64px 76px; }
-  .uvod .wrap { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 72px; align-items: start; }
+  .uvod { padding-block: 56px 72px; }
+  .uvod .wrap { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: 64px; align-items: start; }
+  .uvod h1 { font-size: 56px; }
+  .uvod-text { padding-top: 12px; gap: 16px; }
+  .zajezdy-odkaz { display: none; }
 }
 
-/* Dnešní menu: na úvodu přímo na vínové ploše, na lístku jako vínová karta */
-.tabule { background: var(--vino); color: #fff; border-radius: 4px; padding: 20px 18px 18px; display: grid; gap: 14px; }
-.uvod .tabule { background: none; padding: 0; border-radius: 0; }
-.tabule-hlava { display: grid; gap: 2px; }
-.tabule-hlava h2 { font-size: 22px; color: #fff; }
-.tabule-hlava p { font-size: 15px; color: rgba(255, 255, 255, .8); }
-.tabule ol { list-style: none; margin: 0; padding: 0; display: grid; }
-.tabule li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; padding: 14px 0; border-top: 1px solid rgba(255, 255, 255, .22); }
-.tabule li:first-child { border-top: 0; padding-top: 0; }
-.tabule .jidlo { font-weight: 600; font-size: 19px; line-height: 1.28; }
-.tabule .poradi { color: var(--fasada); font-weight: 800; margin-right: 8px; }
-.tabule .cena { font-weight: 800; font-size: 19px; color: var(--fasada); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.tabule .drobne { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; color: rgba(255, 255, 255, .72); margin-top: 3px; }
-.tabule .polevka .jidlo { font-weight: 400; }
-.tabule .polevka .jidlo b { font-weight: 700; }
+/* Karta denního menu s dlaždicemi dnů */
+.karta { background: #fff; border: 1px solid var(--linka); border-radius: 6px; overflow: hidden; }
+.karta-hlava { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 16px 18px 6px; }
+.karta-hlava h2 { font-size: 22px; }
+.karta-hlava small { color: var(--tlumeny); font-size: 14px; font-variant-numeric: tabular-nums; }
+.dny { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 8px 12px 0; }
+.den-btn { appearance: none; border: 1px solid transparent; background: transparent; border-radius: 4px; padding: 8px 0 7px; cursor: pointer; font: inherit; color: var(--tlumeny); display: grid; gap: 1px; justify-items: center; min-height: 52px; }
+.den-btn b { font-size: 16px; color: var(--inkoust); }
+.den-btn span { font-size: 12px; font-variant-numeric: tabular-nums; }
+.den-btn:hover { border-color: var(--linka); }
+.den-btn[aria-selected="true"] { background: var(--vino); color: rgba(255, 255, 255, .85); }
+.den-btn[aria-selected="true"] b { color: #fff; }
+.den-btn.dnes:not([aria-selected="true"]) b { color: var(--vino); }
+.karta-telo { padding: 14px 18px 16px; display: grid; gap: 10px; }
+.karta-den { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.stitek { font-size: 12px; font-weight: 700; border-radius: 3px; padding: 2px 7px; background: #f4e7e5; color: var(--vino); }
+.polevka-radek { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding: 10px 12px; background: #f6f2ea; border-radius: 4px; }
+.polevka-radek .k { font-size: 14px; color: var(--tlumeny); }
+.polevka-radek b { font-weight: 700; }
+.polevka-radek .a { font-size: 13px; color: var(--tlumeny); }
+.jidla { list-style: none; margin: 0; padding: 0; display: grid; }
+.jidla li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; column-gap: 10px; padding: 12px 0; border-top: 1px solid var(--linka); }
+.jidla li:first-child { border-top: 0; }
+.jidla .c { width: 28px; height: 28px; border-radius: 50%; background: #f4e7e5; color: var(--vino); font-weight: 800; display: grid; place-items: center; font-size: 15px; }
+.jidla .n { font-weight: 600; font-size: 18px; line-height: 1.3; }
+.jidla .cena { font-weight: 800; color: var(--vino); font-size: 18px; white-space: nowrap; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.jidla .i { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; color: var(--tlumeny); margin-top: 3px; }
 .bezmasa { color: var(--zelena); font-weight: 700; }
-.tabule .bezmasa { color: #9be3b2; }
-.tabule .btn { min-height: 54px; font-size: 18px; background: var(--fasada); border-color: var(--fasada); color: var(--inkoust); }
-.tabule-prazdna { padding: 8px 0; font-size: 19px; color: rgba(255, 255, 255, .92); }
-@media (min-width: 900px) { .uvod .tabule .jidlo, .uvod .tabule .cena { font-size: 24px; } .uvod .tabule li { padding: 18px 0; } }
-
-/* Zbytek týdne (na vínové ploše) */
-.tyden { border-top: 1px solid rgba(255, 255, 255, .22); border-bottom: 1px solid rgba(255, 255, 255, .22); }
-.tyden summary { cursor: pointer; padding: 14px 0; font-weight: 700; color: var(--fasada); list-style: none; display: flex; justify-content: space-between; gap: 10px; min-height: 48px; align-items: center; }
-.tyden summary::-webkit-details-marker { display: none; }
-.tyden summary::after { content: "+"; font: 700 24px/1 var(--f-nadpis); }
-.tyden[open] summary::after { content: "–"; }
-.tyden-dny { display: grid; gap: 18px; padding-bottom: 18px; }
-.tyden-den h3 { font-size: 17px; margin-bottom: 4px; color: #fff; }
-.tyden-den ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 3px; font-size: 16px; color: rgba(255, 255, 255, .9); }
-.tyden-den li { display: flex; justify-content: space-between; gap: 12px; }
-.tyden-den li span:last-child { white-space: nowrap; color: var(--fasada); }
+.karta-pata { display: grid; gap: 10px; padding: 14px 18px 18px; border-top: 1px solid var(--linka); background: #fbfaf6; }
+.karta-pata p { font-size: 14px; color: var(--tlumeny); }
+.karta-prazdna { padding: 22px 4px; color: var(--tlumeny); text-align: center; }
+@media (min-width: 900px) { .karta-hlava { padding: 22px 26px 8px; } .dny { padding: 10px 20px 0; } .karta-telo { padding: 18px 26px 18px; } .karta-pata { padding: 16px 26px 22px; } .jidla .n, .jidla .cena { font-size: 19px; } }
 
 /* ---------- Info řádek ---------- */
 .info { border-block: 1px solid var(--linka); background: #fff; }
@@ -266,7 +267,6 @@ main { padding-bottom: calc(var(--lista) + env(safe-area-inset-bottom)); }
 .badge { font-weight: 700; color: var(--zelena); }
 .hidden { display: none !important; }
 .bocni { display: grid; gap: 20px; align-content: start; }
-.bocni .tabule { padding: 18px; }
 .legenda summary { cursor: pointer; font-weight: 600; color: var(--vino); min-height: 44px; display: flex; align-items: center; }
 .legenda ol { margin: 4px 0 0; padding-left: 22px; columns: 2; font-size: 15px; color: var(--tlumeny); }
 @media (min-width: 900px) { .listek-rozlozeni { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; padding-top: 36px; } .bocni { position: sticky; top: 150px; } }

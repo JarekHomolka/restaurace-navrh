@@ -338,9 +338,47 @@ function vykresliStav() {
   $$('.doba tr[data-d]').forEach((tr) => tr.classList.toggle('dnes', tr.dataset.d.split(',').includes(String(now.getDay()))));
 }
 
+/* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 14:00 a o víkendu nejbližší další všední den. */
+function vykresliKartu(root) {
+  const tyden = nactiTyden(), now = ted();
+  const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
+  const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
+  const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
+  const cil = new Date(dnes);
+  if (now.getHours() >= 14 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  let vybrany = tyden.dny.findIndex((_, i) => stejnyDen(datumDne(tyden.od, i), cil));
+  if (vybrany < 0) { const dalsi = tyden.dny.findIndex((_, i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi >= 0 ? dalsi : 0; }
+  const a = datumDne(tyden.od, 0), b = datumDne(tyden.od, tyden.dny.length - 1);
+  root.innerHTML = `
+    <div class="karta-hlava"><h2>Denní menu</h2><small>${a.getDate()}.–${fmt(b)} ${b.getFullYear()}</small></div>
+    <div class="dny" role="tablist" aria-label="Den v týdnu">${tyden.dny.map((_, i) => { const d = datumDne(tyden.od, i); return `<button class="den-btn${stejnyDen(d, dnes) ? ' dnes' : ''}" role="tab" aria-selected="${i === vybrany}" data-i="${i}"><b>${DNY_KRATCE[i]}</b><span>${fmt(d)}</span></button>`; }).join('')}</div>
+    <div class="karta-telo" role="tabpanel"></div>
+    <div class="karta-pata">
+      <a class="btn btn-plna" href="tel:+420516472188" data-objednat>${ikonaTel}Objednat s sebou · ${TEL_MENU}</a>
+      ${tyden.cenaPoznamka ? `<p>${esc(tyden.cenaPoznamka)}</p>` : ''}
+    </div>`;
+  const telo = $('.karta-telo', root);
+  const ukaz = (i) => {
+    $$('.den-btn', root).forEach((t) => t.setAttribute('aria-selected', String(+t.dataset.i === i)));
+    const d = datumDne(tyden.od, i), den = tyden.dny[i];
+    const stitek = stejnyDen(d, dnes) ? '<span class="stitek">Dnes</span>' : stejnyDen(d, zitra) ? '<span class="stitek">Zítra</span>' : '';
+    const hlava = `<div class="karta-den">${DNY[i]} ${fmt(d)} ${stitek}</div>`;
+    if (!den || den.zavreno || !den.jidla || !den.jidla.length) {
+      telo.innerHTML = hlava + `<p class="karta-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : 'Menu na tento den ještě připravujeme.'}</p>`;
+      return;
+    }
+    telo.innerHTML = hlava + `
+      ${den.polevka && den.polevka.nazev ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(den.polevka.nazev)}</b>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="a">${algText(den.polevka.alergeny)}</span>` : ''}</div>` : ''}
+      <ol class="jidla">${den.jidla.map((j, n) => `<li><span class="c">${n + 1}</span><span class="n">${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="i">${j.bezMasa ? '<span class="bezmasa">bez masa</span>' : ''}${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}</ol>`;
+  };
+  $('.dny', root).addEventListener('click', (e) => { const btn = e.target.closest('.den-btn'); if (btn) ukaz(+btn.dataset.i); });
+  ukaz(vybrany);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.classList.add('js');
   $$('[data-tabule]').forEach(vykresliTabuli);
+  $$('[data-karta]').forEach(vykresliKartu);
   vykresliStav();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });
