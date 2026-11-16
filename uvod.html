@@ -9,9 +9,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261116e">
+<link rel="stylesheet" href="web.css?v=20261116f">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="app.js?v=20261116e" defer></script>
+<script src="app.js?v=20261116f" defer></script>
+<script>
+  // Varianty vyplnění úvodu na počítači (jen náhled pro výběr): ?uvod=fakta | zajezdy | foto. Bez parametru výchozí klidná verze.
+  (function () { var v = new URLSearchParams(location.search).get('uvod'); if (['fakta', 'zajezdy', 'foto'].indexOf(v) >= 0) document.documentElement.dataset.uvod = v; })();
+</script>
 </head>
 <body>
 
@@ -47,6 +51,13 @@
           <a class="btn obrys" href="listek.html">Jídelní lístek</a>
         </div>
         <a class="zajezdy-odkaz" href="skupiny.html"><div><b>Zájezdy, svatby a oslavy</b><span>Oběd pro celý autobus, 300 m od zámku</span></div></a>
+        <dl class="uvod-fakta">
+          <div><dt>11–14 h</dt><dd>obědy každý všední den</dd></div>
+          <div><dt>300 m</dt><dd>od zámku Lysice</dd></div>
+          <div><dt>4,1 ★</dt><dd>642 hodnocení na Googlu</dd></div>
+        </dl>
+        <a class="uvod-zajezdy" href="skupiny.html"><img src="assets/foto/sal-oslava.jpg" alt="" width="1600" height="1200"><div><b>Jedete autobusem na zámek?</b><span>Oběd pro celý autobus, zastávka 30 m od vchodu.</span></div></a>
+        <figure class="uvod-foto"><img src="assets/foto/svickova.jpg" alt="Svíčková na smetaně s knedlíkem" width="1600" height="1068"></figure>
       </div>
       <article class="karta" data-karta aria-label="Denní menu">
         <div class="karta-hlava"><h2>Denní menu</h2></div>

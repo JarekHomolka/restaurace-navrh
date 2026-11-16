@@ -341,3 +341,23 @@ main { padding-bottom: calc(var(--lista) + env(safe-area-inset-bottom)); }
 .lista { transition: transform .2s ease-out; }
 body.lista-skryta .lista { transform: translateY(110%); }
 @media (prefers-reduced-motion: reduce) { .lista { transition: none; } }
+
+/* ---------- Varianty vyplnění úvodu na počítači (?uvod=fakta|zajezdy|foto), na mobilu se nic nemění ---------- */
+.uvod-fakta, .uvod-zajezdy, .uvod-foto { display: none; }
+@media (min-width: 900px) {
+  [data-uvod="fakta"] .uvod-fakta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 28px 0 0; border-top: 1px solid var(--linka); }
+  .uvod-fakta div { padding: 18px 16px 0 0; }
+  .uvod-fakta div + div { padding-left: 18px; border-left: 1px solid var(--linka); }
+  .uvod-fakta dt { font: 800 34px/1 var(--f-nadpis); letter-spacing: -.02em; color: var(--vino); white-space: nowrap; }
+  .uvod-fakta dd { margin: 6px 0 0; font-size: 15px; color: var(--tlumeny); }
+
+  [data-uvod="zajezdy"] .uvod-zajezdy { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; margin-top: 28px; padding: 12px 18px 12px 12px; border: 1px solid var(--linka); border-radius: 6px; background: #fff; color: var(--inkoust); text-decoration: none; max-width: 520px; }
+  .uvod-zajezdy img { width: 150px; height: 104px; object-fit: cover; border-radius: 4px; }
+  .uvod-zajezdy b { display: block; font-size: 19px; }
+  .uvod-zajezdy span { display: block; color: var(--tlumeny); margin-top: 2px; }
+  .uvod-zajezdy:hover { border-color: var(--vino); }
+  [data-uvod="zajezdy"] .uvod .akce-radek .btn:first-child { display: none; }
+
+  [data-uvod="foto"] .uvod-foto { display: block; margin: 28px 0 0; max-width: 520px; }
+  .uvod-foto img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; }
+}
