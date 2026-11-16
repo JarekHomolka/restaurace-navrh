@@ -3,180 +3,174 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Restaurace Na Městečku Lysice – denní menu, pizza, zájezdy a oslavy</title>
-<meta name="description" content="Restaurace na náměstí v Lysicích. Denní menu, jídelní lístek, pizza s sebou, oslavy, svatby a obědy pro zájezdy.">
+<title>Restaurace Na Městečku Lysice – denní menu, jídelní lístek, zájezdy</title>
+<meta name="description" content="Hospoda na náměstí v Lysicích. Každý všední den polévka a tři jídla, minutky, pizza a jídlo s sebou. Obědy pro zájezdy 300 m od zámku.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261115b">
-<script src="app.js?v=20261115b" defer></script>
-<script>
-  // Varianta úvodního bloku pro porovnání: ?uvod=svetly|jidlo|sal|budova (výchozí světlá)
-  (function () { var v = new URLSearchParams(location.search).get('uvod'); try { if (!v) v = localStorage.getItem('rnm-uvod'); } catch (e) {}
-    document.documentElement.dataset.hero = ['svetly', 'jidlo', 'sal', 'budova'].indexOf(v) >= 0 ? v : 'svetly'; })();
-</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="web.css?v=20261116b">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="app.js?v=20261116b" defer></script>
 </head>
-<body class="has-bar">
+<body>
 
-<header class="site-header">
+<header class="hlavicka">
   <div class="wrap">
-    <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+    <a class="nazev" href="uvod.html"><b>Na Městečku</b><span>Lysice</span></a>
     <nav class="nav" aria-label="Hlavní">
       <a href="#menu" aria-current="page">Denní menu</a>
       <a href="listek.html">Jídelní lístek</a>
       <a href="skupiny.html">Zájezdy a oslavy</a>
       <a href="#kontakt">Kontakt</a>
     </nav>
-    <a class="btn btn-primary btn-sm header-call" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>516 472 188</a>
-    <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <a class="tel" href="tel:+420516472188">516 472 188</a>
+    <button class="menu-tlacitko" aria-label="Otevřít menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
-  <nav class="mobile-nav" aria-label="Mobilní">
+  <nav class="mobilni-nav" aria-label="Mobilní">
     <a href="#menu">Denní menu</a>
     <a href="listek.html">Jídelní lístek a pizza</a>
-    <a href="skupiny.html">Zájezdy, oslavy a svatby</a>
+    <a href="skupiny.html">Zájezdy a oslavy</a>
     <a href="#kontakt">Kontakt a otevírací doba</a>
   </nav>
 </header>
 
 <main>
-  <div class="variant-bar" aria-label="Varianty úvodu">
-    <div class="wrap"><span>Návrh úvodu:</span>
-      <button data-v="svetly">Světlá</button><button data-v="jidlo">Jídlo</button><button data-v="sal">Sál</button><button data-v="budova">Původní (budova)</button>
-    </div>
-  </div>
-  <section class="hero" id="menu">
-    <div class="hero-bg"></div>
+  <section class="uvod" id="menu">
     <div class="wrap">
-      <div class="hero-text">
-        <span class="open-pill"><i></i><span>Otevřeno</span></span>
-        <h1>Poctivá kuchyně <em>na&nbsp;náměstí</em> v&nbsp;Lysicích</h1>
-        <p class="lead">Každý všední den čerstvé polední menu, k tomu minutky, pizza a víkendové speciality. Vaříme i s sebou.</p>
-        <div class="hero-actions">
-          <a class="btn btn-light" href="listek.html">Jídelní lístek</a>
-          <a class="btn btn-ghost on-dark" href="skupiny.html">Zájezdy a oslavy</a>
-        </div>
-        <div class="hero-photos" aria-hidden="true">
-          <img src="assets/foto/svickova.jpg" alt="">
-          <img src="assets/foto/svatba-sal.jpg" alt="">
-          <img src="assets/foto/predkrm.jpg" alt="">
-        </div>
+      <div class="uvod-text">
+        <h1>Hospoda na náměstí v Lysicích</h1>
+        <p class="stav" data-stav>Otevřeno</p>
       </div>
-
-      <article class="daily" data-daily aria-label="Denní menu">
-        <div class="daily-head"><h2>Denní menu</h2><small class="daily-range num"></small></div>
-        <div class="day-tabs" role="tablist"></div>
-        <div class="daily-body"></div>
-        <div class="daily-foot">
-          <a class="btn btn-primary btn-block" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat s sebou · 516 472 188</a>
-          <p class="daily-note"></p>
-        </div>
-      </article>
+      <div style="display:grid;gap:14px;min-width:0">
+        <article class="tabule" data-tabule aria-label="Denní menu">
+          <div class="tabule-hlava"><h2>Denní menu</h2></div>
+          <p class="tabule-prazdna">Načítáme dnešní menu…</p>
+        </article>
+        <details class="tyden" data-tyden></details>
+      </div>
+      <figure class="fasada-velka">
+        <img src="assets/foto/budova.jpg" alt="Žlutá budova restaurace s nápisem Na Městečku" width="1600" height="1200">
+      </figure>
     </div>
   </section>
 
-  <div class="info-strip">
+  <section class="info" aria-label="Základní informace">
+    <figure class="fasada-pruh"><img src="assets/foto/budova.jpg" alt="Žlutá budova restaurace s nápisem Na Městečku" width="1600" height="1200" loading="lazy"></figure>
     <div class="wrap">
-      <div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Po–So 10–22 · Ne 10–21</b><span>Kuchyně do 21:00</span></div></div>
-      <div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><b>Komenského 589</b><span>679 71 Lysice</span></div></div>
-      <div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><div><b>Menu a pizza s sebou</b><a href="tel:+420516472188">516 472 188</a></div></div>
-      <div class="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 18v2M17 18v2"/></svg><div><b>Zájezdy a akce</b><a href="tel:+420775206577">775 206 577</a></div></div>
+      <div class="info-polozka"><b>Otevírací doba</b><span>Po–So 10–22, Ne 10–21</span></div>
+      <div class="info-polozka"><b>Kde jsme</b><span>Komenského 589, na náměstí</span></div>
+      <div class="info-polozka"><b>Zámek Lysice</b><span>300 m, 5 minut pěšky</span></div>
+      <div class="info-polozka"><b>Jídlo s sebou</b><a href="tel:+420516472188">516 472 188</a></div>
     </div>
-  </div>
+  </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head row">
-        <div><div class="eyebrow">Jídelní lístek</div><h2>Na co máte chuť?</h2></div>
-        <a class="btn btn-ghost" href="listek.html">Celý jídelní lístek →</a>
+  <section class="sekce" id="recenze">
+    <div class="wrap recenze-mrizka">
+      <div>
+        <div class="sekce-hlava"><h2>Co o nás píšou hosté</h2></div>
+        <div class="hodnoceni">
+          <a class="znamka" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener"><b class="num">4,1<small>★</small></b><span>642 hodnocení na <u>Googlu</u></span></a>
+          <a class="znamka" href="https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html" target="_blank" rel="noopener"><b class="num">4,3<small>★</small></b><span>121 hodnocení na <u>Mapy.cz</u></span></a>
+        </div>
+        <p class="tlumene" style="font-size:14px">Stav k 16. 11. 2026</p>
       </div>
-      <div class="cards">
-        <a class="card" href="listek.html#speciality"><img src="assets/foto/burgery.jpg" alt="Hosté s talíři burgerů"><div class="card-body"><h3>Speciality podniku</h3><p>Grill mix, Kapsa paní Kristýnky, smažené DUO a steaky.</p><span class="more">Od 155 Kč →</span></div></a>
-        <a class="card" href="listek.html#vikend"><img src="assets/foto/svickova.jpg" alt="Hovězí na smetaně s knedlíkem"><div class="card-body"><h3>Víkendová nabídka</h3><p>Kachna se zelím, výpečky, labužnický guláš s bramboráčky.</p><span class="more">So a Ne →</span></div></a>
-        <a class="card" href="listek.html#pizza"><img src="assets/foto/raut.jpg" alt="Studený raut s jednohubkami"><div class="card-body"><h3>Pizza 33 cm</h3><p>Sedm klasik od Margarity po Quattro formaggi. I s sebou.</p><span class="more">Od 165 Kč →</span></div></a>
+      <div>
+        <ol class="citace">
+          <li><figure style="margin:0"><blockquote>„Výborná kuchyně. Kachna se zelím a knedlíkem mě <span class="zvyrazni">přesunula do mého dětství</span>.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+          <li><figure style="margin:0"><blockquote>„Zastavili jsme zde na oběd po cestě na dovolenou a bylo to dobré rozhodnutí. Obsluha velmi milá, atmosféra příjemná a jídlo rychle na stole…“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+          <li><figure style="margin:0"><blockquote>„Restaurace je vybavena jídelnou, výčepem a krytou letní zahrádkou, poblíž je dostatek míst k parkování.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+        </ol>
+        <p class="overeni">Tři recenze z Googlu jsme vybrali a nechali doslova. Jejich pravost neověřujeme. <a href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener">Všechny recenze</a></p>
       </div>
     </div>
   </section>
 
-  <section class="section alt">
+  <section class="sekce">
     <div class="wrap">
-      <div class="promo">
-        <img src="assets/foto/sal-oslava.jpg" alt="Prostřený sál pro oslavu s balonky">
-        <div class="promo-body">
-          <div class="eyebrow" style="color:var(--gold)">Pro skupiny a oslavy</div>
-          <h2>Přivezete zájezd? Celý autobus naobědváme najednou.</h2>
-          <p>Menu domluvíme předem, stoly budou připravené a jídlo na stole do pár minut po příjezdu. Stejně tak uspořádáme svatbu, rodinnou oslavu, raut nebo firemní večírek.</p>
-          <ul class="ticks">
-            <li>Velký sál i venkovní zahrádka s pergolou</li>
-            <li>Na náměstí v centru Lysic, kousek od zámku</li>
-            <li>Nabídku menu pro skupinu pošleme obratem</li>
+      <div class="sekce-hlava"><h2>Z jídelního lístku</h2><p>Minutky, speciality, o víkendu kachna a pizza 33 cm. Všechno připravíme i s sebou.</p></div>
+      <div class="z-listku">
+        <figure><img src="assets/foto/svickova.jpg" alt="Svíčková na smetaně s knedlíkem, šlehačkou a brusinkami" width="1600" height="1068" loading="lazy"></figure>
+        <div>
+          <ul class="cedule">
+            <li><span class="jidlo">Kapsa paní Kristýnky</span><span class="cena">180 Kč</span><small>kuřecí řízek plněný šunkou a eidamem</small></li>
+            <li><span class="jidlo">Grill mix</span><span class="cena">180 Kč</span><small>kuřecí a vepřový steak s opečenou slaninou</small></li>
+            <li><span class="jidlo">Pečené kachní stehno, zelí, knedlík</span><span class="cena">220 Kč</span><small>víkendová nabídka</small></li>
+            <li><span class="jidlo">Smažený sýr, tatarská omáčka</span><span class="cena">140 Kč</span><small>bez masa</small></li>
+            <li><span class="jidlo">Pizza Margarita, 33 cm</span><span class="cena">165 Kč</span><small>a dalších šest druhů</small></li>
           </ul>
-          <div class="btns">
-            <a class="btn btn-light" href="skupiny.html#poptavka">Nezávazná poptávka</a>
-            <a class="btn btn-ghost on-dark" href="tel:+420775206577">775 206 577</a>
-          </div>
+          <a class="odkaz-dal" href="listek.html">Celý jídelní lístek s cenami a alergeny →</a>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head"><div class="eyebrow">Fotogalerie</div><h2>Jak to u nás vypadá</h2></div>
-      <div class="gallery">
-        <img src="assets/foto/svatba-sal.jpg" alt="Svatební tabule v sále">
-        <img src="assets/foto/predkrm.jpg" alt="Předkrm na svatební hostině">
-        <img src="assets/foto/zahradka.jpg" alt="Venkovní zahrádka s pergolou">
-        <img src="assets/foto/sladke-mameni.jpg" alt="Sladký bar na oslavě">
-        <img src="assets/foto/bar-sal.jpg" alt="Bar a sál restaurace">
-        <img src="assets/foto/balonky.jpg" alt="Výzdoba s balonky">
-        <img src="assets/foto/tabule-detail.jpg" alt="Prostřená tabule">
-        <img src="assets/foto/svatba-detail.jpg" alt="Svatební výzdoba stolu">
-        <img src="assets/foto/burgery.jpg" alt="Hosté s burgery na oslavě">
+  <section class="sekce">
+    <div class="wrap zajezdy">
+      <figure><img src="assets/foto/sal-oslava.jpg" alt="Sál restaurace prostřený pro oslavu" width="1600" height="1200" loading="lazy"></figure>
+      <div>
+        <div class="sekce-hlava"><h2>Jedete autobusem na zámek?</h2><p>Napište nám počet lidí a čas příjezdu. Menu domluvíme dopředu a stoly prostřeme, než dorazíte. V sále chystáme i svatby, oslavy a rauty, v létě je otevřená krytá zahrádka.</p></div>
+        <ul class="fakta">
+          <li><b>30 m</b><span>zastávka Lysice, pohostinství – autobus vysadí skupinu před vchodem</span></li>
+          <li><b>40 m</b><span>velké parkoviště, další je 110 m od nás</span></li>
+          <li><b>300 m</b><span>zámek Lysice, asi 5 minut pěšky</span></li>
+        </ul>
+        <div class="akce-radek">
+          <a class="btn" href="skupiny.html#poptavka">Poslat poptávku</a>
+          <a class="btn obrys" href="tel:+420775206577">775 206 577</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section alt" id="kontakt">
+  <section class="sekce">
     <div class="wrap">
-      <div class="section-head"><div class="eyebrow">Kontakt</div><h2>Kde nás najdete</h2></div>
-      <div class="contact">
-        <div class="panel">
-          <h3>Otevírací doba</h3>
-          <table class="hours num">
-            <tr data-d="1,2,3,4,5"><td>Pondělí – pátek</td><td>10:00 – 22:00</td></tr>
-            <tr data-d="6"><td>Sobota</td><td>10:00 – 22:00</td></tr>
-            <tr data-d="0"><td>Neděle</td><td>10:00 – 21:00</td></tr>
-          </table>
-          <p class="note" style="font-size:14px;color:var(--muted)">Denní menu po–pá 11:00–14:00.</p>
+      <div class="sekce-hlava"><h2>Jak to u nás vypadá</h2></div>
+      <div class="fotky">
+        <img src="assets/foto/bar-sal.jpg" alt="Výčep a lokál restaurace" loading="lazy">
+        <img src="assets/foto/zahradka.jpg" alt="Zahrádka s pergolou za restaurací" loading="lazy">
+        <img src="assets/foto/svatba-sal.jpg" alt="Sál prostřený na svatbu" loading="lazy">
+        <img src="assets/foto/predkrm.jpg" alt="Předkrm a pivo na oslavě" loading="lazy">
+        <img src="assets/foto/sladke-mameni.jpg" alt="Sladký bar na oslavě" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section class="sekce" id="kontakt">
+    <div class="wrap">
+      <div class="sekce-hlava"><h2>Kde nás najdete</h2><p>Komenského 589, 679 71 Lysice. Na náměstí, 300 m od zámku. Parkovat můžete hned u nás.</p></div>
+      <div class="kontakt">
+        <table class="doba num">
+          <caption class="sr">Otevírací doba</caption>
+          <tr data-d="1,2,3,4,5"><td>Pondělí – pátek</td><td>10:00 – 22:00</td></tr>
+          <tr data-d="6"><td>Sobota</td><td>10:00 – 22:00</td></tr>
+          <tr data-d="0"><td>Neděle</td><td>10:00 – 21:00</td></tr>
+        </table>
+        <div class="telefony">
+          <a href="tel:+420516472188"><b>516 472 188</b><span>denní menu, pizza a jídlo s sebou</span></a>
+          <a href="tel:+420775206577"><b>775 206 577</b><span>zájezdy, oslavy, svatby a rezervace</span></a>
+          <a href="mailto:restaurace.namestecku@seznam.cz" style="font-weight:600;color:var(--vino)">restaurace.namestecku@seznam.cz</a>
+          <a class="btn obrys" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener">Navigovat v Mapy.com</a>
         </div>
-        <div class="panel">
-          <h3>Volejte podle toho, co potřebujete</h3>
-          <a class="phone-row" href="tel:+420516472188"><b>516 472 188</b><span>Denní menu, pizza a jídla s sebou</span></a>
-          <a class="phone-row" href="tel:+420775206577"><b>775 206 577</b><span>Zájezdy, oslavy, svatby a rezervace</span></a>
-          <a href="mailto:restaurace.namestecku@seznam.cz" style="font-weight:600">restaurace.namestecku@seznam.cz</a>
-        </div>
-        <a class="map-card" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener">
-          <img src="assets/foto/zahradka.jpg" alt="">
-          <div><b>Komenského 589, Lysice</b><span>Navigovat přes Mapy.com →</span></div>
-        </a>
+        <div class="mapka" id="mapka" role="img" aria-label="Mapa s polohou restaurace"></div>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="site-footer">
+<footer class="paticka">
   <div class="wrap">
-    <div style="display:grid;gap:10px">
-      <a class="brand" href="uvod.html"><span class="brand-text"><b>Na Městečku</b><small>Restaurace · Lysice</small></span></a>
+    <div style="display:grid;gap:8px">
+      <a class="nazev" href="uvod.html"><b>Na Městečku</b><span>Lysice</span></a>
       <p>Komenského 589, 679 71 Lysice</p>
     </div>
-    <div class="foot-links"><a href="#menu">Denní menu</a><a href="listek.html">Jídelní lístek</a><a href="skupiny.html">Zájezdy a oslavy</a><a href="#kontakt">Kontakt</a></div>
-    <div class="foot-links"><a href="tel:+420516472188">516 472 188</a><a href="tel:+420775206577">775 206 577</a><a href="admin.html">Administrace</a></div>
+    <div class="odkazy"><a href="#menu">Denní menu</a><a href="listek.html">Jídelní lístek</a><a href="skupiny.html">Zájezdy a oslavy</a><a href="#kontakt">Kontakt</a></div>
+    <div class="odkazy"><a href="tel:+420516472188">516 472 188</a><a href="tel:+420775206577">775 206 577</a><a href="admin.html">Administrace</a></div>
   </div>
 </footer>
 
-<div class="action-bar">
-  <a class="btn btn-primary" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat jídlo</a>
-  <a class="btn btn-ghost" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Navigovat</a>
+<div class="lista">
+  <a class="btn" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat jídlo</a>
+  <a class="btn obrys" href="https://mapy.com/cs/zakladni?q=Komensk%C3%A9ho%20589%2C%20Lysice&amp;source=firm&amp;id=565171&amp;x=16.5374298&amp;y=49.4520863&amp;z=17" target="_blank" rel="noopener">Navigovat</a>
 </div>
 </body>
 </html>

@@ -94,13 +94,17 @@ function vykresliEditor() {
     <button type="button" class="add-meal open-only" data-k="add">+ Přidat jídlo</button>`;
   vykresliNahled();
 }
+/* Náhled = skutečná úvodní stránka webu v rámečku telefonu, s rozpracovaným týdnem a časem 11:00 vybraného dne */
+let nahledCasovac = null;
 function vykresliNahled() {
-  const t = tyden(), d = denData(), datum = datumDne(t.od, den);
-  $('#pv-range').textContent = `${DNY[den]} ${fmt(datum)}`;
-  const jidla = d.jidla.filter((j) => j.nazev.trim());
-  $('#pv-body').innerHTML = d.zavreno ? `<div class="daily-empty">${esc(d.poznamka || 'Tento den je zavřeno.')}</div>` : !jidla.length && !d.polevka.nazev ? '<div class="daily-empty">Menu na tento den připravujeme.</div>' : `
-    ${d.polevka.nazev ? `<div class="soup"><span class="k">Polévka</span><span class="v">${esc(d.polevka.nazev)}</span>${alergenyHtml(d.polevka.alergeny)}</div>` : ''}
-    <ol class="meals">${jidla.map((j, n) => `<li class="meal"><span class="meal-no">${n + 1}</span><div><div class="meal-name">${esc(j.nazev)}</div><div class="meal-meta">${j.bezMasa ? '<span class="badge green">Bez masa</span>' : ''}${alergenyHtml(j.alergeny)}</div></div><span class="meal-price num">${kc(j.cena)}</span></li>`).join('')}</ol>`;
+  const t = clone(tyden());
+  t.dny.forEach((d) => { d.jidla = (d.jidla || []).filter((j) => j.nazev.trim()); });
+  try { localStorage.setItem('rnm-tyden-nahled', JSON.stringify(t)); } catch (e) { /* bez úložiště náhled ukáže výchozí data */ }
+  clearTimeout(nahledCasovac);
+  nahledCasovac = setTimeout(() => {
+    const f = $('#pv-frame');
+    if (f) f.src = `uvod.html?nahled=1&cas=${posunDatum(t.od, den)}T11:00&r=${Date.now()}`;
+  }, 350);
 }
 
 /* ---------- Našeptávač ---------- */

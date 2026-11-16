@@ -10,7 +10,7 @@ const KLIC_TYDNE = 'rnm-tyden-v1';
 /* Pondělí je opsané ze současného webu, zbytek týdne a ceny jsou ukázka. */
 const VYCHOZI_TYDEN = {
   od: '2026-11-16',
-  cenaPoznamka: 'Polévka je v ceně menu. Menu podáváme 11:00–14:00, také s sebou.',
+  cenaPoznamka: 'Polévka je v ceně. Vaříme od 11 do 14 h, i s sebou.',
   dny: [
     { polevka: { nazev: 'Brokolicová', alergeny: [7] }, jidla: [
       { nazev: 'Vepřový guláš, houskový knedlík', alergeny: [1, 3, 7], cena: 145 },
@@ -107,7 +107,9 @@ function alergenyHtml(a) {
   return `<span class="alg" title="Alergeny: ${a.map((n) => `${n} ${ALERGENY[n - 1]}`).join(', ')}">${a.map((n) => `<span>${n}</span>`).join('')}</span>`;
 }
 function nactiTyden() {
-  try { const s = localStorage.getItem(KLIC_TYDNE); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště jedeme z výchozích dat */ }
+  // ?nahled=1: živý náhled z administrace (rozpracovaný, ještě neuložený týden)
+  const klic = new URLSearchParams(location.search).has('nahled') ? 'rnm-tyden-nahled' : KLIC_TYDNE;
+  try { const s = localStorage.getItem(klic); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště jedeme z výchozích dat */ }
   return VYCHOZI_TYDEN;
 }
 
@@ -223,8 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (new URLSearchParams(location.search).has('bez-prepinace')) document.documentElement.classList.add('bez-prepinace');
     oznac();
   }
-  const f = $('#poptavka');
-  if (f) f.addEventListener('submit', (e) => { e.preventDefault(); $('.thanks').classList.add('show'); $('.thanks').scrollIntoView({ block: 'center', behavior: 'smooth' }); });
+  const f = $('#poptavka'), th = $('.thanks');
+  if (f && th) f.addEventListener('submit', (e) => { e.preventDefault(); th.classList.add('show'); th.scrollIntoView({ block: 'center', behavior: 'smooth' }); });
 });
 
 /* ---------- Mapa parkování (stránka pro zájezdy) ---------- */
@@ -261,4 +263,98 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
   if (typeof L !== 'undefined') start(); else window.addEventListener('load', start);
+});
+
+/* =========================================================================
+   Nový vzhled (web.css): tabule dnešního menu, stav podle času, recenze, mapka
+   ========================================================================= */
+const MESICE_2P = ['ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince'];
+const DNY_MALE = ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'];
+const V_DEN = ['v neděli', 'v pondělí', 'v úterý', 've středu', 've čtvrtek', 'v pátek', 'v sobotu'];
+const TEL_MENU = '516 472 188';
+// ?cas=2026-11-16T11:30 nastaví čas pro ukázku (jinak skutečný čas)
+function ted() { const q = new URLSearchParams(location.search).get('cas'); const d = q ? new Date(q) : new Date(); return isNaN(d) ? new Date() : d; }
+const algText = (a) => (a && a.length ? 'A ' + a.join(', ') : '');
+const ikonaTel = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>';
+
+function vykresliTabuli(root) {
+  const tyden = nactiTyden(), now = ted();
+  const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
+  const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
+  // Do 14:00 ve všední den dnešek, jinak nejbližší další všední den
+  const cil = new Date(dnes);
+  if (now.getHours() >= 14 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
+  const kdy = stejnyDen(cil, dnes) ? 'Dnes' : stejnyDen(cil, zitra) ? 'Zítra' : V_DEN[cil.getDay()][0].toUpperCase() + V_DEN[cil.getDay()].slice(1);
+  const datumText = `${cil.getDate()}. ${MESICE_2P[cil.getMonth()]}`;
+  const titul = kdy === "Dnes" || kdy === "Zítra" ? `${kdy} – ${DNY_MALE[cil.getDay()]} ${datumText}` : `${kdy} ${datumText}`;
+  const idx = tyden.dny.findIndex((_, i) => stejnyDen(datumDne(tyden.od, i), cil));
+  const den = tyden.dny[idx];
+  let obsah;
+  if (!den || !den.jidla || !den.jidla.length || den.zavreno) {
+    obsah = `<p class="tabule-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : 'Menu na tento den ještě připravujeme. Zavolejte nám, rádi poradíme.'}</p>`;
+  } else {
+    obsah = `<ol>
+      ${den.polevka && den.polevka.nazev ? `<li class="polevka"><span class="jidlo">Polévka: <b>${esc(den.polevka.nazev)}</b></span><span class="cena"></span>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="drobne">${algText(den.polevka.alergeny)}</span>` : ''}</li>` : ''}
+      ${den.jidla.map((j, n) => `<li><span class="jidlo"><span class="poradi">${n + 1}</span>${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="drobne">${j.bezMasa ? '<span class="bezmasa">bez masa</span>' : ''}${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}
+    </ol>`;
+  }
+  root.innerHTML = `
+    <div class="tabule-hlava"><h2>${titul}</h2>${tyden.cenaPoznamka ? `<p>${esc(tyden.cenaPoznamka)}</p>` : ''}</div>
+    ${obsah}
+    <a class="btn btn-plna" href="tel:+420516472188">${ikonaTel}Objednat · ${TEL_MENU}</a>`;
+
+  // Zbytek týdne jako rozbalovací seznam
+  const tyd = $('[data-tyden]');
+  if (tyd) {
+    const ostatni = tyden.dny.map((d, i) => ({ d, i, datum: datumDne(tyden.od, i) })).filter((x) => x.i !== idx && x.d && x.d.jidla && x.d.jidla.length);
+    const a = datumDne(tyden.od, 0), b = datumDne(tyden.od, tyden.dny.length - 1);
+    tyd.innerHTML = ostatni.length ? `<summary>Celý týden ${a.getDate()}.–${fmt(b)}</summary><div class="tyden-dny">${ostatni.map(({ d, datum }) => `
+      <div class="tyden-den"><h3>${DNY[(datum.getDay() + 6) % 7]} ${fmt(datum)}</h3><ul>
+        ${d.polevka && d.polevka.nazev ? `<li><span>Polévka: ${esc(d.polevka.nazev)}</span><span></span></li>` : ''}
+        ${d.jidla.map((j, n) => `<li><span>${n + 1}. ${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span></li>`).join('')}
+      </ul></div>`).join('')}</div>` : '';
+    tyd.hidden = !ostatni.length;
+  }
+}
+
+function vykresliStav() {
+  const now = ted(), [od, doo] = OTEVRENO[now.getDay()], h = now.getHours() + now.getMinutes() / 60;
+  const otevreno = h >= od && h < doo, obedy = now.getDay() >= 1 && now.getDay() <= 5 && h >= 11 && h < 14;
+  $$('[data-stav]').forEach((el) => {
+    el.classList.toggle('zavreno', !otevreno);
+    el.textContent = !otevreno ? `Teď zavřeno · otevíráme v ${OTEVRENO[h >= doo ? (now.getDay() + 1) % 7 : now.getDay()][0]}:00`
+      : obedy ? 'Teď vaříme obědy, menu do 14:00' : `Otevřeno, dnes do ${doo}:00`;
+  });
+  $$('.doba tr[data-d]').forEach((tr) => tr.classList.toggle('dnes', tr.dataset.d.split(',').includes(String(now.getDay()))));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.documentElement.classList.add('js');
+  $$('[data-tabule]').forEach(vykresliTabuli);
+  vykresliStav();
+  const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
+  if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });
+  // Jediný animovaný moment: podtržení věty hosta se jednou dokreslí
+  const z = $$('.zvyrazni');
+  if (z.length && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((en) => en.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('ted'); io.unobserve(e.target); } }), { threshold: 0.8 });
+    z.forEach((el) => io.observe(el));
+  } else z.forEach((el) => el.classList.add('ted'));
+  // Spodní lišta jen tehdy, když není vidět tlačítko Objednat na tabuli (žádné dvě stejné výzvy najednou)
+  const tb = $('.uvod .tabule .btn');
+  if (tb && 'IntersectionObserver' in window) new IntersectionObserver((en) => document.body.classList.toggle('lista-skryta', en[0].isIntersecting)).observe(tb);
+  // Malá mapa v kontaktu (OpenStreetMap, bez cookies)
+  const mk = $('#mapka');
+  const startMapky = () => {
+    if (!mk || typeof L === 'undefined') return;
+    const pos = [49.4520863, 16.5374298];
+    const m = L.map(mk, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false }).setView(pos, 16);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
+    L.marker(pos, { icon: L.divIcon({ className: '', html: '<div class="pin rest">★</div>', iconSize: [36, 36], iconAnchor: [18, 18] }) }).addTo(m).bindPopup('<b>Restaurace Na Městečku</b><br>Komenského 589, Lysice');
+  };
+  if (mk) { if (typeof L !== 'undefined') startMapky(); else window.addEventListener('load', startMapky); }
+  // Formulář poptávky (ukázka)
+  const f = $('#poptavka-form');
+  if (f) f.addEventListener('submit', (e) => { e.preventDefault(); const d = $('.dekujeme'); d.classList.add('show'); d.scrollIntoView({ block: 'center', behavior: 'smooth' }); });
 });

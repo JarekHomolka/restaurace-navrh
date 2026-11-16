@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Návrh nového webu Na Městečku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Zilla+Slab:wght@600;700&display=swap">
 <style>
 /* Dokument s návrhem: jeden sloupec (max 1080 px), galerie screenshotů v mřížce, tabulky v posuvných kontejnerech. Tisk do PDF A4. */
 :root {
   --bg: #fbf7f1; --surface: #ffffff; --fg: #2b1d16; --muted: #6f6056; --line: #ebe1d5;
   --wine: #7d1f22; --gold: #d9a441; --ok: #2f7a4d; --bad: #b3261e; --chip: #f3eadf;
-  --f-display: "Fraunces", Georgia, serif; --f-body: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-display: "Zilla Slab", Georgia, serif; --f-body: "Source Sans 3", "Segoe UI", Roboto, Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
@@ -145,7 +145,6 @@ td.total { font-weight: 700; color: var(--wine); }
 <body>
 <main class="page">
   <header class="intro">
-    <div class="eyebrow">Návrh nového webu · listopad 2026</div>
     <h1>Restaurace Na Městečku: nový web</h1>
     <p class="lead">Web, na kterém lidé z Lysic a okolí rychle najdou dnešní menu, a který vedoucím zájezdů a snoubencům „prodá“ sál. Menu přitom obsluha doplní sama během pár minut, klidně z telefonu. Na stránce je rozbor současného webu, návrh designu pro mobil i počítač, administrace menu, technické řešení a náklady.</p>
     <div class="meta"><span>restauracenamestecku.cz</span><span>Komenského 589, Lysice</span><span>Denní menu · Jídelní lístek · Zájezdy a akce</span></div>
@@ -163,15 +162,12 @@ td.total { font-weight: 700; color: var(--wine); }
       <a href="skupiny.html" target="_blank" rel="noopener">Zájezdy a oslavy</a>
       <a href="skupiny.html#parkovani" target="_blank" rel="noopener">Mapa parkování</a>
       <a href="admin.html#navrh" target="_blank" rel="noopener">Návrh menu z historie</a>
-      <a href="uvod.html?uvod=jidlo" target="_blank" rel="noopener">Úvod – varianta Jídlo</a>
-      <a href="uvod.html?uvod=sal" target="_blank" rel="noopener">Úvod – varianta Sál</a>
       <a href="RestauraceNaMestecku-navrh-noveho-webu.pdf" download>Stáhnout návrh v PDF</a>
     </div>
   </section>
 
 
   <section>
-    <div class="eyebrow">Výchozí stav</div>
     <h2>Co jsme našli na současném webu</h2>
     <div class="stats">
       <div class="stat"><b class="num">6,4 s</b><small>načtení úvodní stránky (jedno měření)</small><span class="vs">cíl pod 1,5 s</span></div>
@@ -195,23 +191,21 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow">Pro koho web je</div>
     <h2>Dva typy návštěvníků, dvě hlavní cesty</h2>
     <div class="split">
-      <div class="box"><span class="tag">Každý den · hlavně z mobilu</span><h3>„Co je dneska k obědu?“</h3><p>Místní, řemeslníci, lidé z kanceláří. Chtějí za pět vteřin vidět dnešní menu a zavolat si o jídlo s sebou.</p><ul><li>Menu hned na první obrazovce telefonu, dnešní den předvybraný, přepínání Po–Pá.</li><li>Cena a alergeny u každého jídla, štítek „bez masa“.</li><li>Tlačítko „Objednat jídlo“ (516 472 188) stále dole na displeji.</li><li>„Teď otevřeno · do 22:00“ podle aktuálního času.</li></ul></div>
-      <div class="box"><span class="tag">V sezoně · mobil i počítač</span><h3>„Kam se zájezdem na oběd?“</h3><p>Vedoucí zájezdů, cestovní kanceláře, snoubenci, firmy. Prostor si chtějí prohlédnout a rychle se domluvit.</p><ul><li>Samostatná stránka Zájezdy a oslavy s fotkami sálu, svateb a rautů.</li><li>Argumenty: zámek 300 m, zastávka 30 m a parkoviště hned u restaurace (mapa), hodnocení 4,3 ★, menu předem.</li><li>Ukázky skupinových menu a postup ve 4 krocích.</li><li>Formulář poptávky (datum, počet osob, čas příjezdu) a přímé číslo 775 206 577.</li></ul></div>
+      <div class="box"><span class="tag">Každý den · hlavně z mobilu</span><h3>„Co je dneska k obědu?“</h3><p>Místní, řemeslníci, lidé z kanceláří. Chtějí za pět vteřin vidět dnešní menu a zavolat si o jídlo s sebou.</p><ul><li>Dnešní menu na žluté tabuli hned na první obrazovce telefonu, po 14:00 a o víkendu automaticky menu na další den.</li><li>Cena a alergeny u každého jídla, štítek „bez masa“.</li><li>Tlačítko „Objednat jídlo“ (516 472 188) stále dole na displeji.</li><li>„Teď vaříme obědy, menu do 14:00“ podle aktuálního času.</li></ul></div>
+      <div class="box"><span class="tag">V sezoně · mobil i počítač</span><h3>„Kam se zájezdem na oběd?“</h3><p>Vedoucí zájezdů, cestovní kanceláře, snoubenci, firmy. Prostor si chtějí prohlédnout a rychle se domluvit.</p><ul><li>Samostatná stránka Zájezdy a oslavy s fotkami sálu, svateb a rautů.</li><li>Argumenty: zámek 300 m, zastávka 30 m a parkoviště hned u restaurace (mapa), hodnocení 4,1 ★ na Googlu a 4,3 ★ na Mapy.cz, menu předem.</li><li>Ukázky skupinových menu a postup ve 4 krocích.</li><li>Formulář poptávky (datum, počet osob, čas příjezdu) a přímé číslo 775 206 577.</li></ul></div>
     </div>
   </section>
 
   <section>
-    <div class="eyebrow break-before">Návrh designu</div>
     <h2>Nejdřív telefon</h2>
-    <p>Design je dělaný pro mobil a na počítači jen přidává sloupce. Barvy vychází ze současného webu (vínová) a ze žluté fasády restaurace. Všechny fotky jsou ze současného webu. Jídelní lístek je přepsaný ze skenů do textu, takže se v něm dá hledat a filtrovat bezmasá jídla.</p>
+    <p>Web vypadá jako vývěska hospody na náměstí. Dnešní menu je na žluté tabuli v barvě fasády, nápisy mají vínovou barvu malovaného nápisu a písmo připomíná malovaný štít. Žádné vymyšlené logo, žádné šablonové ozdoby. Všechny fotky jsou ze současného webu restaurace.</p>
     <div class="mobiles">
       <figure class="shot"><img src="screenshots/mobil-uvod.png" alt="Mobil – úvod s denním menu"><figcaption><b>Úvod s menu</b></figcaption></figure>
       <figure class="shot"><img src="screenshots/mobil-listek.png" alt="Mobil – jídelní lístek"><figcaption><b>Jídelní lístek</b></figcaption></figure>
       <figure class="shot"><img src="screenshots/mobil-skupiny.png" alt="Mobil – zájezdy a oslavy"><figcaption><b>Zájezdy a oslavy</b></figcaption></figure>
-      <figure class="shot"><img src="screenshots/mobil-admin.png" alt="Mobil – administrace denního menu"><figcaption><b>Administrace</b></figcaption></figure>
+      <figure class="shot"><img src="screenshots/mobil-recenze.png" alt="Mobil – hodnocení a recenze hostů"><figcaption><b>Recenze hostů</b></figcaption></figure>
     </div>
   </section>
 
@@ -220,25 +214,31 @@ td.total { font-weight: 700; color: var(--wine); }
     <div class="shots">
       <figure class="shot"><img src="screenshots/desktop-uvod.png" alt="Návrh – úvod s denním menu"><figcaption><b>Úvod: denní menu na týden</b><a href="uvod.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-listek.png" alt="Návrh – jídelní lístek s kategoriemi a hledáním"><figcaption><b>Jídelní lístek s hledáním</b><a href="listek.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-recenze.png" alt="Návrh – hodnocení a recenze hostů"><figcaption><b>Co o nás píšou hosté</b><a href="uvod.html#recenze" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-skupiny.png" alt="Návrh – zájezdy a oslavy"><figcaption><b>Zájezdy, svatby, oslavy</b><a href="skupiny.html" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-parkovani.png" alt="Návrh – mapa parkování, zastávky a zámku"><figcaption><b>Příjezd a parkování s mapou</b><a href="skupiny.html#parkovani" target="_blank" rel="noopener">Otevřít mockup ↗</a></figcaption></figure>
     </div>
   </section>
 
   <section>
-    <div class="eyebrow break-before">Úvodní stránka</div>
-    <h2>Tři varianty úvodu</h2>
-    <p>Fotka budovy působí trochu staromódně, proto jsou na výběr tři úvody bez ní. V mockupu se dají přepínat lištou nahoře. Na telefonu je ve všech variantách hned pod nadpisem denní menu.</p>
-    <div class="shots variants">
-      <figure class="shot"><img src="screenshots/desktop-uvod.png" alt="Varianta Světlá"><figcaption><b>Světlá</b> <span class="pill rec">doporučuji</span><a href="uvod.html?uvod=svetly" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
-      <figure class="shot"><img src="screenshots/desktop-uvod-jidlo.png" alt="Varianta Jídlo"><figcaption><b>Jídlo</b><a href="uvod.html?uvod=jidlo" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
-      <figure class="shot"><img src="screenshots/desktop-uvod-sal.png" alt="Varianta Sál"><figcaption><b>Sál</b><a href="uvod.html?uvod=sal" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
+    <h2>Jak vzniklo nové řešení</h2>
+    <p>Restaurace dostala i jiný návrh webu. Oba návrhy jsme dali posoudit dvěma nezávislým kritikům. Každý pracoval s jiným nástrojem pro hodnocení designu (Impeccable a Taste-skill). Pak oponovali jeden druhému a shodli se na společném směru: <b>web jako vývěska hospody na náměstí</b>. K tomu jsme prošli moderní weby hospod a bister (Lokál, obed.ambi.cz, Padella a oceněné weby na Awwwards).</p>
+    <div class="cols">
+      <div class="box"><h3>Co měl druhý návrh dobře</h3><ul><li>Hodnocení hostů hned nahoře.</li><li>Skutečná věta hosta jako hlavní myšlenka („kachna jako z dětství“).</li><li>Fasáda jako poznávací znak.</li></ul></div>
+      <div class="box"><h3>Co jsme nepřevzali</h3><ul><li>Fotky hostů z Google Map bez svolení autorů.</li><li>Jídla bez cen („dle nabídky“) a žádné denní menu.</li><li>Oříznutý nadpis na mobilu, prázdné plochy po animacích.</li><li>Na oslavy odkazuje na číslo pro objednávky jídla.</li></ul></div>
+      <div class="box"><h3>Na čem se kritici shodli</h3><ul><li>Dnešní menu i telefon na první obrazovce mobilu.</li><li>Žlutá jen na tabuli s menu, jinak papír, inkoust a vínová.</li><li>Žádné nadpisky nad nadpisy, pilulky, stíny ani text přes fotky.</li><li>Recenze se zdrojem, počtem a datem, nic vymyšleného.</li></ul></div>
     </div>
-    <p class="note"><b>Světlá</b> je nejmodernější a nejlíp čitelná: hlavní je menu a koláž fotek ukáže jídlo i sál. <b>Jídlo</b> a <b>Sál</b> jsou výraznější, ale fotky ze současného webu nejsou v plném rozlišení. Kdyby restaurace nafotila pár nových fotek jídel (stačí dobrý telefon a denní světlo), úvod se dá snadno vyměnit.</p>
   </section>
 
   <section>
-    <div class="eyebrow break-before">Administrace</div>
+    <h2>Fotky a recenze: v čem je rozdíl</h2>
+    <div class="split">
+      <div class="box"><h3>Fotky</h3><p>Druhý návrh má asi polovinu fotek ze současného webu restaurace. Druhá polovina (kachna, řízek, pizza, steak, výčep s pivem, večerní fasáda) jsou podle všeho fotky hostů z Google Map. Ty patří jejich autorům a Google je mimo své služby převzít nedovoluje. Náš návrh používá jen fotky restaurace. Nejlepší řešení je jedno dopoledne focení telefonem: fasáda, výčep, šest jídel z menu, sál a zahrádka.</p></div>
+      <div class="box"><h3>Recenze</h3><p>Ukazujeme obě hodnocení s počtem a zdrojem: 4,1 ★ z 642 na Googlu a 4,3 ★ ze 121 na Mapy.cz. K tomu tři doslovné úryvky. V ostrém webu se recenze načtou přes oficiální napojení na Google, i se jménem a datem. Obsluha v administraci vybere, které ukázat. Zákon o ochraně spotřebitele vyžaduje uvést, zda a jak se pravost recenzí ověřuje, a na webu to je.</p></div>
+    </div>
+  </section>
+
+  <section>
     <h2>Menu na celý týden za pár minut</h2>
     <p>Kdo dnes menu ručně přepisuje do webu, dostane jednoduchou obrazovku jen pro denní menu. Funguje na počítači i na telefonu a vpravo hned ukazuje, jak to uvidí hosté. Po kliknutí na „Uložit a zveřejnit“ je menu na webu.</p>
     <div class="cols">
@@ -254,7 +254,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow break-before">Návrh menu z historie</div>
     <h2>Web sám navrhne menu na příští týden</h2>
     <p>Menu se v čase opakuje, a to se dá využít. Z webového archivu (web.archive.org) jsme ze současného webu vytáhli <b>52 skutečných denních menu od září 2019 do listopadu 2026</b>. Tlačítko „Navrhnout menu“ z nich sestaví celý týden: polévku a tři jídla na každý den. U každého jídla je napsané, proč ho vybralo. Co se líbí, se zamkne, a zbytek se nechá navrhnout znovu.</p>
     <div class="split">
@@ -294,7 +293,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow">Jak to bude fungovat</div>
     <h2>Technické řešení</h2>
     <div class="cols">
       <div class="box"><h3>Web</h3><p>Next.js. Stránky se předgenerují a po uložení menu se obnoví, takže se načítají okamžitě i na slabém signálu. Fotky se samy zmenší pro mobil.</p></div>
@@ -304,7 +302,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section class="long">
-    <div class="eyebrow break-before">Inspirace z jiných webů</div>
     <h2>Co dalšího by se hodilo</h2>
     <p>Prošli jsme weby restaurací a portálů s denním menu. Tohle jsou nápady, které v návrhu zatím nejsou, seřazené podle užitku pro restauraci tohoto typu. Náročnost: <b>M</b> malá, <b>S</b> střední.</p>
     <div class="tablewrap"><table>
@@ -326,7 +323,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow">Provozní náklady</div>
     <h2>Dvě varianty provozu</h2>
     <p>Web nepotřebuje platební bránu ani e-shop, takže provoz je levný. Varianta A je zdarma s limity bezplatných tarifů, které takovému webu stačí. Varianta B je vlastní malý server s jednoduchými zálohami.</p>
     <div class="tablewrap"><table>
@@ -344,7 +340,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow">Před dalším krokem</div>
     <h2>Co potřebujeme od restaurace</h2>
     <p>Údaje označené v mockupu žlutě (<b>doplnit</b>, <b>ověřit</b>) jsou zatím odhad nebo ukázka:</p>
     <ul class="questions">
@@ -359,7 +354,6 @@ td.total { font-weight: 700; color: var(--wine); }
   </section>
 
   <section>
-    <div class="eyebrow">Postup</div>
     <h2>Další kroky</h2>
     <ol class="steps">
       <li class="done"><div><b>Rozbor a návrh designu</b><p>Mockupy úvodu, jídelního lístku, stránky pro zájezdy a administrace denního menu na této stránce.</p></div></li>
