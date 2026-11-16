@@ -338,6 +338,27 @@ function vykresliStav() {
   $$('.doba tr[data-d]').forEach((tr) => tr.classList.toggle('dnes', tr.dataset.d.split(',').includes(String(now.getDay()))));
 }
 
+/* Hodnocení hostů. V ostrém webu se čísla obnovují automaticky (Google Places API, Firmy.cz).
+   Na úvod jde vždy zdroj s vyšší známkou; při shodě ten s víc hodnoceními.
+   Zdroj s méně než MIN_HODNOCENI recenzemi se nebere, aby číslo bylo reprezentativní. */
+const HODNOCENI = [
+  { zdroj: 'Googlu', hvezdy: 4.1, pocet: 642, url: 'https://www.google.com/maps/search/?api=1&query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice' },
+  { zdroj: 'Mapy.cz', hvezdy: 4.3, pocet: 121, url: 'https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html' },
+];
+const MIN_HODNOCENI = 50;
+const hvezdyText = (h) => h.toFixed(1).replace('.', ',') + ' ★';
+function nejlepsiHodnoceni() {
+  return HODNOCENI.filter((h) => h.pocet >= MIN_HODNOCENI)
+    .sort((a, b) => b.hvezdy - a.hvezdy || b.pocet - a.pocet)[0] || null;
+}
+function vykresliHodnoceni() {
+  const nej = nejlepsiHodnoceni();
+  $$('[data-hodnoceni-nej]').forEach((el) => {
+    if (!nej) { el.hidden = true; return; }
+    el.innerHTML = `<dt>${hvezdyText(nej.hvezdy)}</dt><dd><a href="#recenze">${nej.pocet} hodnocení na ${esc(nej.zdroj)}</a></dd>`;
+  });
+}
+
 /* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 14:00 a o víkendu nejbližší další všední den. */
 function vykresliKartu(root) {
   const tyden = nactiTyden(), now = ted();
@@ -380,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-tabule]').forEach(vykresliTabuli);
   $$('[data-karta]').forEach(vykresliKartu);
   vykresliStav();
+  vykresliHodnoceni();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });
   // Jediný animovaný moment: podtržení věty hosta se jednou dokreslí
