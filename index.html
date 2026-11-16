@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Návrh nového webu Na Městečku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <style>
 /* Dokument s návrhem: jeden sloupec (max 1080 px), galerie screenshotů v mřížce, tabulky v posuvných kontejnerech. Tisk do PDF A4. */
 :root {
   --bg: #fbf7f1; --surface: #ffffff; --fg: #2b1d16; --muted: #6f6056; --line: #ebe1d5;
   --wine: #7d1f22; --gold: #d9a441; --ok: #2f7a4d; --bad: #b3261e; --chip: #f3eadf;
-  --f-display: "Zilla Slab", Georgia, serif; --f-body: "Source Sans 3", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-display: "Archivo", "Segoe UI", Arial, sans-serif; --f-body: "Archivo", "Segoe UI", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
@@ -193,14 +193,14 @@ td.total { font-weight: 700; color: var(--wine); }
   <section>
     <h2>Dva typy návštěvníků, dvě hlavní cesty</h2>
     <div class="split">
-      <div class="box"><span class="tag">Každý den · hlavně z mobilu</span><h3>„Co je dneska k obědu?“</h3><p>Místní, řemeslníci, lidé z kanceláří. Chtějí za pět vteřin vidět dnešní menu a zavolat si o jídlo s sebou.</p><ul><li>Dnešní menu na žluté tabuli hned na první obrazovce telefonu, po 14:00 a o víkendu automaticky menu na další den.</li><li>Cena a alergeny u každého jídla, štítek „bez masa“.</li><li>Tlačítko „Objednat jídlo“ (516 472 188) stále dole na displeji.</li><li>„Teď vaříme obědy, menu do 14:00“ podle aktuálního času.</li></ul></div>
+      <div class="box"><span class="tag">Každý den · hlavně z mobilu</span><h3>„Co je dneska k obědu?“</h3><p>Místní, řemeslníci, lidé z kanceláří. Chtějí za pět vteřin vidět dnešní menu a zavolat si o jídlo s sebou.</p><ul><li>Velké „Dnes vaříme“ a dnešní menu hned na první obrazovce telefonu, po 14:00 a o víkendu automaticky menu na další den.</li><li>Cena a alergeny u každého jídla, štítek „bez masa“.</li><li>Tlačítko „Objednat jídlo“ (516 472 188) stále dole na displeji.</li><li>„Teď vaříme obědy, menu do 14:00“ podle aktuálního času.</li></ul></div>
       <div class="box"><span class="tag">V sezoně · mobil i počítač</span><h3>„Kam se zájezdem na oběd?“</h3><p>Vedoucí zájezdů, cestovní kanceláře, snoubenci, firmy. Prostor si chtějí prohlédnout a rychle se domluvit.</p><ul><li>Samostatná stránka Zájezdy a oslavy s fotkami sálu, svateb a rautů.</li><li>Argumenty: zámek 300 m, zastávka 30 m a parkoviště hned u restaurace (mapa), hodnocení 4,1 ★ na Googlu a 4,3 ★ na Mapy.cz, menu předem.</li><li>Ukázky skupinových menu a postup ve 4 krocích.</li><li>Formulář poptávky (datum, počet osob, čas příjezdu) a přímé číslo 775 206 577.</li></ul></div>
     </div>
   </section>
 
   <section>
     <h2>Nejdřív telefon</h2>
-    <p>Web vypadá jako vývěska hospody na náměstí. Dnešní menu je na žluté tabuli v barvě fasády, nápisy mají vínovou barvu malovaného nápisu a písmo připomíná malovaný štít. Žádné vymyšlené logo, žádné šablonové ozdoby. Všechny fotky jsou ze současného webu restaurace.</p>
+    <p>Úvod začíná velkým „Dnes vaříme“ na vínové ploše v barvě malovaného nápisu a hned pod ním je dnešní menu s cenami ve žluté barvě fasády. Nadpis se mění podle času: po 14:00 „Zítra vaříme“, o víkendu „V pondělí vaříme“. Moderní písmo Archivo, žádná fotka na úvod, žádné vymyšlené logo ani šablonové ozdoby. Všechny fotky jsou ze současného webu restaurace.</p>
     <div class="mobiles">
       <figure class="shot"><img src="screenshots/mobil-uvod.png" alt="Mobil – úvod s denním menu"><figcaption><b>Úvod s menu</b></figcaption></figure>
       <figure class="shot"><img src="screenshots/mobil-listek.png" alt="Mobil – jídelní lístek"><figcaption><b>Jídelní lístek</b></figcaption></figure>
@@ -222,11 +222,12 @@ td.total { font-weight: 700; color: var(--wine); }
 
   <section>
     <h2>Jak vzniklo nové řešení</h2>
-    <p>Restaurace dostala i jiný návrh webu. Oba návrhy jsme dali posoudit dvěma nezávislým kritikům. Každý pracoval s jiným nástrojem pro hodnocení designu (Impeccable a Taste-skill). Pak oponovali jeden druhému a shodli se na společném směru: <b>web jako vývěska hospody na náměstí</b>. K tomu jsme prošli moderní weby hospod a bister (Lokál, obed.ambi.cz, Padella a oceněné weby na Awwwards).</p>
+    <p>Restaurace dostala i jiný návrh webu. Oba návrhy jsme dali posoudit dvěma nezávislým kritikům. Každý pracoval s jiným nástrojem pro hodnocení designu (Impeccable a Taste-skill). Pak oponovali jeden druhému a shodli se na společném směru: <b>moderní hospoda na náměstí, kde je hlavní dnešní menu</b>. K tomu jsme prošli moderní weby hospod a bister (Lokál, obed.ambi.cz, Padella a oceněné weby na Awwwards).</p>
+    <p>Po připomínkách majitele jsme úvod ještě přepracovali: je bez fotky hospody, má modernější písmo a recenze hostů jsou níž na stránce.</p>
     <div class="cols">
       <div class="box"><h3>Co měl druhý návrh dobře</h3><ul><li>Hodnocení hostů hned nahoře.</li><li>Skutečná věta hosta jako hlavní myšlenka („kachna jako z dětství“).</li><li>Fasáda jako poznávací znak.</li></ul></div>
       <div class="box"><h3>Co jsme nepřevzali</h3><ul><li>Fotky hostů z Google Map bez svolení autorů.</li><li>Jídla bez cen („dle nabídky“) a žádné denní menu.</li><li>Oříznutý nadpis na mobilu, prázdné plochy po animacích.</li><li>Na oslavy odkazuje na číslo pro objednávky jídla.</li></ul></div>
-      <div class="box"><h3>Na čem se kritici shodli</h3><ul><li>Dnešní menu i telefon na první obrazovce mobilu.</li><li>Žlutá jen na tabuli s menu, jinak papír, inkoust a vínová.</li><li>Žádné nadpisky nad nadpisy, pilulky, stíny ani text přes fotky.</li><li>Recenze se zdrojem, počtem a datem, nic vymyšleného.</li></ul></div>
+      <div class="box"><h3>Na čem se kritici shodli</h3><ul><li>Dnešní menu i telefon na první obrazovce mobilu.</li><li>Jedna výrazná vínová plocha s dnešním menu, jinak papír a inkoust.</li><li>Žádné nadpisky nad nadpisy, pilulky, stíny ani text přes fotky.</li><li>Recenze se zdrojem, počtem a datem, nic vymyšleného.</li></ul></div>
     </div>
   </section>
 

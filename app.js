@@ -10,7 +10,7 @@ const KLIC_TYDNE = 'rnm-tyden-v1';
 /* Pondělí je opsané ze současného webu, zbytek týdne a ceny jsou ukázka. */
 const VYCHOZI_TYDEN = {
   od: '2026-11-16',
-  cenaPoznamka: 'Polévka je v ceně. Vaříme od 11 do 14 h, i s sebou.',
+  cenaPoznamka: 'Polévka je v ceně, výdej 11–14 h, i s sebou.',
   dny: [
     { polevka: { nazev: 'Brokolicová', alergeny: [7] }, jidla: [
       { nazev: 'Vepřový guláš, houskový knedlík', alergeny: [1, 3, 7], cena: 145 },
@@ -299,10 +299,19 @@ function vykresliTabuli(root) {
       ${den.jidla.map((j, n) => `<li><span class="jidlo"><span class="poradi">${n + 1}</span>${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="drobne">${j.bezMasa ? '<span class="bezmasa">bez masa</span>' : ''}${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}
     </ol>`;
   }
-  root.innerHTML = `
+  // Na úvodu je nadpis velký nad menu („Dnes vaříme“) a tlačítko u nadpisu; jinde (lístek) má tabule vlastní hlavičku
+  const hNadpis = root.closest('.uvod') && $('[data-nadpis]');
+  if (hNadpis) {
+    hNadpis.textContent = `${kdy} vaříme`;
+    const pod = $('[data-podnadpis]');
+    if (pod) pod.textContent = `${DNY_MALE[cil.getDay()][0].toUpperCase() + DNY_MALE[cil.getDay()].slice(1)} ${datumText}. ${tyden.cenaPoznamka || ''}`.trim();
+    root.innerHTML = obsah;
+  } else {
+    root.innerHTML = `
     <div class="tabule-hlava"><h2>${titul}</h2>${tyden.cenaPoznamka ? `<p>${esc(tyden.cenaPoznamka)}</p>` : ''}</div>
     ${obsah}
     <a class="btn btn-plna" href="tel:+420516472188">${ikonaTel}Objednat · ${TEL_MENU}</a>`;
+  }
 
   // Zbytek týdne jako rozbalovací seznam
   const tyd = $('[data-tyden]');
@@ -342,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
     z.forEach((el) => io.observe(el));
   } else z.forEach((el) => el.classList.add('ted'));
   // Spodní lišta jen tehdy, když není vidět tlačítko Objednat na tabuli (žádné dvě stejné výzvy najednou)
-  const tb = $('.uvod .tabule .btn');
+  const tb = $('.uvod [data-objednat]');
   if (tb && 'IntersectionObserver' in window) new IntersectionObserver((en) => document.body.classList.toggle('lista-skryta', en[0].isIntersecting)).observe(tb);
   // Malá mapa v kontaktu (OpenStreetMap, bez cookies)
   const mk = $('#mapka');

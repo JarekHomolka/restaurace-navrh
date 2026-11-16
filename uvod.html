@@ -6,11 +6,11 @@
 <title>Restaurace Na Městečku Lysice – denní menu, jídelní lístek, zájezdy</title>
 <meta name="description" content="Hospoda na náměstí v Lysicích. Každý všední den polévka a tři jídla, minutky, pizza a jídlo s sebou. Obědy pro zájezdy 300 m od zámku.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Zilla+Slab:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261116c">
+<link rel="stylesheet" href="web.css?v=20261116d">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="app.js?v=20261116c" defer></script>
+<script src="app.js?v=20261116d" defer></script>
 </head>
 <body>
 
@@ -38,50 +38,29 @@
   <section class="uvod" id="menu">
     <div class="wrap">
       <div class="uvod-text">
-        <h1>Hospoda na náměstí v Lysicích</h1>
+        <h1><span class="sr">Restaurace Na Městečku, Lysice – </span><span data-nadpis>Dnes vaříme</span></h1>
+        <p class="uvod-pod" data-podnadpis>Polévka a tři jídla každý všední den.</p>
         <p class="stav" data-stav>Otevřeno</p>
+        <div class="akce-radek">
+          <a class="btn zluta" href="tel:+420516472188" data-objednat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Objednat · 516 472 188</a>
+          <a class="btn svetla" href="listek.html">Jídelní lístek</a>
+        </div>
       </div>
-      <div style="display:grid;gap:14px;min-width:0">
+      <div style="display:grid;gap:16px;min-width:0">
         <article class="tabule" data-tabule aria-label="Denní menu">
-          <div class="tabule-hlava"><h2>Denní menu</h2></div>
           <p class="tabule-prazdna">Načítáme dnešní menu…</p>
         </article>
         <details class="tyden" data-tyden></details>
       </div>
-      <figure class="fasada-velka">
-        <img src="assets/foto/budova.jpg" alt="Žlutá budova restaurace s nápisem Na Městečku" width="1600" height="1200">
-      </figure>
     </div>
   </section>
 
   <section class="info" aria-label="Základní informace">
-    <figure class="fasada-pruh"><img src="assets/foto/budova.jpg" alt="Žlutá budova restaurace s nápisem Na Městečku" width="1600" height="1200" loading="lazy"></figure>
     <div class="wrap">
       <div class="info-polozka"><b>Otevírací doba</b><span>Po–So 10–22, Ne 10–21</span></div>
       <div class="info-polozka"><b>Kde jsme</b><span>Komenského 589, na náměstí</span></div>
       <div class="info-polozka"><b>Zámek Lysice</b><span>300 m, 5 minut pěšky</span></div>
       <div class="info-polozka"><b>Jídlo s sebou</b><a href="tel:+420516472188">516 472 188</a></div>
-    </div>
-  </section>
-
-  <section class="sekce" id="recenze">
-    <div class="wrap recenze-mrizka">
-      <div>
-        <div class="sekce-hlava"><h2>Co o nás píšou hosté</h2></div>
-        <div class="hodnoceni">
-          <a class="znamka" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener"><b class="num">4,1<small>★</small></b><span>642 hodnocení na <u>Googlu</u></span></a>
-          <a class="znamka" href="https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html" target="_blank" rel="noopener"><b class="num">4,3<small>★</small></b><span>121 hodnocení na <u>Mapy.cz</u></span></a>
-        </div>
-        <p class="tlumene" style="font-size:14px">Stav k 16. 11. 2026</p>
-      </div>
-      <div>
-        <ol class="citace">
-          <li><figure style="margin:0"><blockquote>„Výborná kuchyně. Kachna se zelím a knedlíkem mě <span class="zvyrazni">přesunula do mého dětství</span>.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
-          <li><figure style="margin:0"><blockquote>„Zastavili jsme zde na oběd po cestě na dovolenou a bylo to dobré rozhodnutí. Obsluha velmi milá, atmosféra příjemná a jídlo rychle na stole…“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
-          <li><figure style="margin:0"><blockquote>„Restaurace je vybavena jídelnou, výčepem a krytou letní zahrádkou, poblíž je dostatek míst k parkování.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
-        </ol>
-        <p class="overeni">Tři recenze z Googlu jsme vybrali a nechali doslova. Jejich pravost neověřujeme. <a href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener">Všechny recenze</a></p>
-      </div>
     </div>
   </section>
 
@@ -131,6 +110,27 @@
         <img src="assets/foto/svatba-sal.jpg" alt="Sál prostřený na svatbu" loading="lazy">
         <img src="assets/foto/predkrm.jpg" alt="Předkrm a pivo na oslavě" loading="lazy">
         <img src="assets/foto/sladke-mameni.jpg" alt="Sladký bar na oslavě" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <section class="sekce" id="recenze">
+    <div class="wrap recenze-mrizka">
+      <div>
+        <div class="sekce-hlava"><h2>Co o nás píšou hosté</h2></div>
+        <div class="hodnoceni">
+          <a class="znamka" href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener"><b class="num">4,1<small>★</small></b><span>642 hodnocení na <u>Googlu</u></span></a>
+          <a class="znamka" href="https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html" target="_blank" rel="noopener"><b class="num">4,3<small>★</small></b><span>121 hodnocení na <u>Mapy.cz</u></span></a>
+        </div>
+        <p class="tlumene" style="font-size:14px">Stav k 16. 11. 2026</p>
+      </div>
+      <div>
+        <ol class="citace">
+          <li><figure style="margin:0"><blockquote>„Výborná kuchyně. Kachna se zelím a knedlíkem mě <span class="zvyrazni">přesunula do mého dětství</span>.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+          <li><figure style="margin:0"><blockquote>„Zastavili jsme zde na oběd po cestě na dovolenou a bylo to dobré rozhodnutí. Obsluha velmi milá, atmosféra příjemná a jídlo rychle na stole…“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+          <li><figure style="margin:0"><blockquote>„Restaurace je vybavena jídelnou, výčepem a krytou letní zahrádkou, poblíž je dostatek míst k parkování.“</blockquote><figcaption>Host na Googlu</figcaption></figure></li>
+        </ol>
+        <p class="overeni">Tři recenze z Googlu jsme vybrali a nechali doslova. Jejich pravost neověřujeme. <a href="https://www.google.com/maps/search/?api=1&amp;query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice" target="_blank" rel="noopener">Všechny recenze</a></p>
       </div>
     </div>
   </section>
