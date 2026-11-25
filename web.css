@@ -389,3 +389,12 @@ body.lista-skryta .lista { transform: translateY(110%); }
 
 /* Úvodní věta stránky Zájezdy a oslavy */
 .skupiny-perex { font-size: 20px; line-height: 1.45; color: var(--inkoust); font-weight: 600; max-width: 640px; }
+
+/* Nabídka rautů s sebou (upravuje se v administraci: Fotky a texty) */
+.rauty-nabidka { display: grid; gap: 12px; }
+.rauty-nabidka .sekce-hlava { margin-bottom: 0; }
+.rauty-seznam { list-style: none; margin: 0; padding: 0; display: grid; }
+.rauty-seznam li { position: relative; padding: 10px 0 10px 20px; border-top: 1px solid var(--linka); font-weight: 600; font-size: 17px; line-height: 1.35; }
+.rauty-seznam li:first-child { border-top: 0; padding-top: 2px; }
+.rauty-seznam li::before { content: ""; position: absolute; left: 2px; top: 1.05em; width: 7px; height: 7px; border-radius: 50%; background: var(--vino); }
+.rauty-seznam li:first-child::before { top: calc(1.05em - 8px); }

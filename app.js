@@ -451,6 +451,31 @@ function vykresliGalerii() {
   box.innerHTML = g.map((f) => `<img src="${esc(f.src || '/foto/' + f.id + '.jpg')}" alt="${esc(f.alt || '')}" loading="lazy">`).join('');
 }
 
+/* ---------- Nabídka rautů s sebou (stránka Rauty, upravuje se v administraci) ---------- */
+const KLIC_RAUTY = 'rnm-rauty-v1';
+const VYCHOZI_RAUTY = {
+  nadpis: 'Nabídka rautů s sebou',
+  polozky: ['Kuřecí a vepřové rautové řízečky', 'Sýrové smažáčky', 'Pečené kuřecí malé špízy', 'Pečené kuřecí paličky', 'Grilovaný kuřecí kebab',
+    'Guláš (vepřový/hovězí)', 'Pečená vepřová žebra na medu', 'Pečené vepřové maso na česneku', 'Hovězí tatarák + topinky',
+    'Studené obložené mísy (uzeninová, sýrová, zeleninová)', 'Saláty – šopský, coleslaw, bramborový atd.'],
+  cenaOd: 120, cenaDo: 400, poznamka: 'Rádi poradíme a vypracujeme individuální cenovou nabídku.',
+};
+function aktualniRauty() {
+  if (window.RNM_RAUTY) return window.RNM_RAUTY;
+  if (!RNM_SERVER) { try { const s = localStorage.getItem(KLIC_RAUTY); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště */ } }
+  return VYCHOZI_RAUTY;
+}
+function vykresliRauty() {
+  const box = $('[data-rauty]');
+  if (!box || (!window.RNM_RAUTY && RNM_SERVER)) return;   // bez dat zůstává text ze stránky
+  const n = aktualniRauty();
+  const cena = n.cenaOd && n.cenaDo ? `Cena od <b>${kc(n.cenaOd)}</b> do <b>${kc(n.cenaDo)}</b> na osobu podle velikosti rautu`
+    : n.cenaOd ? `Cena od <b>${kc(n.cenaOd)}</b> na osobu` : '';
+  $('h2', box).textContent = n.nadpis;
+  $('.nabidka-karta', box).innerHTML = `<ul class="rauty-seznam">${n.polozky.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${cena ? `<p class="nabidka-cena"><span>${cena}</span></p>` : ''}`;
+  $('.nabidka-pozn', box).textContent = n.poznamka || '';
+}
+
 /* ---------- Nabídka pro skupinové zájezdy (stránka Zájezdy a oslavy, upravuje se v administraci) ---------- */
 const KLIC_SKUPINY = 'rnm-skupiny-v1';
 const VYCHOZI_SKUPINY = {
@@ -546,6 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
   vykresliStav();
   vykresliGalerii();
   vykresliSkupinyMenu();
+  vykresliRauty();
   vykresliHodnoceni();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });

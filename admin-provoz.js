@@ -14,7 +14,7 @@
     { src: 'assets/foto/sladke-mameni.jpg', alt: 'Sladký bar na oslavě' },
   ];
   const KLIC_GALERIE = 'rnm-galerie-v1';
-  let provoz, galerie, skupiny, maxFotek = 12, zmeneno = false, upraveno = null, upravil = null;
+  let provoz, galerie, skupiny, rauty, maxFotek = 12, zmeneno = false, upraveno = null, upravil = null;
 
   /* ---------- stav ---------- */
   const kdy = (s) => { if (!s) return ''; const d = new Date(s); return `${d.getDate()}. ${d.getMonth() + 1}. v ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -29,10 +29,10 @@
     if (RNM_SERVER) {
       const r = await rnmApi('/api/admin/obsah');
       provoz = r.provoz || kopie(VYCHOZI_PROVOZ); galerie = r.galerie; maxFotek = r.maxFotek || 12;
-      skupiny = r.skupiny || kopie(VYCHOZI_SKUPINY);
+      skupiny = r.skupiny || kopie(VYCHOZI_SKUPINY); rauty = r.rauty || kopie(VYCHOZI_RAUTY);
       upraveno = r.provozUpraveno; upravil = r.provozUpravil;
     } else {
-      provoz = kopie(aktualniProvoz()); skupiny = kopie(aktualniSkupiny());
+      provoz = kopie(aktualniProvoz()); skupiny = kopie(aktualniSkupiny()); rauty = kopie(aktualniRauty());
       try { galerie = JSON.parse(localStorage.getItem(KLIC_GALERIE)) || kopie(VYCHOZI_GALERIE); } catch (e) { galerie = kopie(VYCHOZI_GALERIE); }
     }
     provoz.vyjimky = provoz.vyjimky || []; provoz.oznameni = provoz.oznameni || { text: '', od: '', do: '' };
@@ -115,9 +115,10 @@
       if (RNM_SERVER) {
         const r = await rnmApi('/api/admin/provoz', { provoz }, 'PUT');
         skupiny = (await rnmApi('/api/admin/skupiny', { skupiny: ctiSkupiny() }, 'PUT')).skupiny;
+        rauty = (await rnmApi('/api/admin/rauty', { rauty: ctiRauty() }, 'PUT')).rauty;
         provoz = r.provoz; upraveno = r.upraveno; upravil = (Ucty.aktualni() || {}).jmeno || upravil;
-      } else { localStorage.setItem(KLIC_PROVOZ, JSON.stringify(provoz)); localStorage.setItem(KLIC_SKUPINY, JSON.stringify(ctiSkupiny())); upraveno = new Date().toISOString(); }
-      vykresliSkupinyEd();
+      } else { localStorage.setItem(KLIC_PROVOZ, JSON.stringify(provoz)); localStorage.setItem(KLIC_SKUPINY, JSON.stringify(ctiSkupiny())); localStorage.setItem(KLIC_RAUTY, JSON.stringify(ctiRauty())); upraveno = new Date().toISOString(); }
+      vykresliSkupinyEd(); vykresliRautyEd();
       zmeneno = false; ukazStav(); vykresliVyjimky(); toast('✓ Uloženo. Na webu je to hned.');
     } catch (e) { toast('Nepodařilo se uložit: ' + e.message); }
     b.disabled = false;
@@ -153,6 +154,36 @@
   $('#sk-pridat').addEventListener('click', () => {
     skupiny = ctiSkupiny(true); skupiny.jidla.push(''); oznac(); vykresliSkupinyEd();
     const i = $$('#sk-jidla [data-f="jidlo"]').pop(); if (i) i.focus();
+  });
+
+  /* ---------- nabídka rautů s sebou ---------- */
+  function vykresliRautyEd() {
+    $('#ra-nadpis').value = rauty.nadpis || '';
+    $('#ra-cena-od').value = rauty.cenaOd || '';
+    $('#ra-cena-do').value = rauty.cenaDo || '';
+    $('#ra-pozn').value = rauty.poznamka || '';
+    $('#ra-polozky').innerHTML = (rauty.polozky || []).map((j, i) => `
+      <div class="vyj-radek" data-i="${i}">
+        <input type="text" data-f="polozka" value="${esc(j)}" maxlength="160" aria-label="Položka ${i + 1}" placeholder="Např. Sýrové smažáčky">
+        <button type="button" class="del" data-a="smazat" title="Odebrat položku" aria-label="Odebrat položku ${i + 1}">×</button>
+      </div>`).join('');
+  }
+  const ctiRauty = (iPrazdne) => ({
+    nadpis: $('#ra-nadpis').value,
+    polozky: $$('#ra-polozky [data-f="polozka"]').map((i) => i.value).filter((x) => iPrazdne || x.trim()),
+    cenaOd: $('#ra-cena-od').value.replace(/\D/g, ''), cenaDo: $('#ra-cena-do').value.replace(/\D/g, ''), poznamka: $('#ra-pozn').value,
+  });
+  $('#rauty-ed').addEventListener('input', (e) => {
+    if (e.target.id === 'ra-cena-od' || e.target.id === 'ra-cena-do') e.target.value = e.target.value.replace(/\D/g, '');
+    oznac();
+  });
+  $('#ra-polozky').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-a="smazat"]'); if (!b) return;
+    rauty = ctiRauty(true); rauty.polozky.splice(+b.closest('[data-i]').dataset.i, 1); oznac(); vykresliRautyEd();
+  });
+  $('#ra-pridat').addEventListener('click', () => {
+    rauty = ctiRauty(true); rauty.polozky.push(''); oznac(); vykresliRautyEd();
+    const i = $$('#ra-polozky [data-f="polozka"]').pop(); if (i) i.focus();
   });
 
   /* ---------- galerie ---------- */
@@ -241,7 +272,7 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     try { await nacti(); } catch (e) { $('#v-vice .list-ed').innerHTML = `<p class="tip"><span>⚠️</span><span>${esc(e.message)}</span></p>`; return; }
-    vykresliOznameniEd(); vykresliDobuEd(); vykresliVyjimky(); vykresliSkupinyEd(); vykresliGalerieEd(); ukazStav();
+    vykresliOznameniEd(); vykresliDobuEd(); vykresliVyjimky(); vykresliSkupinyEd(); vykresliRautyEd(); vykresliGalerieEd(); ukazStav();
     if (location.hash === '#fotky') { prepniPohled('vice'); prepni(); }
   });
 })();
