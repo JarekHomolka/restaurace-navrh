@@ -8,8 +8,8 @@
 <title>Přihlášení – administrace Na Městečku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125b">
-<script src="auth.js?v=20261125b"></script>
+<link rel="stylesheet" href="styles.css?v=20261125d">
+<script src="auth.js?v=20261125d"></script>
 </head>
 <body class="auth-body">
 
@@ -20,7 +20,7 @@
 <main class="auth-main">
   <div class="auth-karta">
     <h1>Přihlášení</h1>
-    <p>Úpravy menu, jídelního lístku a poptávek. Účet vám založí správce webu pozvánkou.</p>
+    <p>Úpravy menu, jídelního lístku a poptávek. Účet vám založí IT správce webu.</p>
     <p class="auth-chyba" id="chyba" role="alert"></p>
     <form id="form" novalidate>
       <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" inputmode="email" required></div>
@@ -31,16 +31,13 @@
       <button class="btn btn-primary btn-block" id="odeslat">Přihlásit se</button>
     </form>
     <button type="button" class="auth-odkaz" id="zapomenute" aria-expanded="false" aria-controls="napoveda">Zapomněli jste heslo?</button>
-    <p class="auth-napoveda" id="napoveda" hidden>Napište nebo zavolejte správci webu. V administraci vám jedním klikem pošle odkaz, přes který si nastavíte nové heslo. Odkaz platí 24 hodin a jde použít jen jednou.</p>
+    <p class="auth-napoveda" id="napoveda" hidden>Napište nebo zavolejte IT správci webu. V administraci vám jedním klikem pošle odkaz, přes který si nastavíte nové heslo. Odkaz platí 24 hodin a jde použít jen jednou.</p>
   </div>
 
   <div class="auth-ukazka" id="ukazka" hidden>
     <b>Jen v ukázce návrhu</b>
-    <p>Abyste si administraci mohli vyzkoušet bez účtu. V ostrém webu tu tato tlačítka nebudou.</p>
-    <div class="tlacitka">
-      <button type="button" class="btn btn-ghost btn-sm" data-role="obsluha" style="background:#fff">Jako obsluha</button>
-      <button type="button" class="btn btn-ghost btn-sm" data-role="spravce" style="background:#fff">Jako správce</button>
-    </div>
+    <p>Na začátku má přístup jen IT. Účet pro vedení restaurace si pak založíte v sekci Uživatelé a můžete se jím přihlásit. V ostrém webu tu toto tlačítko nebude.</p>
+    <button type="button" class="btn btn-ghost btn-sm" data-role="superadmin" style="background:#fff">Přihlásit ukázkovým účtem IT (super admin)</button>
   </div>
 </main>
 
@@ -52,7 +49,7 @@
   const q = new URLSearchParams(location.search);
   const navrat = Ucty.bezpecnyNavrat(q.get('zpet'));
   const chyba = $('#chyba');
-  if (q.get('chyba') === 'role') chyba.textContent = 'Na tuto část potřebujete roli správce.';
+  if (q.get('chyba') === 'role') chyba.textContent = 'Na tuto část potřebujete přístup super admin (IT).';
   if (q.get('odhlaseno')) { chyba.className = 'auth-ok'; chyba.textContent = 'Odhlásili jste se.'; }
 
   try { await Ucty.pripravit(); } catch (e) { chyba.textContent = e.message; }
@@ -82,7 +79,7 @@
     $('#ukazka').hidden = false;
     const zkus = (role) => { const u = Ucty.ukazkoveHeslo(role); $('#email').value = u.email; $('#heslo').value = u.heslo; prihlas(u.email, u.heslo, false); };
     document.querySelectorAll('[data-role]').forEach((b) => b.addEventListener('click', () => zkus(b.dataset.role)));
-    if (['obsluha', 'spravce'].includes(q.get('ukazka'))) zkus(q.get('ukazka'));   // jen pro snímky návrhu
+    if (q.get('ukazka') === 'superadmin') zkus(q.get('ukazka'));   // jen pro snímky návrhu
   }
 })();
 </script>

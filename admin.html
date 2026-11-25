@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Administrace – Na Městečku</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="auth.js?v=20261125b"></script>
+<script src="auth.js?v=20261125d"></script>
 <script>Ucty.vyzadujPrihlaseni();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125b">
+<link rel="stylesheet" href="styles.css?v=20261125d">
 <style>
 /* Administrace: na telefonu jeden sloupec se spodní navigací, na počítači boční panel a živý náhled vpravo. */
 body { background: #f3f0e9; padding-bottom: 140px; }
@@ -158,7 +158,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
   .meal-line2 { flex-wrap: nowrap; }
 }
 
-/* Uživatelé (jen správce) a můj účet */
+/* Uživatelé (jen super admin) a můj účet */
 .uz-seznam { display: grid; gap: 10px; }
 .uz { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 14px; display: grid; gap: 10px; }
 .uz.blok { background: #faf8f4; }
@@ -252,7 +252,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
     <button data-view="listek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M8 11h8M8 15h8M8 7h4"/></svg>Jídelní lístek</button>
     <button data-view="poptavky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/></svg>Poptávky<span class="cnt">2</span></button>
     <button data-view="vice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Fotky a texty</button>
-    <button data-view="uzivatele" data-jen="spravce" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2.2.6 3.5 2.4 3.5 5.2"/></svg>Uživatelé</button>
+    <button data-view="uzivatele" data-jen="superadmin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2.2.6 3.5 2.4 3.5 5.2"/></svg>Uživatelé</button>
   </nav>
 
   <main class="adm-main">
@@ -326,10 +326,10 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
         </div>
       </section>
 
-      <!-- ===== Uživatelé (jen správce) ===== -->
+      <!-- ===== Uživatelé (jen super admin, IT) ===== -->
       <section class="view-pane" id="v-uzivatele">
-        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Uživatelé</h1><span class="status" id="uz-stav"></span></div><button class="btn btn-primary btn-sm" id="b-pozvat">+ Pozvat uživatele</button></div>
-        <p class="tip"><span>🔒</span><span><b>Každý má svůj účet.</b> Pozvaný dostane odkaz a heslo si nastaví sám, nikdo jiný ho nezná, ani správce. Kdo odejde, tomu přístup jedním klikem zablokujete.</span></p>
+        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Uživatelé</h1><span class="status" id="uz-stav"></span></div><button class="btn btn-primary btn-sm" id="b-pozvat">+ Přidat uživatele</button></div>
+        <p class="tip"><span>🔒</span><span><b>Každý má svůj účet.</b> Účty zakládá jen IT. Heslo můžete nastavit hned (i vygenerovat), nebo poslat odkaz a heslo si člověk nastaví sám. Když se vedení restaurace změní, přístup jedním klikem zablokujete.</span></p>
         <div class="uz-seznam" id="uz-seznam"></div>
         <h2 class="uz-sekce" id="uz-pozvanky-nadpis">Čeká na přijetí pozvánky</h2>
         <div class="uz-seznam" id="uz-pozvanky"></div>
@@ -346,7 +346,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
   <button data-view="listek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h12l4 4v12H4z"/><path d="M8 11h8M8 15h8M8 7h4"/></svg>Lístek</button>
   <button data-view="poptavky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/></svg>Poptávky<span class="cnt">2</span></button>
   <button data-view="vice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Fotky</button>
-  <button data-view="uzivatele" data-jen="spravce" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2.2.6 3.5 2.4 3.5 5.2"/></svg>Lidé</button>
+  <button data-view="uzivatele" data-jen="superadmin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2.2.6 3.5 2.4 3.5 5.2"/></svg>Lidé</button>
 </nav>
 
 <dialog id="dlg-paste">
@@ -378,26 +378,37 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 
 <dialog id="dlg-pozvat">
   <form class="dlg" id="pozvat-form" novalidate>
-    <h2>Pozvat do administrace</h2>
-    <p>Pozvaný dostane odkaz, přes který si nastaví vlastní heslo. Odkaz platí 7 dní a jde použít jen jednou.</p>
+    <h2 id="pz-nadpis">Přidat uživatele</h2>
     <p class="dlg-chyba" id="pozvat-chyba" role="alert"></p>
-    <div id="pozvat-pole" style="display:grid;gap:12px">
-      <div class="field"><label for="pz-email">E-mail</label><input id="pz-email" type="email" inputmode="email" autocomplete="off" required></div>
-      <div class="field"><label for="pz-jmeno">Jméno <span style="font-weight:400;color:var(--muted)">(nepovinné, doplní si sám)</span></label><input id="pz-jmeno" autocomplete="off"></div>
-      <fieldset class="role-volba"><legend>Role</legend>
-        <label><input type="radio" name="pz-role" value="obsluha" checked><b>Obsluha</b><small>Denní menu, jídelní lístek, poptávky, fotky a texty.</small></label>
-        <label><input type="radio" name="pz-role" value="spravce"><b>Správce</b><small>Navíc zve a spravuje uživatele. Dávejte jen tomu, komu věříte.</small></label>
+    <div id="pozvat-pole" style="display:grid;gap:14px">
+      <div id="pz-udaje" style="display:grid;gap:12px">
+        <div class="field"><label for="pz-email">E-mail (slouží k přihlášení)</label><input id="pz-email" type="email" inputmode="email" autocomplete="off" required></div>
+        <div class="field"><label for="pz-jmeno">Jméno</label><input id="pz-jmeno" autocomplete="off" placeholder="Např. Vedení restaurace"></div>
+        <fieldset class="role-volba"><legend>Role</legend>
+          <label><input type="radio" name="pz-role" value="admin" checked><b>Admin · vedení restaurace</b><small>Denní menu, ceny v jídelním lístku, fotky a texty, poptávky.</small></label>
+          <label><input type="radio" name="pz-role" value="superadmin"><b>Super admin · IT</b><small>Navíc zakládá a spravuje uživatele. Jen pro toho, kdo se stará o web.</small></label>
+        </fieldset>
+      </div>
+      <fieldset class="role-volba"><legend id="pz-zpusob-nadpis">Heslo</legend>
+        <label><input type="radio" name="pz-zpusob" value="heslo" checked><b>Nastavím heslo hned</b><small>Zadejte ho, nebo nechte vygenerovat. Předejte ho osobně nebo telefonem.</small></label>
+        <label><input type="radio" name="pz-zpusob" value="odkaz"><b id="pz-odkaz-nazev">Pošlu odkaz, heslo si nastaví sám</b><small id="pz-odkaz-popis">Jednorázový odkaz platí 7 dní.</small></label>
       </fieldset>
+      <div id="pz-heslo-blok" style="display:grid;gap:8px">
+        <div class="field"><label for="pz-heslo">Heslo</label>
+          <div class="heslo-pole"><input id="pz-heslo" type="text" autocomplete="new-password" spellcheck="false" autocapitalize="off" style="padding-right:124px;font-family:ui-monospace,Consolas,monospace;font-size:15px"><button type="button" id="pz-generovat">Vygenerovat</button></div></div>
+        <small style="color:var(--muted);margin-top:-4px">Aspoň 10 znaků. Vygenerované heslo jsou čtyři slova a číslo, dobře se nadiktuje.</small>
+        <label class="zaskrt"><input type="checkbox" id="pz-zmenit" checked>Při prvním přihlášení si heslo změní</label>
+      </div>
     </div>
     <div class="odkaz-box" id="pozvat-vysledek" hidden>
-      <b id="pozvat-vysledek-nadpis">Pozvánka je připravená</b>
-      <input id="pozvat-odkaz" readonly aria-label="Odkaz">
+      <b id="pozvat-vysledek-nadpis"></b>
+      <input id="pozvat-odkaz" readonly aria-labelledby="pozvat-vysledek-nadpis">
       <small style="color:var(--muted)" id="pozvat-vysledek-text"></small>
     </div>
     <div class="dlg-actions">
       <button type="button" class="btn btn-ghost" id="pozvat-zavrit">Zrušit</button>
-      <button type="button" class="btn btn-ghost" id="pozvat-kopirovat" hidden>Zkopírovat odkaz</button>
-      <button class="btn btn-primary" id="pozvat-ok">Vytvořit pozvánku</button>
+      <button type="button" class="btn btn-ghost" id="pozvat-kopirovat" hidden>Zkopírovat</button>
+      <button class="btn btn-primary" id="pozvat-ok">Přidat uživatele</button>
     </div>
   </form>
 </dialog>
@@ -425,10 +436,10 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 <div class="toast" id="toast"></div>
 <div id="tisk"></div>
 
-<script src="app.js?v=20261125b"></script>
-<script src="historie-data.js?v=20261125b"></script>
-<script src="navrh-tydne.js?v=20261125b"></script>
-<script src="admin.js?v=20261125b"></script>
-<script src="admin-uzivatele.js?v=20261125b"></script>
+<script src="app.js?v=20261125d"></script>
+<script src="historie-data.js?v=20261125d"></script>
+<script src="navrh-tydne.js?v=20261125d"></script>
+<script src="admin.js?v=20261125d"></script>
+<script src="admin-uzivatele.js?v=20261125d"></script>
 </body>
 </html>

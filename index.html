@@ -155,7 +155,7 @@ td.total { font-weight: 700; color: var(--wine); }
     <p>Návrh je funkční ukázka. Dá se proklikat na počítači i v telefonu a v administraci si můžete menu sami upravit a podívat se, jak se ukáže na webu.</p>
     <div class="try-main">
       <a class="try-btn" href="uvod.html" target="_blank" rel="noopener"><b>Otevřít nový web <span aria-hidden="true">↗</span></b><span>Úvod s denním menu, jídelní lístek, zájezdy a oslavy</span></a>
-      <a class="try-btn alt" href="admin.html" target="_blank" rel="noopener"><b>Vyzkoušet administraci <span aria-hidden="true">↗</span></b><span>Přihlaste se tlačítkem „Jako obsluha“ nebo „Jako správce“</span></a>
+      <a class="try-btn alt" href="admin.html" target="_blank" rel="noopener"><b>Vyzkoušet administraci <span aria-hidden="true">↗</span></b><span>Přihlaste se ukázkovým účtem IT a založte účet pro vedení</span></a>
     </div>
     <div class="try-links">
       <a href="listek.html" target="_blank" rel="noopener">Jídelní lístek</a>
@@ -256,17 +256,17 @@ td.total { font-weight: 700; color: var(--wine); }
 
   <section>
     <h2>Přístup jen s přihlášením</h2>
-    <p>Do administrace se dostane jen ten, kdo má vlastní účet s e-mailem a heslem. Účty zakládá správce webu pozvánkou, sám si je nikdo nevytvoří.</p>
+    <p>Do administrace se dostane jen ten, kdo má vlastní účet s e-mailem a heslem. Na začátku má přístup jen IT (super admin) a ten zakládá účty pro vedení restaurace. Sám si účet nikdo nevytvoří.</p>
     <div class="cols">
-      <div class="box"><h3>Obsluha: jen to, co potřebuje</h3><p>Denní menu, jídelní lístek, poptávky, fotky a texty. Do správy uživatelů nevidí.</p></div>
-      <div class="box"><h3>Správce: zve a spravuje lidi</h3><p>Pozve nového člověka e-mailem a vybere mu roli. Kdo odejde, tomu jedním klikem zablokuje přístup. Vidí i záznam, kdo co kdy změnil.</p></div>
-      <div class="box"><h3>Heslo zná jen jeho majitel</h3><p>Pozvaný si heslo nastaví sám přes jednorázový odkaz. Po pěti špatných pokusech se přihlášení na 15 minut zamkne. Zapomenuté heslo obnoví odkaz od správce.</p></div>
+      <div class="box"><h3>Admin: vedení restaurace</h3><p>Napíše denní menu, upraví ceny v jídelním lístku, přidá fotky a texty a vidí poptávky. Do správy uživatelů nevidí.</p></div>
+      <div class="box"><h3>Super admin: IT</h3><p>Založí účet, zadá heslo nebo ho nechá vygenerovat, případně pošle odkaz. Když se vedení změní, jedním klikem zablokuje přístup. Vidí záznam, kdo co kdy změnil.</p></div>
+      <div class="box"><h3>Bezpečnost</h3><p>Dočasné heslo od IT si člověk při prvním přihlášení změní na vlastní. Po pěti špatných pokusech se přihlášení na 15 minut zamkne. Zapomenuté heslo IT nastaví znovu.</p></div>
     </div>
     <div class="shots">
-      <figure class="shot"><img src="screenshots/desktop-admin-uzivatele.png" alt="Administrace – správa uživatelů, role a pozvánky"><figcaption><b>Uživatelé a pozvánky (jen správce)</b><a href="admin.html#uzivatele" target="_blank" rel="noopener">Vyzkoušet ↗</a></figcaption></figure>
+      <figure class="shot"><img src="screenshots/desktop-admin-uzivatele.png" alt="Administrace – přidání uživatele s vygenerovaným heslem"><figcaption><b>Přidání účtu s heslem (jen IT)</b><a href="admin.html#uzivatele" target="_blank" rel="noopener">Vyzkoušet ↗</a></figcaption></figure>
       <figure class="shot"><img src="screenshots/desktop-prihlaseni.png" alt="Přihlášení do administrace"><figcaption><b>Přihlášení</b><a href="prihlaseni.html" target="_blank" rel="noopener">Otevřít ↗</a></figcaption></figure>
     </div>
-    <p class="note">V ukázce se účty ukládají jen v prohlížeči, takže to ještě není skutečné zabezpečení. Ověřit si tu ale můžete celý postup: pozvat člověka, otevřít jeho odkaz v anonymním okně, nastavit heslo, zablokovat ho. V ostrém webu účty a hesla hlídá server (Payload CMS) a pozvánky chodí e-mailem.</p>
+    <p class="note">V ukázce se účty ukládají jen v prohlížeči, takže to ještě není skutečné zabezpečení. Ověřit si tu ale můžete celý postup: přihlásit se ukázkovým účtem IT, založit účet pro vedení s vygenerovaným heslem, přihlásit se jím (třeba v anonymním okně) a heslo si změnit. V ostrém webu účty a hesla hlídá server (Payload CMS).</p>
   </section>
 
   <section>

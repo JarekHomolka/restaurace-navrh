@@ -9,8 +9,8 @@
 <title>Nastavení hesla – administrace Na Městečku</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125b">
-<script src="auth.js?v=20261125b"></script>
+<link rel="stylesheet" href="styles.css?v=20261125d">
+<script src="auth.js?v=20261125d"></script>
 </head>
 <body class="auth-body">
 
@@ -60,7 +60,7 @@
   const pozvanka = info.typ === 'pozvanka';
   $('#nadpis').textContent = pozvanka ? 'Vítejte v administraci' : 'Nové heslo';
   $('#uvod').textContent = pozvanka
-    ? `Správce vás pozval s rolí ${Ucty.ROLE[info.role].nazev.toLowerCase()}: ${Ucty.ROLE[info.role].popis.charAt(0).toLowerCase() + Ucty.ROLE[info.role].popis.slice(1)} Nastavte si heslo a můžete začít.`
+    ? `Máte přístup ${Ucty.ROLE[info.role].nazev} (${Ucty.ROLE[info.role].kdo}): ${Ucty.ROLE[info.role].popis.charAt(0).toLowerCase() + Ucty.ROLE[info.role].popis.slice(1)} Nastavte si heslo a můžete začít.`
     : 'Zvolte si nové heslo. Na ostatních zařízeních budete odhlášeni.';
   $('#email').value = info.email;
   $('#jmeno').value = info.jmeno || '';
