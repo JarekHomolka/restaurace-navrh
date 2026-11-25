@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261125l">
+<link rel="stylesheet" href="web.css?v=20261125n">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="parkoviste-data.js?v=20261125l" defer></script>
-<script src="app.js?v=20261125l" defer></script>
+<script src="parkoviste-data.js?v=20261125n" defer></script>
+<script src="app.js?v=20261125n" defer></script>
 </head>
 <body>
 
@@ -52,7 +52,7 @@
       <div>
         <div class="sekce-hlava"><h2>Co u nás pořádáme</h2><p>Restaurace nabízí možnost pořádání nejrůznějších akcí, rautů, svateb, promocí, školních setkání, firemních večírků a jiných společenských událostí.</p></div>
         <ul class="seznam-akci">
-          <li><b>Zájezdy a cestovní kanceláře</b><span>Oběd nebo večeře pro celý autobus, jídlo na stole pár minut po příjezdu.</span></li>
+          <li><b>Skupinové zájezdy</b><span>Oběd nebo večeře pro celý autobus, jídlo na stole pár minut po příjezdu.</span></li>
           <li><b>Firemní večírky a rauty</b><span>Vánoční a firemní večírky, porady s obědem, rauty a studené mísy.</span></li>
           <li><b>Oslavy, promoce a setkání</b><span>Narozeniny, výročí, křtiny, promoce i školní setkání.</span></li>
           <li><b>Svatby</b><span>Hostina, sladký bar a večerní raut. Výzdobu sálu domluvíme s vámi.</span></li>
@@ -86,25 +86,6 @@
   </section>
 
   <section class="sekce">
-    <div class="wrap">
-      <div class="nabidka-sk" id="nabidka" data-skupiny-menu>
-        <div class="sekce-hlava"><h2>Naše nabídka pro skupinové zájezdy</h2></div>
-        <div class="nabidka-karta">
-          <div class="polevka-radek"><span class="k">Polévka</span><b>Hovězí vývar s játrovými knedlíčky a nudlemi</b></div>
-          <ol class="jidla">
-            <li><span class="c">1</span><span class="n">Moravský vrabec, zelí, houskový knedlík</span></li>
-            <li><span class="c">2</span><span class="n">Kuřecí steak z grilu, šťouchaný brambor, zeleninová obloha</span></li>
-            <li><span class="c">3</span><span class="n">Smažený vepřový řízek, bramborový salát</span></li>
-          </ol>
-          <p class="nabidka-cena"><span><b>180 Kč</b> za porci bez polévky</span><span><b>200 Kč</b> za porci s polévkou</span></p>
-        </div>
-        <p class="nabidka-pozn">Menu upravíme podle vás, i pro vegetariány a děti.</p>
-        <a class="btn" href="#poptavka">Poslat poptávku</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sekce">
     <div class="wrap dvoje">
       <div>
         <div class="sekce-hlava"><h2>Jak to probíhá</h2></div>
@@ -130,6 +111,19 @@
         <div class="telefony">
           <a href="tel:+420775206577"><b>775 206 577</b><span>zájezdy, oslavy, firemní akce a rezervace</span></a>
           <a href="mailto:restaurace.namestecku@seznam.cz" style="font-weight:600;color:var(--vino)">restaurace.namestecku@seznam.cz</a>
+        </div>
+        <div class="nabidka-sk" id="nabidka" data-skupiny-menu>
+          <h3>Naše nabídka pro skupinové zájezdy</h3>
+          <div class="nabidka-karta">
+            <div class="polevka-radek"><span class="k">Polévka</span><b>Hovězí vývar s játrovými knedlíčky a nudlemi</b></div>
+            <ol class="jidla">
+              <li><span class="c">1</span><span class="n">Moravský vrabec, zelí, houskový knedlík</span></li>
+              <li><span class="c">2</span><span class="n">Kuřecí steak z grilu, šťouchaný brambor, zeleninová obloha</span></li>
+              <li><span class="c">3</span><span class="n">Smažený vepřový řízek, bramborový salát</span></li>
+            </ol>
+            <p class="nabidka-cena"><span><b>180 Kč</b> za porci bez polévky</span><span><b>200 Kč</b> za porci s polévkou</span></p>
+          </div>
+          <p class="nabidka-pozn">Menu upravíme podle vás, i pro vegetariány a děti.</p>
         </div>
       </div>
       <form class="form" id="poptavka-form">

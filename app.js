@@ -232,6 +232,21 @@ function vykresliListek(root) {
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
   $$('[data-cat]', root).forEach((s) => io.observe(s));
+
+  // Klik na kategorii: nadpis kategorie zastaví těsně pod hlavičkou a lištou kategorií (nezajede pod ně)
+  const skocNa = (id, plynule) => {
+    const cil = document.getElementById(id); if (!cil) return;
+    const prekryv = ($('.hlavicka') ? $('.hlavicka').offsetHeight : 0) + ($('.nastroje') ? $('.nastroje').offsetHeight : 0) + 12;
+    window.scrollTo({ top: cil.getBoundingClientRect().top + window.scrollY - prekryv, behavior: plynule ? 'smooth' : 'auto' });
+  };
+  chips.forEach((c) => c.addEventListener('click', (e) => {
+    e.preventDefault();
+    const id = c.getAttribute('href').slice(1);
+    history.replaceState(null, '', '#' + id);
+    chips.forEach((x) => x.classList.toggle('active', x === c));
+    skocNa(id, !matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }));
+  if (location.hash) requestAnimationFrame(() => skocNa(location.hash.slice(1), false));
 }
 
 /* ---------- Společné ---------- */
@@ -455,7 +470,7 @@ function vykresliSkupinyMenu() {
   const n = aktualniSkupiny(), ceny = [];
   if (n.cenaBez) ceny.push(`<span><b>${kc(n.cenaBez)}</b> za porci${n.polevka ? ' bez polévky' : ''}</span>`);
   if (n.cenaS && n.polevka) ceny.push(`<span><b>${kc(n.cenaS)}</b> za porci s polévkou</span>`);
-  $('h2', box).textContent = n.nadpis;
+  $('h2, h3', box).textContent = n.nadpis;
   $('.nabidka-karta', box).innerHTML = `
     ${n.polevka ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(n.polevka)}</b></div>` : ''}
     <ol class="jidla">${n.jidla.map((j, i) => `<li><span class="c">${i + 1}</span><span class="n">${esc(j)}</span></li>`).join('')}</ol>
