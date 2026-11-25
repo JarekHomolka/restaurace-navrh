@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const M = MAPA_OKOLI, seznam = $('#park-list');
   const polozky = [
     { typ: 'bus', ikona: 'B', nazev: `Zastávka ${M.zastavka.nazev}`, popis: 'vysazení skupiny před vchodem', poloha: M.zastavka.poloha, vzd: 30 },
-    ...M.parkoviste.filter((p) => p.typ !== 'menší').map((p) => ({ typ: 'p', ikona: 'P', nazev: p.nazev, popis: `${p.pesky} min pěšky`, poloha: p.stred, vzd: p.vzdalenost, obrys: p.obrys })),
+    ...M.parkoviste.filter((p) => p.typ !== 'menší').sort((a, b) => a.vzdalenost - b.vzdalenost).map((p) => ({ typ: 'p', ikona: 'P', nazev: p.nazev, popis: p.vzdalenost <= 20 ? 'pár kroků od vchodu' : `${p.pesky} min pěšky`, poloha: p.stred, vzd: p.vzdalenost, obrys: p.obrys })),
     { typ: 'p', ikona: 'P', nazev: `Další ${M.parkoviste.filter((p) => p.typ === 'menší').length} menší parkoviště`, popis: 'do 3 minut pěšky', poloha: null, vzd: null },
     { typ: 'castle', ikona: '♜', nazev: M.zamek.nazev, popis: `${M.zamek.pesky} min pěšky`, poloha: M.zamek.poloha, vzd: M.zamek.vzdalenost }
   ];
