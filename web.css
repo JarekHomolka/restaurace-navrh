@@ -368,3 +368,6 @@ body.lista-skryta .lista { transform: translateY(110%); }
 .doba tr.vyjimka.dnes td { color: var(--vino); }
 /* Galerie může mít víc fotek než původních pět */
 @media (min-width: 900px) { .fotky { grid-auto-rows: 220px; } }
+
+/* Oddělení víkendové nabídky v ukázce z lístku na úvodu */
+.cedule li.cedule-oddel { display: block; padding: 20px 0 8px; border-top: 0; font-weight: 700; font-size: 16px; color: var(--vino); }

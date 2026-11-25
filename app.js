@@ -45,7 +45,7 @@ const LISTEK = [
     { g: '150 g', nazev: 'Grilovaný vepřový steak se smaženými cibulovými kroužky (5 ks)', en: 'pork steak, onion rings', a: [1, 3], cena: 155 } ] },
   { id: 'vikend', nazev: 'Víkendová nabídka', pozn: 'Sobota a neděle', polozky: [
     { g: '', nazev: 'Hovězí vývar s játrovými knedlíčky a nudlemi', en: 'beef broth with liver dumplings and noodles', a: [], cena: 55, polevka: true },
-    { g: '100 g', nazev: 'Vepřové výpečky, zelí, houskový knedlík', en: 'roasted pork, cabbage, dumplings', a: [1, 3, 7], cena: 170 },
+    { g: '100 g', nazev: 'Moravský vrabec, zelí, houskový knedlík', en: 'Moravian roast pork, cabbage, dumplings', a: [1, 3, 7], cena: 170 },
     { g: '100 g', nazev: 'Vepřový guláš, houskový knedlík', en: 'pork goulash, dumplings', a: [1, 3, 7], cena: 170 },
     { g: '100 g', nazev: 'Labužnický guláš, bramboráčky', en: 'gourmet goulash, potato pancakes', a: [1, 3, 7], cena: 190 },
     { g: '200 g', nazev: 'Grilované kuřecí a vepřové medailonky, hranolky, salát coleslaw', en: 'grilled chicken + pork fillet, french fries, coleslaw', a: [1], cena: 210 },
