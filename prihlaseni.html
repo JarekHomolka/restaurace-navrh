@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#7a1e24">
+<title>Přihlášení – administrace Na Městečku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<link rel="stylesheet" href="styles.css?v=20261125b">
+<script src="auth.js?v=20261125b"></script>
+</head>
+<body class="auth-body">
+
+<header class="auth-top">
+  <div class="wrap"><a class="brand" href="uvod.html"><span class="brand-text"><b style="font-size:17px">Administrace</b><small>Na Městečku</small></span></a></div>
+</header>
+
+<main class="auth-main">
+  <div class="auth-karta">
+    <h1>Přihlášení</h1>
+    <p>Úpravy menu, jídelního lístku a poptávek. Účet vám založí správce webu pozvánkou.</p>
+    <p class="auth-chyba" id="chyba" role="alert"></p>
+    <form id="form" novalidate>
+      <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" inputmode="email" required></div>
+      <div class="field"><label for="heslo">Heslo</label>
+        <div class="heslo-pole"><input id="heslo" type="password" autocomplete="current-password" required><button type="button" data-ukaz="heslo" aria-controls="heslo">Ukázat</button></div>
+      </div>
+      <label class="zaskrt"><input type="checkbox" id="zustat">Zůstat přihlášen na tomto zařízení</label>
+      <button class="btn btn-primary btn-block" id="odeslat">Přihlásit se</button>
+    </form>
+    <button type="button" class="auth-odkaz" id="zapomenute" aria-expanded="false" aria-controls="napoveda">Zapomněli jste heslo?</button>
+    <p class="auth-napoveda" id="napoveda" hidden>Napište nebo zavolejte správci webu. V administraci vám jedním klikem pošle odkaz, přes který si nastavíte nové heslo. Odkaz platí 24 hodin a jde použít jen jednou.</p>
+  </div>
+
+  <div class="auth-ukazka" id="ukazka" hidden>
+    <b>Jen v ukázce návrhu</b>
+    <p>Abyste si administraci mohli vyzkoušet bez účtu. V ostrém webu tu tato tlačítka nebudou.</p>
+    <div class="tlacitka">
+      <button type="button" class="btn btn-ghost btn-sm" data-role="obsluha" style="background:#fff">Jako obsluha</button>
+      <button type="button" class="btn btn-ghost btn-sm" data-role="spravce" style="background:#fff">Jako správce</button>
+    </div>
+  </div>
+</main>
+
+<p class="auth-pata"><a href="uvod.html">← Zpět na web restaurace</a></p>
+
+<script>
+(async function () {
+  const $ = (s) => document.querySelector(s);
+  const q = new URLSearchParams(location.search);
+  const navrat = Ucty.bezpecnyNavrat(q.get('zpet'));
+  const chyba = $('#chyba');
+  if (q.get('chyba') === 'role') chyba.textContent = 'Na tuto část potřebujete roli správce.';
+  if (q.get('odhlaseno')) { chyba.className = 'auth-ok'; chyba.textContent = 'Odhlásili jste se.'; }
+
+  try { await Ucty.pripravit(); } catch (e) { chyba.textContent = e.message; }
+  if (Ucty.aktualni() && !q.get('chyba')) { location.replace(navrat); return; }
+
+  document.querySelectorAll('[data-ukaz]').forEach((b) => b.addEventListener('click', () => {
+    const i = document.getElementById(b.dataset.ukaz), skryte = i.type === 'password';
+    i.type = skryte ? 'text' : 'password'; b.textContent = skryte ? 'Skrýt' : 'Ukázat';
+  }));
+  $('#zapomenute').addEventListener('click', (e) => { const n = $('#napoveda'); n.hidden = !n.hidden; e.currentTarget.setAttribute('aria-expanded', String(!n.hidden)); });
+
+  async function prihlas(email, heslo, zustat) {
+    const b = $('#odeslat'); b.disabled = true; b.textContent = 'Ověřuji…';
+    chyba.className = 'auth-chyba'; chyba.textContent = '';
+    try { await Ucty.prihlasit(email, heslo, zustat); location.replace(navrat); }
+    catch (e) { chyba.textContent = e.message; b.disabled = false; b.textContent = 'Přihlásit se'; $('#heslo').select(); }
+  }
+  $('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = $('#email').value.trim(), heslo = $('#heslo').value;
+    if (!email || !heslo) { chyba.textContent = 'Vyplňte e-mail i heslo.'; (email ? $('#heslo') : $('#email')).focus(); return; }
+    prihlas(email, heslo, $('#zustat').checked);
+  });
+
+  // Ukázka: přihlášení ukázkovým účtem (projde stejným ověřením hesla jako ruční přihlášení)
+  if (Ucty.UKAZKA) {
+    $('#ukazka').hidden = false;
+    const zkus = (role) => { const u = Ucty.ukazkoveHeslo(role); $('#email').value = u.email; $('#heslo').value = u.heslo; prihlas(u.email, u.heslo, false); };
+    document.querySelectorAll('[data-role]').forEach((b) => b.addEventListener('click', () => zkus(b.dataset.role)));
+    if (['obsluha', 'spravce'].includes(q.get('ukazka'))) zkus(q.get('ukazka'));   // jen pro snímky návrhu
+  }
+})();
+</script>
+</body>
+</html>

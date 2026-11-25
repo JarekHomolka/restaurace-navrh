@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#7a1e24">
+<title>Nastavení hesla – administrace Na Městečku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<link rel="stylesheet" href="styles.css?v=20261125b">
+<script src="auth.js?v=20261125b"></script>
+</head>
+<body class="auth-body">
+
+<header class="auth-top">
+  <div class="wrap"><a class="brand" href="uvod.html"><span class="brand-text"><b style="font-size:17px">Administrace</b><small>Na Městečku</small></span></a></div>
+</header>
+
+<main class="auth-main">
+  <div class="auth-karta">
+    <h1 id="nadpis">Pozvánka do administrace</h1>
+    <p id="uvod">Ověřujeme odkaz…</p>
+    <p class="auth-chyba" id="chyba" role="alert"></p>
+    <form id="form" novalidate hidden>
+      <div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" readonly></div>
+      <div class="field" id="pole-jmeno"><label for="jmeno">Vaše jméno</label><input id="jmeno" autocomplete="name" required></div>
+      <div class="field"><label for="heslo">Heslo</label>
+        <div class="heslo-pole"><input id="heslo" type="password" autocomplete="new-password" required aria-describedby="pravidla"><button type="button" data-ukaz="heslo" aria-controls="heslo">Ukázat</button></div>
+      </div>
+      <p class="auth-pravidla" id="pravidla">Aspoň 10 znaků. Nejlépe tři čtyři slova, která si zapamatujete.</p>
+      <div class="field"><label for="heslo2">Heslo znovu</label><input id="heslo2" type="password" autocomplete="new-password" required></div>
+      <button class="btn btn-primary btn-block" id="odeslat">Uložit heslo a pokračovat</button>
+    </form>
+    <a class="btn btn-ghost btn-block" id="na-prihlaseni" href="prihlaseni.html" hidden>Na přihlášení</a>
+  </div>
+</main>
+
+<p class="auth-pata"><a href="uvod.html">← Zpět na web restaurace</a></p>
+
+<script>
+(async function () {
+  const $ = (s) => document.querySelector(s);
+  // Token z adresy hned schovat, ať nezůstane v historii prohlížeče ani na sdílené obrazovce.
+  // Pro obnovení stránky si ho pamatujeme jen v této záložce (sessionStorage).
+  let token = new URLSearchParams(location.search).get('t') || '';
+  try { if (token) sessionStorage.setItem('rnm-odkaz-t', token); else token = sessionStorage.getItem('rnm-odkaz-t') || ''; } catch (e) { /* bez úložiště */ }
+  const chyba = $('#chyba');
+  history.replaceState(null, '', location.pathname);
+
+  let info;
+  try { info = await Ucty.najdiOdkaz(token); } catch (e) { info = { chyba: e.message }; }
+  if (info.chyba) {
+    $('#nadpis').textContent = 'Odkaz neplatí';
+    $('#uvod').textContent = info.chyba;
+    $('#na-prihlaseni').hidden = false;
+    return;
+  }
+  const pozvanka = info.typ === 'pozvanka';
+  $('#nadpis').textContent = pozvanka ? 'Vítejte v administraci' : 'Nové heslo';
+  $('#uvod').textContent = pozvanka
+    ? `Správce vás pozval s rolí ${Ucty.ROLE[info.role].nazev.toLowerCase()}: ${Ucty.ROLE[info.role].popis.charAt(0).toLowerCase() + Ucty.ROLE[info.role].popis.slice(1)} Nastavte si heslo a můžete začít.`
+    : 'Zvolte si nové heslo. Na ostatních zařízeních budete odhlášeni.';
+  $('#email').value = info.email;
+  $('#jmeno').value = info.jmeno || '';
+  $('#pole-jmeno').hidden = !pozvanka;
+  $('#form').hidden = false;
+  (pozvanka && !info.jmeno ? $('#jmeno') : $('#heslo')).focus();
+
+  document.querySelectorAll('[data-ukaz]').forEach((b) => b.addEventListener('click', () => {
+    const i = document.getElementById(b.dataset.ukaz), skryte = i.type === 'password';
+    i.type = skryte ? 'text' : 'password'; b.textContent = skryte ? 'Skrýt' : 'Ukázat';
+  }));
+
+  $('#form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    chyba.textContent = '';
+    const heslo = $('#heslo').value;
+    const k = Ucty.kontrolaHesla(heslo, info.email);
+    if (k) { chyba.textContent = k; $('#heslo').focus(); return; }
+    if (heslo !== $('#heslo2').value) { chyba.textContent = 'Hesla se neshodují.'; $('#heslo2').focus(); return; }
+    const b = $('#odeslat'); b.disabled = true; b.textContent = 'Ukládám…';
+    try {
+      await Ucty.nastavitHeslo(token, { jmeno: $('#jmeno').value, heslo });
+      try { sessionStorage.removeItem('rnm-odkaz-t'); } catch (e2) { /* nic */ }
+      location.replace('admin.html');
+    }
+    catch (err) { chyba.textContent = err.message; b.disabled = false; b.textContent = 'Uložit heslo a pokračovat'; }
+  });
+})();
+</script>
+</body>
+</html>

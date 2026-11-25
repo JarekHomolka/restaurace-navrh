@@ -310,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     t.dny.forEach((d) => { d.jidla = d.jidla.filter((j) => j.nazev.trim()); });
     try { localStorage.setItem(KLIC_TYDNE, JSON.stringify(t)); } catch (e) { /* nic */ }
     zmeneno = false; const s = $('#status'); s.textContent = 'Zveřejněno právě teď'; s.classList.remove('draft'); ulozKoncept();
+    if (typeof Ucty !== 'undefined') Ucty.zapis(`Zveřejnění denního menu na ${$('#week-label').textContent}`);
     toast('✓ Uloženo. Menu je na webu.');
   });
 
