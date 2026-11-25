@@ -586,6 +586,12 @@ document.addEventListener('DOMContentLoaded', () => {
   vykresliStav();
   vykresliGalerii();
   vykresliSkupinyMenu();
+  // Pizza s sebou: okno s volbou (seznam pizz, nebo rovnou zavolat)
+  const pv = $('#pizza-volba');
+  if (pv) {
+    $$('[data-pizza]').forEach((b) => b.addEventListener('click', () => { if (pv.showModal) pv.showModal(); else location.href = 'listek.html#pizza'; }));
+    pv.addEventListener('click', (e) => { if (e.target === pv || e.target.closest('[data-zavrit]')) pv.close(); });
+  }
   vykresliRauty();
   vykresliHodnoceni();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');

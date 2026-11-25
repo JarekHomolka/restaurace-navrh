@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261126c">
+<link rel="stylesheet" href="web.css?v=20261126d">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="app.js?v=20261126c" defer></script>
+<script src="app.js?v=20261126d" defer></script>
 </head>
 <body>
 
@@ -45,10 +45,10 @@
         <p class="uvod-pod">Každý všední den vaříme polévku a alespoň tři druhy menu. K tomu minutky, pizza a o víkendu další speciality. Všechno připravíme i s sebou.</p>
         <p class="stav" data-stav>Otevřeno</p>
         <div class="akce-radek">
-          <a class="btn" href="skupiny.html">Zájezdy a oslavy</a>
+          <button type="button" class="btn" data-pizza aria-haspopup="dialog">Pizza s sebou</button>
+          <a class="btn obrys" href="skupiny.html">Zájezdy a oslavy</a>
           <a class="btn obrys" href="listek.html">Jídelní lístek</a>
         </div>
-        <a class="pizza-odkaz pizza-pc" href="tel:+420516472188"><div><b>Pizza s sebou</b><span>33 cm, každý den. Objednávky na <span class="num">516 472 188</span></span></div><span class="pizza-tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
         <dl class="uvod-fakta">
           <div><dt>10–15 h</dt><dd>obědy každý všední den</dd></div>
           <div><dt>300 m</dt><dd>od zámku Lysice</dd></div>
@@ -60,7 +60,7 @@
           <div class="karta-hlava"><h2>Denní menu</h2></div>
           <p class="karta-prazdna">Načítáme menu…</p>
         </article>
-          <a class="pizza-odkaz pizza-mobil" href="tel:+420516472188"><div><b>Pizza s sebou</b><span>33 cm, každý den. Objednávky na <span class="num">516 472 188</span></span></div><span class="pizza-tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span></a>
+          <button type="button" class="zajezdy-odkaz pizza-karta" data-pizza aria-haspopup="dialog"><div><b>Pizza s sebou</b></div></button>
           <a class="zajezdy-odkaz" href="listek.html"><div><b>Jídelní lístek</b><span>Minutky, speciality, pizza a víkendová nabídka</span></div></a>
           <a class="zajezdy-odkaz" href="skupiny.html"><div><b>Zájezdy a oslavy</b><span>Obědy pro autobusy, firemní večírky a oslavy</span></div></a>
       </div>
@@ -151,7 +151,7 @@
 
   <section class="sekce" id="kontakt">
     <div class="wrap">
-      <div class="sekce-hlava"><h2>Kde nás najdete</h2><p>Komenského 589, 679 71 Lysice. Na náměstí, 300 m od zámku. Parkovat můžete hned u nás.</p></div>
+      <div class="sekce-hlava"><h2>Kde nás najdete</h2><p class="kontakt-nazev">Restaurace Na Městečku</p><p>Komenského 589, 679 71 Lysice. Na náměstí, 300 m od zámku. Parkovat můžete hned u nás.</p></div>
       <div class="kontakt">
         <table class="doba num">
           <caption class="sr">Otevírací doba</caption>
@@ -169,6 +169,15 @@
       </div>
     </div>
   </section>
+  <dialog class="volba" id="pizza-volba" aria-labelledby="pizza-volba-nadpis">
+    <h2 id="pizza-volba-nadpis">Pizza s sebou</h2>
+    <p>Pizza 33 cm každý den. Vyberte si z lístku, nebo rovnou zavolejte a objednejte.</p>
+    <div class="volba-akce">
+      <a class="btn" href="tel:+420516472188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Zavolat 516 472 188</a>
+      <a class="btn obrys" href="listek.html#pizza">Seznam pizz</a>
+    </div>
+    <button type="button" class="volba-zavrit" data-zavrit aria-label="Zavřít">×</button>
+  </dialog>
 </main>
 
 <footer class="paticka">
