@@ -121,6 +121,7 @@ function algPick(a, key) {
 }
 function vykresliTaby() {
   const t = tyden();
+  const pz = $('#tyden-pozn'); if (pz && document.activeElement !== pz) pz.value = t.cenaPoznamka || '';
   $('#ed-tabs').innerHTML = t.dny.map((d, i) => `<button class="day-tab${vyplnenyDen(d) ? ' filled' : ''}" role="tab" aria-selected="${i === den}" data-i="${i}"><b>${DNY_KRATCE[i]}</b><span>${fmt(datumDne(t.od, i))}</span></button>`).join('');
   const a = datumDne(t.od, 0), b = datumDne(t.od, t.dny.length - 1);
   $('#week-label').textContent = `${a.getMonth() === b.getMonth() ? a.getDate() + '.' : fmt(a)}–${fmt(b)} ${b.getFullYear()}`;
@@ -446,6 +447,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast(`Vloženo: ${r.map((d) => DNY_KRATCE[d.i]).join(', ')}. Zkontrolujte a uložte.`);
   });
   $('#b-print').addEventListener('click', tisk);
+  $('#tyden-pozn').addEventListener('input', (e) => { tyden().cenaPoznamka = e.target.value; oznacZmenu(); vykresliNahled(); });
 
   // Výchozí cena menu: uloží se (server nebo prohlížeč) a doplní se do prázdných cen v otevřeném týdnu
   if (!RNM_SERVER) { try { vychoziCena = (JSON.parse(localStorage.getItem(KLIC_NASTAVENI)) || {}).vychoziCena || ''; } catch (e) { /* nic */ } }

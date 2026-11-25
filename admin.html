@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Administrace – Na Městečku</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="auth.js?v=20261125v"></script>
+<script src="auth.js?v=20261125x"></script>
 <script>Ucty.vyzadujPrihlaseni();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125v">
+<link rel="stylesheet" href="styles.css?v=20261125x">
 <style>
 /* Administrace: na telefonu jeden sloupec se spodní navigací, na počítači boční panel a živý náhled vpravo. */
 body { background: #f3f0e9; padding-bottom: 140px; }
@@ -137,7 +137,11 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 .lc-pozn { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
 .lr { border-bottom: 1px solid var(--line); }
 .lr:last-of-type { border-bottom: 0; }
-.lr-hlava { display: grid; grid-template-columns: minmax(0, 1fr) 104px; gap: 10px; align-items: center; padding: 6px 0; }
+.lr-hlava { display: grid; grid-template-columns: 24px minmax(0, 1fr) 104px; gap: 8px; align-items: center; padding: 6px 0; }
+.lr-tah { display: grid; place-items: center; height: 44px; color: #9c8a74; cursor: grab; touch-action: none; user-select: none; font-size: 20px; font-weight: 700; letter-spacing: -3px; border-radius: 4px; }
+.lr-tah:hover { background: var(--wine-soft); color: var(--wine); }
+.lr.tazeno { background: #fff; box-shadow: 0 6px 18px rgba(36,21,15,.15); position: relative; z-index: 2; border-radius: 4px; }
+.lr.tazeno .lr-tah { cursor: grabbing; color: var(--wine); }
 .lr-nazev { display: grid; gap: 2px; text-align: left; min-height: 48px; padding: 6px 8px; margin-left: -8px; border: 0; border-radius: 4px; background: transparent; font: inherit; color: var(--ink); cursor: pointer; min-width: 0; }
 .lr-nazev:hover, .lr.open .lr-nazev { background: var(--wine-soft); }
 .lr-nazev b { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
@@ -341,6 +345,10 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
           <label class="price"><span class="sr">Výchozí cena v Kč</span><input id="vc-cena" inputmode="numeric" placeholder="0"></label>
           <span>Předvyplní se u každého nového jídla. U jednotlivých jídel ji můžete změnit.</span>
         </div>
+        <div class="vychozi-cena">
+          <label for="tyden-pozn">Poznámka pod menu</label>
+          <input id="tyden-pozn" maxlength="160" style="flex:1 1 260px;min-width:0;height:44px;border-radius:4px;border:1px solid #d9ccbd;padding:0 12px;font:inherit;font-size:16px" placeholder="Např. Polévka je v ceně, výdej 10–15 h, i s sebou.">
+        </div>
 
         <p class="tip"><span>💡</span><span><b>Stačí začít psát.</b> Nabídneme jídla, která už jste vařili, a doplníme k nim alergeny i cenu. Celý týden můžete také vložit najednou z Wordu nebo e-mailu.</span></p>
 
@@ -366,7 +374,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
       <!-- ===== Jídelní lístek ===== -->
       <section class="view-pane" id="v-listek">
         <div class="adm-head"><div style="display:grid;gap:6px"><h1>Jídelní lístek</h1><span class="status" id="lst-stav">Zveřejněno</span></div></div>
-        <p class="tip"><span>💡</span><span>Cenu změníte přímo v řádku. Klepnutím na název upravíte popis, alergeny a pořadí. Jídlo, které dočasně nevaříte, stačí skrýt, smazat ho nemusíte.</span></p>
+        <p class="tip"><span>💡</span><span>Cenu změníte přímo v řádku, pořadí přetažením za ⋮⋮. Klepnutím na název upravíte popis, alergeny a angličtinu, u nového jídla je navrhneme sami. Jídlo, které dočasně nevaříte, stačí skrýt, smazat ho nemusíte.</span></p>
         <div class="list-ed" id="list-ed"></div>
         <div class="save-bar lst-bar">
           <small id="lst-hint">Lístek se na webu změní hned po uložení.</small>
@@ -558,12 +566,12 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 <div class="toast" id="toast"></div>
 <div id="tisk"></div>
 
-<script src="app.js?v=20261125v"></script>
-<script src="historie-data.js?v=20261125v"></script>
-<script src="navrh-tydne.js?v=20261125v"></script>
-<script src="admin.js?v=20261125v"></script>
-<script src="admin-listek.js?v=20261125v"></script>
-<script src="admin-provoz.js?v=20261125v"></script>
-<script src="admin-uzivatele.js?v=20261125v"></script>
+<script src="app.js?v=20261125x"></script>
+<script src="historie-data.js?v=20261125x"></script>
+<script src="navrh-tydne.js?v=20261125x"></script>
+<script src="admin.js?v=20261125x"></script>
+<script src="admin-listek.js?v=20261125x"></script>
+<script src="admin-provoz.js?v=20261125x"></script>
+<script src="admin-uzivatele.js?v=20261125x"></script>
 </body>
 </html>

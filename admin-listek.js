@@ -33,6 +33,7 @@
     const klic = `${ki}:${pi}`, open = otevrena === klic;
     return `<div class="lr${p.skryto ? ' skryta' : ''}${open ? ' open' : ''}" data-k="${ki}" data-p="${pi}">
       <div class="lr-hlava">
+        <span class="lr-tah" data-tah title="Přetáhněte pro změnu pořadí" aria-hidden="true">⋮⋮</span>
         <button type="button" class="lr-nazev" data-a="otevrit" aria-expanded="${open}">
           <b>${esc(p.nazev || 'Nové jídlo')}</b>${shrnuti(p) ? `<small>${esc(shrnuti(p))}</small>` : ''}${p.skryto ? '<span class="badge seda">Skryto</span>' : ''}
         </button>
@@ -124,6 +125,105 @@
       pol.splice(it.p, 1); otevrena = null; oznac(); vykresli(); toast('Smazáno. Na webu zmizí po uložení.');
     }
   });
+
+  /* ---------- Návrh alergenů a anglického názvu pro nové jídlo ----------
+     1) stejné jídlo už v lístku nebo v historii denního menu, 2) jinak podle slov v názvu (slovník níže).
+     Je to jen návrh: doplní se do prázdných polí a obsluha ho zkontroluje. */
+  const ALG_PRAVIDLA = [
+    [/rizek|rizk|smaz|obal|kapsa|duo\b/, [1, 3]], [/knedl/, [1, 3, 7]], [/testovin|spaget|lasagn|noky|nudl|pizza|toast|topink|pecivo|chleb|housk|bageta|tortil|wrap|burger|langos|palacink|kolac|zakusk|dort/, [1]],
+    [/syr|smetan|masl|kase|eidam|hermelin|mozzarel|parmaz|jogurt|mlek|tvaroh|niva|gorgonz|bechamel/, [7]], [/tatar(ska|ka)|majonez|coleslaw|bramborov\w* salat|vlassk/, [3, 10]],
+    [/tatarak/, [3, 10]], [/horcic/, [10]], [/celer|vyvar|polevk/, [9]], [/ryb|losos|pstruh|tunak|treska|kapr|filet z/, [4]], [/kreve|krab/, [2]], [/slavk|mekk|chobot/, [14]],
+    [/orech|mandl|pistac|kesu/, [8]], [/arasid/, [5]], [/sezam/, [11]], [/soj/, [6]], [/vejc|vajic|omelet|hemenex/, [3]], [/gulas|svickov|rajsk|koprov|segedin|stroganov|(smetanov|houbov|pepr|knedlikov)\w* omack/, [1, 7, 9]],
+    [/pizza/, [1, 7]], [/vino|na vine/, [12]],
+  ];
+  const EN_FRAZE = [
+    ['houskovy knedlik', 'bread dumplings'], ['bramborovy knedlik', 'potato dumplings'], ['tatarska omacka', 'tartar sauce'], ['stouchany brambor', 'mashed potatoes'],
+    ['vareny brambor', 'boiled potatoes'], ['bramborova kase', 'mashed potatoes'], ['bramborovy salat', 'potato salad'], ['cibulove krouzky', 'onion rings'],
+    ['dusena ryze', 'steamed rice'], ['obložene misy', 'cold platters'], ['obložene', 'cold'], ['na pepri', 'with pepper'], ['na cesneku', 'with garlic'], ['na medu', 'with honey'],
+    ['na masle', 'on butter'], ['na pomerancich', 'in orange sauce'], ['na smetane', 'in cream sauce'], ['bbq omacka', 'BBQ sauce'], ['sladka chilli omacka', 'sweet chilli sauce'],
+  ];
+  const EN_SLOVA = {
+    smazeny: 'fried', smazena: 'fried', smazene: 'fried', grilovany: 'grilled', grilovana: 'grilled', grilovane: 'grilled', peceny: 'roasted', pecena: 'roasted', pecene: 'roasted',
+    duseny: 'stewed', dusena: 'stewed', vareny: 'boiled', plneny: 'stuffed', plnena: 'stuffed', male: 'small', maly: 'small', domaci: 'homemade', zapeceny: 'baked', zapecene: 'baked',
+    kureci: 'chicken', veprovy: 'pork', veprove: 'pork', veprova: 'pork', hovezi: 'beef', kachni: 'duck', kruti: 'turkey', teleci: 'veal', jehneci: 'lamb', zverinovy: 'venison',
+    rizek: 'schnitzel', rizky: 'schnitzels', rizecky: 'mini schnitzels', rautove: 'buffet', steak: 'steak', medailonky: 'medallions', spizy: 'skewers', spiz: 'skewer', palicky: 'drumsticks',
+    zebra: 'ribs', kebab: 'kebab', gulas: 'goulash', svickova: 'beef sirloin', stehno: 'leg', prsa: 'breast', maso: 'meat', vypecky: 'roast pork', vrabec: 'roast pork',
+    knedlik: 'dumplings', knedliky: 'dumplings', hranolky: 'french fries', brambor: 'potatoes', brambory: 'potatoes', bramboraky: 'potato pancakes', ryze: 'rice', zeli: 'cabbage',
+    syr: 'cheese', syrove: 'cheese', smazacky: 'fried bites', hermelin: 'Hermelín cheese', salat: 'salad', salaty: 'salads', okurek: 'pickle', obloha: 'garnish', zeleninova: 'vegetable',
+    polevka: 'soup', vyvar: 'broth', pizza: 'pizza', sunka: 'ham', slanina: 'bacon', zampiony: 'mushrooms', houby: 'mushrooms', cibule: 'onion', tatarak: 'tartare', tatarka: 'tartar sauce', cesnekem: 'garlic', cesnek: 'garlic', syrem: 'cheese', sunkou: 'ham', slaninou: 'bacon', langos: 'langos', hranolkami: 'french fries', topinky: 'toast',
+    misy: 'platters', uzeninova: 'cold cuts', syrova: 'cheese', s: 'with', se: 'with', a: 'and', omacka: 'sauce', kachna: 'duck', ryba: 'fish', losos: 'salmon', pstruh: 'trout',
+    sopsky: 'Shopska', coleslaw: 'coleslaw', kompot: 'compote', tvaroh: 'cottage cheese', palacinky: 'pancakes', dezert: 'dessert', pohar: 'sundae', zmrzlina: 'ice cream',
+  };
+  const bezDiak = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  function navrhniAnglicky(nazev) {
+    let t = ' ' + bezDiak(nazev).replace(/[()]/g, ' ').replace(/\s+/g, ' ') + ' ';
+    const kousky = [];
+    EN_FRAZE.forEach(([cz, en]) => { const c = bezDiak(cz); if (t.includes(' ' + c + ' ') || t.includes(' ' + c + ',')) t = t.replace(c, `§${kousky.push(en) - 1}§`); });
+    let znamych = 0, slov = 0;
+    const out = t.trim().split(/(\s+|,)/).map((w) => {
+      if (!w.trim() || w === ',') return w;
+      const m = w.match(/^§(\d+)§$/); if (m) { znamych++; slov++; return kousky[+m[1]]; }
+      if (/^\d/.test(w)) return w;
+      slov++;
+      const en = EN_SLOVA[w]; if (en) { znamych++; return en; }
+      return w;
+    }).join('').replace(/\s+,/g, ',').replace(/\s+/g, ' ').trim();
+    return slov && znamych / slov >= 0.6 ? out : '';
+  }
+  function navrhniAlergeny(nazev, popis) {
+    const t = bezDiak(nazev + ' ' + (popis || '')), a = new Set();
+    ALG_PRAVIDLA.forEach(([re, cisla]) => { if (re.test(t)) cisla.forEach((c) => a.add(c)); });
+    return [...a].sort((x, y) => x - y);
+  }
+  function navrhPro(p) {
+    const n = bezDiak(p.nazev).trim(); if (!n) return null;
+    let a = null, en = '';
+    // 1) stejné jídlo jinde v lístku
+    listek.forEach((k) => k.polozky.forEach((x) => { if (x !== p && bezDiak(x.nazev).trim() === n) { if (!a && x.a && x.a.length) a = [...x.a]; if (!en && x.en) en = x.en; } }));
+    // 2) historie denního menu (má alergeny)
+    if (!a && typeof HISTORIE !== 'undefined') { const h = HISTORIE.find((x) => bezDiak(x.nazev).trim() === n && x.alergeny && x.alergeny.length); if (h) a = [...h.alergeny]; }
+    // 3) podle slov v názvu
+    if (!a) a = navrhniAlergeny(p.nazev, p.popis);
+    if (!en) en = navrhniAnglicky(p.nazev);
+    return { a, en };
+  }
+  ed.addEventListener('change', (e) => {
+    if (e.target.dataset.f !== 'nazev') return;
+    const it = polozka(e.target); if (!it || !String(it.x.nazev || '').trim()) return;
+    const n = navrhPro(it.x); if (!n) return;
+    const doplneno = [];
+    if ((!it.x.a || !it.x.a.length) && n.a.length) { it.x.a = n.a; doplneno.push(`alergeny ${n.a.join(', ')}`); }
+    if (!it.x.en && n.en) { it.x.en = n.en; doplneno.push(`anglicky „${n.en}“`); }
+    if (doplneno.length) { oznac(); vykresli(); toast(`Navrhli jsme ${doplneno.join(' a ')}. Zkontrolujte prosím.`); }
+  });
+
+  /* ---------- Přetahování jídel v kategorii (myš i prst) za úchyt ⋮⋮ ---------- */
+  let tah = null;
+  ed.addEventListener('pointerdown', (e) => {
+    const h = e.target.closest('[data-tah]'); if (!h) return;
+    const r = h.closest('.lr'); if (!r) return;
+    e.preventDefault();
+    h.setPointerCapture(e.pointerId);
+    tah = { r, h, k: +r.dataset.k, kat: r.parentElement, pred: [...r.parentElement.querySelectorAll(':scope > .lr')].map((x) => +x.dataset.p) };
+    r.classList.add('tazeno');
+  });
+  ed.addEventListener('pointermove', (e) => {
+    if (!tah) return;
+    const radky = [...tah.kat.querySelectorAll(':scope > .lr')].filter((x) => x !== tah.r);
+    const cil = radky.find((x) => { const b = x.getBoundingClientRect(); return e.clientY < b.top + b.height / 2; });
+    tah.kat.insertBefore(tah.r, cil || tah.kat.querySelector(':scope > .add-meal'));
+    if (e.clientY < 90) window.scrollBy(0, -12); else if (e.clientY > innerHeight - 150) window.scrollBy(0, 12);
+  });
+  const pustit = () => {
+    if (!tah) return;
+    const nove = [...tah.kat.querySelectorAll(':scope > .lr')].map((x) => +x.dataset.p);
+    const pol = listek[tah.k].polozky, zmena = nove.some((v, i) => v !== tah.pred[i]);
+    tah.r.classList.remove('tazeno'); tah = null;
+    if (zmena) { const kopie = nove.map((i) => pol[i]); pol.length = 0; kopie.forEach((x) => pol.push(x)); otevrena = null; oznac(); toast('Pořadí změněno. Na webu se ukáže po uložení.'); }
+    vykresli();
+  };
+  ed.addEventListener('pointerup', pustit);
+  ed.addEventListener('pointercancel', pustit);
 
   async function uloz() {
     const btn = $('#lst-ulozit');
