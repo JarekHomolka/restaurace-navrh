@@ -196,6 +196,7 @@ function vykresliListek(root) {
   root.innerHTML = listek.map((k) => `
     <section class="menu-cat${k.id === 'pizza' ? ' pizza' : ''}" id="${k.id}" data-cat>
       <div class="menu-cat-head"><h2>${esc(k.nazev)}</h2>${k.pozn ? `<small>${esc(k.pozn)}</small>` : ''}</div>
+      ${k.id === 'pizza' ? `<a class="btn pizza-volat" href="tel:+420516472188">${ikonaTel}Objednat pizzu · 516 472 188</a>` : ''}
       <ul class="items">${k.polozky.map((p) => `
         <li class="item" data-veg="${p.bezMasa ? 1 : 0}" data-text="${esc((p.nazev + ' ' + (p.popis || '') + ' ' + (p.en || '')).toLowerCase())}">
           <div class="item-name">${esc(p.nazev)}</div>
@@ -206,6 +207,7 @@ function vykresliListek(root) {
         </li>`).join('')}
       </ul>
       ${k.pozn2 ? `<p class="cat-note">${esc(k.pozn2)}</p>` : ''}
+      ${k.id === 'pizza' ? `<a class="btn obrys pizza-volat" href="tel:+420516472188">${ikonaTel}Zavolat a objednat · 516 472 188</a>` : ''}
     </section>`).join('');
   // Odkaz na kategorii, která teď nic nenabízí, se schová
   $$('.chips .chip').forEach((c) => { c.style.display = document.getElementById((c.getAttribute('href') || '').slice(1)) ? '' : 'none'; });

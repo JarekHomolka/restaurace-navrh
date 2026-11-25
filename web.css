@@ -433,3 +433,7 @@ button.zajezdy-odkaz { width: 100%; font: inherit; text-align: left; cursor: poi
 .volba-zavrit { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border: 0; border-radius: 4px; background: transparent; color: var(--tlumeny); font-size: 26px; line-height: 1; cursor: pointer; }
 .volba-zavrit:hover { background: #f4e7e5; color: var(--vino); }
 .uvod .akce-radek button.btn { font-family: inherit; }
+
+/* Jídelní lístek: u pizzy tlačítko pro objednání telefonem */
+.pizza-volat { justify-self: start; margin: 10px 0 4px; }
+@media (max-width: 599px) { .pizza-volat { justify-self: stretch; width: 100%; } }
