@@ -129,6 +129,31 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 .list-row .price input { height: 40px; }
 .list-row .price::after { top: 10px; }
 .list-row .price { width: 96px; }
+/* Editor jídelního lístku */
+.lc-pozn { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
+.lr { border-bottom: 1px solid var(--line); }
+.lr:last-of-type { border-bottom: 0; }
+.lr-hlava { display: grid; grid-template-columns: minmax(0, 1fr) 104px; gap: 10px; align-items: center; padding: 6px 0; }
+.lr-nazev { display: grid; gap: 2px; text-align: left; min-height: 48px; padding: 6px 8px; margin-left: -8px; border: 0; border-radius: 4px; background: transparent; font: inherit; color: var(--ink); cursor: pointer; min-width: 0; }
+.lr-nazev:hover, .lr.open .lr-nazev { background: var(--wine-soft); }
+.lr-nazev b { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.lr-nazev small { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lr-nazev .badge { justify-self: start; }
+.lr .price { width: 104px; }
+.lr .price input { height: 44px; }
+.lr .price::after { top: 12px; }
+.lr.skryta .lr-nazev b, .lr.skryta .price input { color: var(--muted); }
+.lr.skryta .lr-nazev b { text-decoration: line-through; text-decoration-color: #c7b8a6; }
+.lr-detail { display: grid; gap: 10px; padding: 4px 0 14px; }
+.lr-2 { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+.lr-detail .field input { min-height: 44px; }
+.lr-detail .alg-pick { display: grid; }
+.lr-akce { display: flex; flex-wrap: wrap; gap: 8px; }
+.lr-akce .smazat { margin-left: auto; color: var(--wine); }
+.list-cat .add-meal { margin-top: 6px; }
+#v-listek { padding-bottom: 76px; }
+@media (min-width: 640px) { .lr-2 { grid-template-columns: 160px minmax(0, 1fr); } }
+@media (min-width: 1000px) { #v-listek { padding-bottom: 0; } }
 .inq { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 14px; display: grid; gap: 6px; }
 .inq-top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
 .inq-top h2 { font-size: 20px; }
@@ -299,9 +324,14 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 
       <!-- ===== Jídelní lístek ===== -->
       <section class="view-pane" id="v-listek">
-        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Jídelní lístek</h1><span class="status">Zveřejněno · upraveno 12. 11.</span></div><button class="btn btn-primary btn-sm">+ Nové jídlo</button></div>
-        <p class="tip"><span>💡</span><span>Cenu změníte přímo v řádku, pořadí přetažením. Jídlo, které dočasně nevaříte, stačí skrýt, smazat ho nemusíte.</span></p>
+        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Jídelní lístek</h1><span class="status" id="lst-stav">Zveřejněno</span></div></div>
+        <p class="tip"><span>💡</span><span>Cenu změníte přímo v řádku. Klepnutím na název upravíte popis, alergeny a pořadí. Jídlo, které dočasně nevaříte, stačí skrýt, smazat ho nemusíte.</span></p>
         <div class="list-ed" id="list-ed"></div>
+        <div class="save-bar lst-bar">
+          <small id="lst-hint">Lístek se na webu změní hned po uložení.</small>
+          <a class="btn btn-ghost" href="listek.html" target="_blank" style="background:#fff">Náhled</a>
+          <button class="btn btn-primary" id="lst-ulozit">Uložit a zveřejnit</button>
+        </div>
       </section>
 
       <!-- ===== Poptávky ===== -->
@@ -440,6 +470,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 <script src="historie-data.js?v=20261125e"></script>
 <script src="navrh-tydne.js?v=20261125e"></script>
 <script src="admin.js?v=20261125e"></script>
+<script src="admin-listek.js?v=20261125e"></script>
 <script src="admin-uzivatele.js?v=20261125e"></script>
 </body>
 </html>

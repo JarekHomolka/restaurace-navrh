@@ -271,10 +271,7 @@ function tisk() {
   window.print();
 }
 
-/* ---------- Jídelní lístek (zjednodušená ukázka) ---------- */
-function vykresliListekAdmin() {
-  $('#list-ed').innerHTML = LISTEK.map((k) => `<div class="list-cat"><h2>${esc(k.nazev)} <span class="badge">${k.polozky.length} položek</span></h2>${k.polozky.map((p) => `<div class="list-row"><span class="grip">⋮⋮</span><span>${esc(p.nazev)}</span><label class="price"><input value="${p.cena}" inputmode="numeric"></label></div>`).join('')}</div>`).join('');
-}
+/* Jídelní lístek má vlastní editor v admin-listek.js */
 
 /* ---------- Události ---------- */
 function prepniPohled(v) {
@@ -296,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     window.addEventListener('beforeunload', (e) => { if (spinave.size) { ulozKonceptyNaServer(); e.preventDefault(); } });
   } else nacti();
-  vykresliEditor(); vykresliStavTydne(); vykresliListekAdmin();
+  vykresliEditor(); vykresliStavTydne();
   $$('[data-view]').forEach((b) => b.addEventListener('click', () => prepniPohled(b.dataset.view)));
 
   $('#ed-tabs').addEventListener('click', (e) => { const b = e.target.closest('.day-tab'); if (!b) return; den = +b.dataset.i; otevrenyPicker = null; vykresliEditor(); });

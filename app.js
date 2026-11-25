@@ -183,8 +183,17 @@ function stavOtevreni() {
 }
 
 /* ---------- Jídelní lístek ---------- */
+/* Jídelní lístek: v ostrém webu ho vloží server (window.RNM_LISTEK), v ukázce může být upravený v administraci (localStorage). */
+const KLIC_LISTEK = 'rnm-listek-v1';
+function aktualniListek() {
+  if (window.RNM_LISTEK) return window.RNM_LISTEK;
+  if (!RNM_SERVER) { try { const s = localStorage.getItem(KLIC_LISTEK); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště */ } }
+  return LISTEK;
+}
 function vykresliListek(root) {
-  root.innerHTML = LISTEK.map((k) => `
+  // Skrytá jídla (dočasně se nevaří) se nezobrazují, prázdná kategorie taky ne
+  const listek = aktualniListek().map((k) => ({ ...k, polozky: k.polozky.filter((p) => !p.skryto) })).filter((k) => k.polozky.length);
+  root.innerHTML = listek.map((k) => `
     <section class="menu-cat${k.id === 'pizza' ? ' pizza' : ''}" id="${k.id}" data-cat>
       <div class="menu-cat-head"><h2>${esc(k.nazev)}</h2>${k.pozn ? `<small>${esc(k.pozn)}</small>` : ''}</div>
       <ul class="items">${k.polozky.map((p) => `
@@ -198,6 +207,8 @@ function vykresliListek(root) {
       </ul>
       ${k.pozn2 ? `<p class="cat-note">${esc(k.pozn2)}</p>` : ''}
     </section>`).join('');
+  // Odkaz na kategorii, která teď nic nenabízí, se schová
+  $$('.chips .chip').forEach((c) => { c.style.display = document.getElementById((c.getAttribute('href') || '').slice(1)) ? '' : 'none'; });
 
   const hledat = $('#hledat'), veg = $('#bezmasa');
   const filtr = () => {
