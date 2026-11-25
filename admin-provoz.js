@@ -14,7 +14,7 @@
     { src: 'assets/foto/sladke-mameni.jpg', alt: 'Sladký bar na oslavě' },
   ];
   const KLIC_GALERIE = 'rnm-galerie-v1';
-  let provoz, galerie, maxFotek = 12, zmeneno = false, upraveno = null, upravil = null;
+  let provoz, galerie, skupiny, maxFotek = 12, zmeneno = false, upraveno = null, upravil = null;
 
   /* ---------- stav ---------- */
   const kdy = (s) => { if (!s) return ''; const d = new Date(s); return `${d.getDate()}. ${d.getMonth() + 1}. v ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -29,9 +29,10 @@
     if (RNM_SERVER) {
       const r = await rnmApi('/api/admin/obsah');
       provoz = r.provoz || kopie(VYCHOZI_PROVOZ); galerie = r.galerie; maxFotek = r.maxFotek || 12;
+      skupiny = r.skupiny || kopie(VYCHOZI_SKUPINY);
       upraveno = r.provozUpraveno; upravil = r.provozUpravil;
     } else {
-      provoz = kopie(aktualniProvoz());
+      provoz = kopie(aktualniProvoz()); skupiny = kopie(aktualniSkupiny());
       try { galerie = JSON.parse(localStorage.getItem(KLIC_GALERIE)) || kopie(VYCHOZI_GALERIE); } catch (e) { galerie = kopie(VYCHOZI_GALERIE); }
     }
     provoz.vyjimky = provoz.vyjimky || []; provoz.oznameni = provoz.oznameni || { text: '', od: '', do: '' };
@@ -113,13 +114,46 @@
     try {
       if (RNM_SERVER) {
         const r = await rnmApi('/api/admin/provoz', { provoz }, 'PUT');
+        skupiny = (await rnmApi('/api/admin/skupiny', { skupiny: ctiSkupiny() }, 'PUT')).skupiny;
         provoz = r.provoz; upraveno = r.upraveno; upravil = (Ucty.aktualni() || {}).jmeno || upravil;
-      } else { localStorage.setItem(KLIC_PROVOZ, JSON.stringify(provoz)); upraveno = new Date().toISOString(); }
+      } else { localStorage.setItem(KLIC_PROVOZ, JSON.stringify(provoz)); localStorage.setItem(KLIC_SKUPINY, JSON.stringify(ctiSkupiny())); upraveno = new Date().toISOString(); }
+      vykresliSkupinyEd();
       zmeneno = false; ukazStav(); vykresliVyjimky(); toast('✓ Uloženo. Na webu je to hned.');
     } catch (e) { toast('Nepodařilo se uložit: ' + e.message); }
     b.disabled = false;
   }
   $('#pv-ulozit').addEventListener('click', ulozProvoz);
+
+  /* ---------- nabídka pro skupinové zájezdy ---------- */
+  function vykresliSkupinyEd() {
+    $('#sk-nadpis').value = skupiny.nadpis || '';
+    $('#sk-polevka').value = skupiny.polevka || '';
+    $('#sk-cena-bez').value = skupiny.cenaBez || '';
+    $('#sk-cena-s').value = skupiny.cenaS || '';
+    $('#sk-pozn').value = skupiny.poznamka || '';
+    $('#sk-jidla').innerHTML = (skupiny.jidla || []).map((j, i) => `
+      <div class="vyj-radek" data-i="${i}">
+        <input type="text" data-f="jidlo" value="${esc(j)}" maxlength="160" aria-label="Jídlo ${i + 1}" placeholder="Název jídla a přílohy">
+        <button type="button" class="del" data-a="smazat" title="Odebrat jídlo" aria-label="Odebrat jídlo ${i + 1}">×</button>
+      </div>`).join('');
+  }
+  const ctiSkupiny = (iPrazdne) => ({
+    nadpis: $('#sk-nadpis').value, polevka: $('#sk-polevka').value,
+    jidla: $$('#sk-jidla [data-f="jidlo"]').map((i) => i.value).filter((x) => iPrazdne || x.trim()),
+    cenaBez: $('#sk-cena-bez').value.replace(/\D/g, ''), cenaS: $('#sk-cena-s').value.replace(/\D/g, ''), poznamka: $('#sk-pozn').value,
+  });
+  $('#skupiny-ed').addEventListener('input', (e) => {
+    if (e.target.id === 'sk-cena-bez' || e.target.id === 'sk-cena-s') e.target.value = e.target.value.replace(/\D/g, '');
+    oznac();
+  });
+  $('#sk-jidla').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-a="smazat"]'); if (!b) return;
+    skupiny = ctiSkupiny(true); skupiny.jidla.splice(+b.closest('[data-i]').dataset.i, 1); oznac(); vykresliSkupinyEd();
+  });
+  $('#sk-pridat').addEventListener('click', () => {
+    skupiny = ctiSkupiny(true); skupiny.jidla.push(''); oznac(); vykresliSkupinyEd();
+    const i = $$('#sk-jidla [data-f="jidlo"]').pop(); if (i) i.focus();
+  });
 
   /* ---------- galerie ---------- */
   const zprava = (t) => { $('#gal-zprava').textContent = t || ''; };
@@ -207,7 +241,7 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     try { await nacti(); } catch (e) { $('#v-vice .list-ed').innerHTML = `<p class="tip"><span>⚠️</span><span>${esc(e.message)}</span></p>`; return; }
-    vykresliOznameniEd(); vykresliDobuEd(); vykresliVyjimky(); vykresliGalerieEd(); ukazStav();
+    vykresliOznameniEd(); vykresliDobuEd(); vykresliVyjimky(); vykresliSkupinyEd(); vykresliGalerieEd(); ukazStav();
     if (location.hash === '#fotky') { prepniPohled('vice'); prepni(); }
   });
 })();

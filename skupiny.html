@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261125k">
+<link rel="stylesheet" href="web.css?v=20261125l">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="parkoviste-data.js?v=20261125k" defer></script>
-<script src="app.js?v=20261125k" defer></script>
+<script src="parkoviste-data.js?v=20261125l" defer></script>
+<script src="app.js?v=20261125l" defer></script>
 </head>
 <body>
 
@@ -87,11 +87,19 @@
 
   <section class="sekce">
     <div class="wrap">
-      <div class="sekce-hlava"><h2>Menu pro skupiny</h2><p>Typické sestavy pro zájezdy. Upravíme je podle vás, i pro vegetariány a děti. Cenu za osobu pošleme v nabídce.</p></div>
-      <div class="menu-skupiny">
-        <div><h3>Česká klasika</h3><p>Hovězí vývar s játrovými knedlíčky, svíčková na smetaně s houskovým knedlíkem, nápoj.</p></div>
-        <div><h3>Víkendová</h3><p>Polévka podle sezony, pečené kachní stehno se zelím a knedlíkem, zmrzlinový pohár.</p></div>
-        <div><h3>Rychlý oběd</h3><p>Polévka z denní nabídky, smažený řízek s bramborovým salátem, bezmasá varianta smažený sýr.</p></div>
+      <div class="nabidka-sk" id="nabidka" data-skupiny-menu>
+        <div class="sekce-hlava"><h2>Naše nabídka pro skupinové zájezdy</h2></div>
+        <div class="nabidka-karta">
+          <div class="polevka-radek"><span class="k">Polévka</span><b>Hovězí vývar s játrovými knedlíčky a nudlemi</b></div>
+          <ol class="jidla">
+            <li><span class="c">1</span><span class="n">Moravský vrabec, zelí, houskový knedlík</span></li>
+            <li><span class="c">2</span><span class="n">Kuřecí steak z grilu, šťouchaný brambor, zeleninová obloha</span></li>
+            <li><span class="c">3</span><span class="n">Smažený vepřový řízek, bramborový salát</span></li>
+          </ol>
+          <p class="nabidka-cena"><span><b>180 Kč</b> za porci bez polévky</span><span><b>200 Kč</b> za porci s polévkou</span></p>
+        </div>
+        <p class="nabidka-pozn">Menu upravíme podle vás, i pro vegetariány a děti.</p>
+        <a class="btn" href="#poptavka">Poslat poptávku</a>
       </div>
     </div>
   </section>

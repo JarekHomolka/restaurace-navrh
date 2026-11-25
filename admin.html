@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Administrace – Na Městečku</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="auth.js?v=20261125k"></script>
+<script src="auth.js?v=20261125l"></script>
 <script>Ucty.vyzadujPrihlaseni();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125k">
+<link rel="stylesheet" href="styles.css?v=20261125l">
 <style>
 /* Administrace: na telefonu jeden sloupec se spodní navigací, na počítači boční panel a živý náhled vpravo. */
 body { background: #f3f0e9; padding-bottom: 140px; }
@@ -168,6 +168,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 .vyj-radek { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .vyj input[type="text"] { flex: 1 1 180px; height: 44px; border-radius: 4px; border: 1px solid #d9ccbd; background: #fff; padding: 0 12px; font: inherit; font-size: 16px; min-width: 0; }
 .vyj.minula { opacity: .6; }
+#sk-jidla input { flex: 1 1 200px; height: 44px; border-radius: 4px; border: 1px solid #d9ccbd; background: #fff; padding: 0 12px; font: inherit; font-size: 16px; min-width: 0; }
 .gal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .gal-f { display: grid; gap: 6px; align-content: start; }
 .gal-f img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: #eee6da; }
@@ -394,6 +395,19 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
             <div id="vyjimky-seznam" class="vyj-seznam"></div>
             <button type="button" class="add-meal" id="vyj-pridat">+ Přidat výjimku</button>
           </div>
+          <div class="list-cat" id="skupiny-ed">
+            <h2>Nabídka pro skupinové zájezdy</h2>
+            <p class="lc-pozn">Ukazuje se na stránce Zájezdy a oslavy nad formulářem poptávky.</p>
+            <div class="field"><label for="sk-nadpis">Nadpis</label><input id="sk-nadpis" maxlength="100"></div>
+            <div class="field"><label for="sk-polevka">Polévka (nechte prázdné, když není)</label><input id="sk-polevka" maxlength="160"></div>
+            <div class="field"><span class="lbl">Jídla na výběr</span><div id="sk-jidla" class="vyj-seznam"></div></div>
+            <button type="button" class="add-meal" id="sk-pridat">+ Přidat jídlo</button>
+            <div class="lr-2">
+              <div class="field"><label for="sk-cena-bez">Cena za porci bez polévky (Kč)</label><input id="sk-cena-bez" inputmode="numeric"></div>
+              <div class="field"><label for="sk-cena-s">Cena za porci s polévkou (Kč)</label><input id="sk-cena-s" inputmode="numeric"></div>
+            </div>
+            <div class="field"><label for="sk-pozn">Poznámka pod nabídkou</label><input id="sk-pozn" maxlength="300"></div>
+          </div>
           <div class="list-cat" id="galerie-ed">
             <h2>Fotky na úvodní stránce <span class="badge" id="gal-pocet"></span></h2>
             <p class="lc-pozn">První fotka je na webu velká. Fotky z telefonu se před nahráním samy zmenší. Změny fotek se ukládají hned.</p>
@@ -403,7 +417,7 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
           </div>
         </div>
         <div class="save-bar pv-bar">
-          <small>Oznámení a otevírací doba se změní hned po uložení.</small>
+          <small>Oznámení, otevírací doba a nabídka pro zájezdy se změní hned po uložení.</small>
           <a class="btn btn-ghost" href="uvod.html#kontakt" target="_blank" style="background:#fff">Náhled</a>
           <button class="btn btn-primary" id="pv-ulozit">Uložit a zveřejnit</button>
         </div>
@@ -519,12 +533,12 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 <div class="toast" id="toast"></div>
 <div id="tisk"></div>
 
-<script src="app.js?v=20261125k"></script>
-<script src="historie-data.js?v=20261125k"></script>
-<script src="navrh-tydne.js?v=20261125k"></script>
-<script src="admin.js?v=20261125k"></script>
-<script src="admin-listek.js?v=20261125k"></script>
-<script src="admin-provoz.js?v=20261125k"></script>
-<script src="admin-uzivatele.js?v=20261125k"></script>
+<script src="app.js?v=20261125l"></script>
+<script src="historie-data.js?v=20261125l"></script>
+<script src="navrh-tydne.js?v=20261125l"></script>
+<script src="admin.js?v=20261125l"></script>
+<script src="admin-listek.js?v=20261125l"></script>
+<script src="admin-provoz.js?v=20261125l"></script>
+<script src="admin-uzivatele.js?v=20261125l"></script>
 </body>
 </html>

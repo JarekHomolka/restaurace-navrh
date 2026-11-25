@@ -436,6 +436,33 @@ function vykresliGalerii() {
   box.innerHTML = g.map((f) => `<img src="${esc(f.src || '/foto/' + f.id + '.jpg')}" alt="${esc(f.alt || '')}" loading="lazy">`).join('');
 }
 
+/* ---------- Nabídka pro skupinové zájezdy (stránka Zájezdy a oslavy, upravuje se v administraci) ---------- */
+const KLIC_SKUPINY = 'rnm-skupiny-v1';
+const VYCHOZI_SKUPINY = {
+  nadpis: 'Naše nabídka pro skupinové zájezdy',
+  polevka: 'Hovězí vývar s játrovými knedlíčky a nudlemi',
+  jidla: ['Moravský vrabec, zelí, houskový knedlík', 'Kuřecí steak z grilu, šťouchaný brambor, zeleninová obloha', 'Smažený vepřový řízek, bramborový salát'],
+  cenaBez: 180, cenaS: 200, poznamka: 'Menu upravíme podle vás, i pro vegetariány a děti.',
+};
+function aktualniSkupiny() {
+  if (window.RNM_SKUPINY) return window.RNM_SKUPINY;
+  if (!RNM_SERVER) { try { const s = localStorage.getItem(KLIC_SKUPINY); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště */ } }
+  return VYCHOZI_SKUPINY;
+}
+function vykresliSkupinyMenu() {
+  const box = $('[data-skupiny-menu]');
+  if (!box || (!window.RNM_SKUPINY && RNM_SERVER)) return;   // bez dat zůstává text ze stránky
+  const n = aktualniSkupiny(), ceny = [];
+  if (n.cenaBez) ceny.push(`<span><b>${kc(n.cenaBez)}</b> za porci${n.polevka ? ' bez polévky' : ''}</span>`);
+  if (n.cenaS && n.polevka) ceny.push(`<span><b>${kc(n.cenaS)}</b> za porci s polévkou</span>`);
+  $('h2', box).textContent = n.nadpis;
+  $('.nabidka-karta', box).innerHTML = `
+    ${n.polevka ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(n.polevka)}</b></div>` : ''}
+    <ol class="jidla">${n.jidla.map((j, i) => `<li><span class="c">${i + 1}</span><span class="n">${esc(j)}</span></li>`).join('')}</ol>
+    ${ceny.length ? `<p class="nabidka-cena">${ceny.join('')}</p>` : ''}`;
+  $('.nabidka-pozn', box).textContent = n.poznamka || '';
+}
+
 /* Hodnocení hostů. V ostrém webu se čísla obnovují automaticky (Google Places API, Firmy.cz).
    Na úvod jde vždy zdroj s vyšší známkou; při shodě ten s víc hodnoceními.
    Zdroj s méně než MIN_HODNOCENI recenzemi se nebere, aby číslo bylo reprezentativní. */
@@ -503,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-karta]').forEach(vykresliKartu);
   vykresliStav();
   vykresliGalerii();
+  vykresliSkupinyMenu();
   vykresliHodnoceni();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });

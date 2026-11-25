@@ -371,3 +371,13 @@ body.lista-skryta .lista { transform: translateY(110%); }
 
 /* Oddělení víkendové nabídky v ukázce z lístku na úvodu */
 .cedule li.cedule-oddel { display: block; padding: 20px 0 8px; border-top: 0; font-weight: 700; font-size: 16px; color: var(--vino); }
+
+/* Nabídka pro skupinové zájezdy (upravuje se v administraci: Fotky a texty) */
+.nabidka-sk { display: grid; gap: 16px; max-width: 680px; }
+.nabidka-sk .sekce-hlava { margin-bottom: 0; }
+.nabidka-karta { background: #fff; border: 1px solid var(--linka); border-radius: 6px; padding: 16px; display: grid; gap: 4px; }
+.nabidka-cena { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 8px 0 0; padding-top: 12px; border-top: 1px solid var(--linka); font-size: 16px; color: var(--tlumeny); }
+.nabidka-cena b { color: var(--vino); font-size: 20px; font-weight: 800; }
+.nabidka-pozn { margin: 0; color: var(--tlumeny); }
+.nabidka-pozn:empty { display: none; }
+.nabidka-sk .btn { justify-self: start; }
