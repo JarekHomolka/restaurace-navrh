@@ -524,6 +524,13 @@ function vykresliHodnoceni() {
   });
 }
 
+/* Víkend (sobota + neděle) je v týdnu šestá položka dny[5]: speciality jen na tento termín. */
+const VIKEND = 5;
+const maObsah = (d) => !!d && (d.zavreno || !!(d.polevka && d.polevka.nazev) || (d.jidla || []).some((j) => j.nazev && String(j.nazev).trim()));
+const datumyDne = (od, i) => (i === VIKEND ? `${datumDne(od, 5).getDate()}.–${fmt(datumDne(od, 6))}` : fmt(datumDne(od, i)));
+const nazevDne = (od, i) => (i === VIKEND ? `Víkend ${datumyDne(od, i)}` : `${DNY[i]} ${fmt(datumDne(od, i))}`);
+const zkratkaDne = (i) => (i === VIKEND ? 'So–Ne' : DNY_KRATCE[i]);
+
 /* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 15:00 a o víkendu nejbližší další všední den. */
 function vykresliKartu(root) {
   const tyden = nactiTyden(), now = ted();
@@ -532,12 +539,19 @@ function vykresliKartu(root) {
   const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
   const cil = new Date(dnes);
   if (now.getHours() >= 15 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
-  let vybrany = tyden.dny.findIndex((_, i) => stejnyDen(datumDne(tyden.od, i), cil));
-  if (vybrany < 0) { const dalsi = tyden.dny.findIndex((_, i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi >= 0 ? dalsi : 0; }
-  const a = datumDne(tyden.od, 0), b = datumDne(tyden.od, tyden.dny.length - 1);
+  // Dlaždice: Po–Pá, a víkend jen když má vyplněné speciality
+  const vikend = maObsah(tyden.dny[VIKEND]);
+  const dlazdice = [0, 1, 2, 3, 4].concat(vikend ? [VIKEND] : []);
+  let vybrany = [0, 1, 2, 3, 4].find((i) => stejnyDen(datumDne(tyden.od, i), cil));
+  if (vybrany === undefined) { const dalsi = [0, 1, 2, 3, 4].find((i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi !== undefined ? dalsi : 0; }
+  // V pátek po 15:00 a o víkendu se ukáže víkendová nabídka, pokud je
+  const so = datumDne(tyden.od, 5), ne = datumDne(tyden.od, 6), pa = datumDne(tyden.od, 4);
+  const vikendDnes = stejnyDen(dnes, so) || stejnyDen(dnes, ne);
+  if (vikend && (vikendDnes || (stejnyDen(dnes, pa) && now.getHours() >= 15))) vybrany = VIKEND;
+  const a = datumDne(tyden.od, 0), b = vikend ? ne : pa;
   root.innerHTML = `
     <div class="karta-hlava"><h2>Denní menu</h2><small>${a.getDate()}.–${fmt(b)} ${b.getFullYear()}</small></div>
-    <div class="dny" role="tablist" aria-label="Den v týdnu">${tyden.dny.map((_, i) => { const d = datumDne(tyden.od, i); return `<button class="den-btn${stejnyDen(d, dnes) ? ' dnes' : ''}" role="tab" aria-selected="${i === vybrany}" data-i="${i}"><b>${DNY_KRATCE[i]}</b><span>${fmt(d)}</span></button>`; }).join('')}</div>
+    <div class="dny${vikend ? ' s-vikendem' : ''}" role="tablist" aria-label="Den v týdnu">${dlazdice.map((i) => { const dnesek = i === VIKEND ? vikendDnes : stejnyDen(datumDne(tyden.od, i), dnes); return `<button class="den-btn${dnesek ? ' dnes' : ''}${i === VIKEND ? ' vikend' : ''}" role="tab" aria-selected="${i === vybrany}" data-i="${i}"><b>${zkratkaDne(i)}</b><span>${datumyDne(tyden.od, i)}</span></button>`; }).join('')}</div>
     <div class="karta-telo" role="tabpanel"></div>
     <div class="karta-pata">
       <a class="btn btn-plna" href="tel:+420516472188" data-objednat>${ikonaTel}Objednat s sebou · ${TEL_MENU}</a>
@@ -547,10 +561,11 @@ function vykresliKartu(root) {
   const ukaz = (i) => {
     $$('.den-btn', root).forEach((t) => t.setAttribute('aria-selected', String(+t.dataset.i === i)));
     const d = datumDne(tyden.od, i), den = tyden.dny[i];
-    const stitek = stejnyDen(d, dnes) ? '<span class="stitek">Dnes</span>' : stejnyDen(d, zitra) ? '<span class="stitek">Zítra</span>' : '';
-    const hlava = `<div class="karta-den">${DNY[i]} ${fmt(d)} ${stitek}</div>`;
+    const jeDnes = i === VIKEND ? vikendDnes : stejnyDen(d, dnes), jeZitra = i === VIKEND ? stejnyDen(zitra, so) : stejnyDen(d, zitra);
+    const stitek = jeDnes ? '<span class="stitek">Dnes</span>' : jeZitra ? '<span class="stitek">Zítra</span>' : '';
+    const hlava = `<div class="karta-den">${nazevDne(tyden.od, i)} ${stitek}</div>`;
     // Svátek nebo dovolená z administrace (Fotky a texty → výjimky) má přednost před menu
-    const vyj = (aktualniProvoz().vyjimky || []).find((v) => v.datum === isoDen(d) && v.zavreno);
+    const vyj = i === VIKEND ? null : (aktualniProvoz().vyjimky || []).find((v) => v.datum === isoDen(d) && v.zavreno);
     if (vyj) { telo.innerHTML = hlava + `<p class="karta-prazdna">Tento den máme zavřeno${vyj.text ? ` (${esc(vyj.text)})` : ''}.</p>`; return; }
     if (!den || den.zavreno || !den.jidla || !den.jidla.length) {
       telo.innerHTML = hlava + `<p class="karta-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : 'Menu na tento den ještě připravujeme.'}</p>`;

@@ -414,3 +414,7 @@ body.lista-skryta .lista { transform: translateY(110%); }
 /* Pizza s sebou: na počítači vlevo pod tlačítky a nad hodnocením, na mobilu pod kartou denního menu */
 .pizza-pc { display: none; }
 @media (min-width: 900px) { .pizza-pc { display: flex; margin-top: 8px; max-width: 460px; } .pizza-mobil { display: none; } }
+
+/* Karta menu s víkendovou nabídkou: šest dlaždic (Po–Pá + So–Ne) */
+.dny.s-vikendem { grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.35fr); }
+.den-btn.vikend span { white-space: nowrap; }
