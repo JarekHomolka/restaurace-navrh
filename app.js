@@ -207,7 +207,6 @@ function vykresliListek(root) {
         </li>`).join('')}
       </ul>
       ${k.pozn2 ? `<p class="cat-note">${esc(k.pozn2)}</p>` : ''}
-      ${k.id === 'pizza' ? `<a class="btn obrys pizza-volat" href="tel:+420516472188">${ikonaTel}Zavolat a objednat · 516 472 188</a>` : ''}
     </section>`).join('');
   // Odkaz na kategorii, která teď nic nenabízí, se schová
   $$('.chips .chip').forEach((c) => { c.style.display = document.getElementById((c.getAttribute('href') || '').slice(1)) ? '' : 'none'; });
