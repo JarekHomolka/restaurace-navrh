@@ -570,6 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (mk) { if (typeof L !== 'undefined') startMapky(); else window.addEventListener('load', startMapky); }
   // Formulář poptávky: v ostrém webu se uloží na server a objeví se v administraci
   const f = $('#poptavka-form');
+  // Odkaz „Poptat raut“ (skupiny.html?typ=raut) rovnou vybere druh akce
+  const predvyber = new URLSearchParams(location.search).get('typ');
+  if (f && predvyber) { const r = f.querySelector(`[name="typ"][value="${CSS.escape(predvyber)}"]`); if (r) r.checked = true; }
   if (f) f.addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = $('.dekujeme'), chybaEl = $('#poptavka-chyba'), btn = f.querySelector('button[type="submit"]');

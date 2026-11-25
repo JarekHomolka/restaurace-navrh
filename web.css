@@ -59,7 +59,11 @@ p { margin: 0; }
 .mobilni-nav a { display: block; padding: 14px var(--gutter); border-bottom: 1px solid var(--linka); color: var(--inkoust); font-weight: 600; text-decoration: none; }
 @media (min-width: 900px) {
   .hlavicka .wrap { height: 72px; }
+}
+/* Celé menu (5 položek + telefon) se vejde až od 1100 px, do té doby zůstává tlačítko menu */
+@media (min-width: 1100px) {
   .nav, .hlavicka .tel { display: flex; }
+  .nav a, .hlavicka .tel { white-space: nowrap; }
   .menu-tlacitko, .mobilni-nav, .mobilni-nav.open { display: none; }
 }
 
