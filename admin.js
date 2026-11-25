@@ -134,7 +134,7 @@ function vykresliEditor() {
   const body = $('#ed-body');
   body.classList.toggle('is-closed', !!d.zavreno);
   body.innerHTML = `
-    ${den === VIKEND ? '<p class="tip vikend-tip"><span>🍽️</span><span><b>Víkendová nabídka (sobota a neděle).</b> Speciality jen na tento víkend. Na webu se ukážou jako dlaždice So–Ne v pátek od 15:00 a o víkendu. Když necháte prázdné, dlaždice se neukáže.</span></p>' : ''}
+    ${den === VIKEND ? '<p class="tip vikend-tip"><span>🍽️</span><span><b>Víkendová nabídka (sobota a neděle).</b> Speciality jen na tento víkend. Na webu se ukážou jako dlaždice So–Ne v pátek od 17:00 a o víkendu. Když necháte prázdné, dlaždice se neukáže.</span></p>' : ''}
     <div class="row-head"><h2>${nazevDne(t.od, den)}</h2><div class="row-akce"><button type="button" class="btn btn-ghost btn-sm" data-k="vymazat">Vymazat den</button><label class="sw"><input type="checkbox" data-k="zavreno" ${d.zavreno ? 'checked' : ''}>Zavřeno</label></div></div>
     <div class="closed-note field"><label for="pozn">Co uvidí hosté</label><input id="pozn" data-k="poznamka" value="${esc(d.poznamka || '')}" placeholder="Např. Státní svátek – zavřeno"></div>
     <div class="open-only soup-ed" data-m="s">

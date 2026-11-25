@@ -324,9 +324,9 @@ function vykresliTabuli(root) {
   const tyden = nactiTyden(), now = ted();
   const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
   const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
-  // Do 15:00 ve všední den dnešek, jinak nejbližší další všední den
+  // Do 17:00 ve všední den dnešek, jinak nejbližší další všední den
   const cil = new Date(dnes);
-  if (now.getHours() >= 15 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  if (now.getHours() >= 17 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
   const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
   const kdy = stejnyDen(cil, dnes) ? 'Dnes' : stejnyDen(cil, zitra) ? 'Zítra' : V_DEN[cil.getDay()][0].toUpperCase() + V_DEN[cil.getDay()].slice(1);
   const datumText = `${cil.getDate()}. ${MESICE_2P[cil.getMonth()]}`;
@@ -531,23 +531,23 @@ const datumyDne = (od, i) => (i === VIKEND ? `${datumDne(od, 5).getDate()}.–${
 const nazevDne = (od, i) => (i === VIKEND ? `Víkend ${datumyDne(od, i)}` : `${DNY[i]} ${fmt(datumDne(od, i))}`);
 const zkratkaDne = (i) => (i === VIKEND ? 'So–Ne' : DNY_KRATCE[i]);
 
-/* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 15:00 a o víkendu nejbližší další všední den. */
+/* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 17:00 a o víkendu nejbližší další všední den. */
 function vykresliKartu(root) {
   const tyden = nactiTyden(), now = ted();
   const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
   const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
   const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
   const cil = new Date(dnes);
-  if (now.getHours() >= 15 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  if (now.getHours() >= 17 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
   // Dlaždice: Po–Pá, a víkend jen když má vyplněné speciality
   const vikend = maObsah(tyden.dny[VIKEND]);
   const dlazdice = [0, 1, 2, 3, 4].concat(vikend ? [VIKEND] : []);
   let vybrany = [0, 1, 2, 3, 4].find((i) => stejnyDen(datumDne(tyden.od, i), cil));
   if (vybrany === undefined) { const dalsi = [0, 1, 2, 3, 4].find((i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi !== undefined ? dalsi : 0; }
-  // V pátek po 15:00 a o víkendu se ukáže víkendová nabídka, pokud je
+  // V pátek po 17:00 a o víkendu se ukáže víkendová nabídka, pokud je
   const so = datumDne(tyden.od, 5), ne = datumDne(tyden.od, 6), pa = datumDne(tyden.od, 4);
   const vikendDnes = stejnyDen(dnes, so) || stejnyDen(dnes, ne);
-  if (vikend && (vikendDnes || (stejnyDen(dnes, pa) && now.getHours() >= 15))) vybrany = VIKEND;
+  if (vikend && (vikendDnes || (stejnyDen(dnes, pa) && now.getHours() >= 17))) vybrany = VIKEND;
   const a = datumDne(tyden.od, 0), b = vikend ? ne : pa;
   root.innerHTML = `
     <div class="karta-hlava"><h2>Denní menu</h2><small>${a.getDate()}.–${fmt(b)} ${b.getFullYear()}</small></div>
