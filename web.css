@@ -411,3 +411,6 @@ body.lista-skryta .lista { transform: translateY(110%); }
 
 /* Rauty: zdůraznění „raut s sebou“ v úvodní větě */
 .zvyrazneni-dovoz { color: var(--vino); }
+/* Pizza s sebou: na počítači vlevo pod tlačítky a nad hodnocením, na mobilu pod kartou denního menu */
+.pizza-pc { display: none; }
+@media (min-width: 900px) { .pizza-pc { display: flex; margin-top: 20px; max-width: 460px; } .pizza-mobil { display: none; } }
