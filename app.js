@@ -10,7 +10,7 @@ const KLIC_TYDNE = 'rnm-tyden-v1';
 /* Pondělí je opsané ze současného webu, zbytek týdne a ceny jsou ukázka. */
 const VYCHOZI_TYDEN = {
   od: '2026-11-16',
-  cenaPoznamka: 'Polévka je v ceně, výdej 10–14 h, i s sebou.',
+  cenaPoznamka: 'Polévka je v ceně, výdej 10–15 h, i s sebou.',
   dny: [
     { polevka: { nazev: 'Brokolicová', alergeny: [7] }, jidla: [
       { nazev: 'Vepřový guláš, houskový knedlík', alergeny: [1, 3, 7], cena: 145 },
@@ -309,9 +309,9 @@ function vykresliTabuli(root) {
   const tyden = nactiTyden(), now = ted();
   const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
   const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
-  // Do 14:00 ve všední den dnešek, jinak nejbližší další všední den
+  // Do 15:00 ve všední den dnešek, jinak nejbližší další všední den
   const cil = new Date(dnes);
-  if (now.getHours() >= 14 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  if (now.getHours() >= 15 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
   const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
   const kdy = stejnyDen(cil, dnes) ? 'Dnes' : stejnyDen(cil, zitra) ? 'Zítra' : V_DEN[cil.getDay()][0].toUpperCase() + V_DEN[cil.getDay()].slice(1);
   const datumText = `${cil.getDate()}. ${MESICE_2P[cil.getMonth()]}`;
@@ -379,7 +379,7 @@ function vykresliStav() {
   const now = ted(), h = now.getHours() + now.getMinutes() / 60, dnes = dobaDne(now);
   const vDnes = (aktualniProvoz().vyjimky || []).find((x) => x.datum === isoDen(now));
   const otevreno = !!dnes && h >= naHodiny(dnes.od) && h < naHodiny(dnes.do);
-  const obedy = otevreno && !vDnes && now.getDay() >= 1 && now.getDay() <= 5 && h >= 10 && h < 14;
+  const obedy = otevreno && !vDnes && now.getDay() >= 1 && now.getDay() <= 5 && h >= 10 && h < 15;
   // nejbližší otevření: dnes později, nebo některý z dalších 14 dní
   let dalsi = '';
   if (!otevreno) {
@@ -393,7 +393,7 @@ function vykresliStav() {
   $$('[data-stav]').forEach((el) => {
     el.classList.toggle('zavreno', !otevreno);
     el.textContent = !otevreno ? `Teď zavřeno${vDnes && vDnes.text ? ` (${vDnes.text})` : ''}${dalsi ? ' · ' + dalsi : ''}`
-      : obedy ? 'Teď vaříme obědy, menu do 14:00' : `Otevřeno, dnes do ${casDlouze(dnes.do)}`;
+      : obedy ? 'Teď vaříme obědy, menu do 15:00' : `Otevřeno, dnes do ${casDlouze(dnes.do)}`;
   });
   vykresliDobu(now);
   vykresliOznameni(now);
@@ -457,14 +457,14 @@ function vykresliHodnoceni() {
   });
 }
 
-/* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 14:00 a o víkendu nejbližší další všední den. */
+/* Karta denního menu s dlaždicemi Po–Pá. Předvybraný je dnešek, po 15:00 a o víkendu nejbližší další všední den. */
 function vykresliKartu(root) {
   const tyden = nactiTyden(), now = ted();
   const dnes = new Date(now); dnes.setHours(12, 0, 0, 0);
   const zitra = new Date(dnes); zitra.setDate(zitra.getDate() + 1);
   const vsedni = (d) => d.getDay() >= 1 && d.getDay() <= 5;
   const cil = new Date(dnes);
-  if (now.getHours() >= 14 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
+  if (now.getHours() >= 15 || !vsedni(cil)) { do { cil.setDate(cil.getDate() + 1); } while (!vsedni(cil)); }
   let vybrany = tyden.dny.findIndex((_, i) => stejnyDen(datumDne(tyden.od, i), cil));
   if (vybrany < 0) { const dalsi = tyden.dny.findIndex((_, i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi >= 0 ? dalsi : 0; }
   const a = datumDne(tyden.od, 0), b = datumDne(tyden.od, tyden.dny.length - 1);
