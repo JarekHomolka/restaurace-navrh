@@ -10,7 +10,7 @@ const KLIC_TYDNE = 'rnm-tyden-v1';
 /* Pondělí je opsané ze současného webu, zbytek týdne a ceny jsou ukázka. */
 const VYCHOZI_TYDEN = {
   od: '2026-11-16',
-  cenaPoznamka: 'Polévka je v ceně, výdej 11–14 h, i s sebou.',
+  cenaPoznamka: 'Polévka je v ceně, výdej 10–14 h, i s sebou.',
   dny: [
     { polevka: { nazev: 'Brokolicová', alergeny: [7] }, jidla: [
       { nazev: 'Vepřový guláš, houskový knedlík', alergeny: [1, 3, 7], cena: 145 },
@@ -379,7 +379,7 @@ function vykresliStav() {
   const now = ted(), h = now.getHours() + now.getMinutes() / 60, dnes = dobaDne(now);
   const vDnes = (aktualniProvoz().vyjimky || []).find((x) => x.datum === isoDen(now));
   const otevreno = !!dnes && h >= naHodiny(dnes.od) && h < naHodiny(dnes.do);
-  const obedy = otevreno && !vDnes && now.getDay() >= 1 && now.getDay() <= 5 && h >= 11 && h < 14;
+  const obedy = otevreno && !vDnes && now.getDay() >= 1 && now.getDay() <= 5 && h >= 10 && h < 14;
   // nejbližší otevření: dnes později, nebo některý z dalších 14 dní
   let dalsi = '';
   if (!otevreno) {
