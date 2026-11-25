@@ -76,9 +76,10 @@ const NavrhTydne = (() => {
   }
 
   /** Vrátí návrh: [{ datum, polevka: {nazev, duvod}, jidla: [{nazev, duvod, bezMasa}] }] pro 5 dní od `od`. */
-  function navrhni(historie, od, { seed = 1, zamcene = {}, pocetJidel = 3 } = {}) {
+  // vynech: jídla, která se nemají nabídnout (např. při výměně jednoho jídla to předchozí)
+  function navrhni(historie, od, { seed = 1, zamcene = {}, pocetJidel = 3, vynech = [] } = {}) {
     const st = statistiky(historie), r = rng(seed);
-    const pouzite = new Set(Object.values(zamcene).map((n) => klic(n)));
+    const pouzite = new Set([...Object.values(zamcene), ...vynech].map((n) => klic(n)));
     const tyden = [];
     for (let i = 0; i < 5; i++) {
       const datum = new Date(new Date(od + 'T12:00:00').getTime() + i * DEN_MS);

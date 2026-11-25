@@ -37,7 +37,11 @@ const HISTORIE = (() => {
 })();
 
 /* ---------- Stav ---------- */
-const prazdnyDen = () => ({ polevka: { nazev: '', alergeny: [] }, jidla: [{ nazev: '', alergeny: [], cena: '' }, { nazev: '', alergeny: [], cena: '' }, { nazev: '', alergeny: [], cena: '' }] });
+/* Výchozí cena menu: předvyplní se u každého nového jídla (jde změnit u jednotlivých jídel) */
+const KLIC_NASTAVENI = 'rnm-admin-nastaveni-v1';
+let vychoziCena = '';
+const noveJidlo = () => ({ nazev: '', alergeny: [], cena: vychoziCena });
+const prazdnyDen = () => ({ polevka: { nazev: '', alergeny: [] }, jidla: [noveJidlo(), noveJidlo(), noveJidlo()] });
 const posunDatum = (od, dny) => { const d = datumDne(od, dny); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 let tydny, aktualni, den = 0, otevrenyPicker = null, zmeneno = false;
 const novyTyden = (od) => ({ od, cenaPoznamka: VYCHOZI_TYDEN.cenaPoznamka, dny: [0, 1, 2, 3, 4].map(prazdnyDen) });
@@ -51,6 +55,7 @@ async function nactiZeServeru() {
   const r = await rnmApi('/api/admin/tydny');
   tydny = {}; stavy = {};
   r.tydny.forEach((t) => { tydny[t.od] = t.tyden; stavy[t.od] = t; });
+  vychoziCena = (r.nastaveni && r.nastaveni.vychoziCena) || '';
   const dnes = new Date(r.dnes + 'T12:00:00'), dt = dnes.getDay();
   aktualni = posunDatum(r.dnes, -((dt + 6) % 7));
   if (dt === 0 || dt === 6) aktualni = posunDatum(aktualni, 7);   // o víkendu se chystá příští týden
@@ -118,7 +123,7 @@ function vykresliTaby() {
   const t = tyden();
   $('#ed-tabs').innerHTML = t.dny.map((d, i) => `<button class="day-tab${vyplnenyDen(d) ? ' filled' : ''}" role="tab" aria-selected="${i === den}" data-i="${i}"><b>${DNY_KRATCE[i]}</b><span>${fmt(datumDne(t.od, i))}</span></button>`).join('');
   const a = datumDne(t.od, 0), b = datumDne(t.od, t.dny.length - 1);
-  $('#week-label').textContent = `${a.getDate()}.–${fmt(b)} ${b.getFullYear()}`;
+  $('#week-label').textContent = `${a.getMonth() === b.getMonth() ? a.getDate() + '.' : fmt(a)}–${fmt(b)} ${b.getFullYear()}`;
 }
 function vykresliEditor() {
   vykresliTaby();
@@ -126,7 +131,7 @@ function vykresliEditor() {
   const body = $('#ed-body');
   body.classList.toggle('is-closed', !!d.zavreno);
   body.innerHTML = `
-    <div class="row-head"><h2>${DNY[den]} ${fmt(datumDne(t.od, den))}</h2><label class="sw"><input type="checkbox" data-k="zavreno" ${d.zavreno ? 'checked' : ''}>Zavřeno</label></div>
+    <div class="row-head"><h2>${DNY[den]} ${fmt(datumDne(t.od, den))}</h2><div class="row-akce"><button type="button" class="btn btn-ghost btn-sm" data-k="vymazat">Vymazat den</button><label class="sw"><input type="checkbox" data-k="zavreno" ${d.zavreno ? 'checked' : ''}>Zavřeno</label></div></div>
     <div class="closed-note field"><label for="pozn">Co uvidí hosté</label><input id="pozn" data-k="poznamka" value="${esc(d.poznamka || '')}" placeholder="Např. Státní svátek – zavřeno"></div>
     <div class="open-only soup-ed" data-m="s">
       <span class="lbl2">Polévka</span>
@@ -180,7 +185,7 @@ function ukazNavrhy(input) {
 function vyberNavrh(input, h) {
   const m = input.closest('[data-m]').dataset.m, d = denData();
   if (m === 's') { d.polevka.nazev = h.nazev; d.polevka.alergeny = [...h.alergeny]; }
-  else { const j = d.jidla[+m]; j.nazev = h.nazev; j.alergeny = [...h.alergeny]; if (h.cena) j.cena = h.cena; j.bezMasa = h.bezMasa; }
+  else { const j = d.jidla[+m]; j.nazev = h.nazev; j.alergeny = [...h.alergeny]; if (!j.cena) j.cena = vychoziCena || h.cena || ''; j.bezMasa = h.bezMasa; }
   oznacZmenu(); vykresliEditor();
   toast(h.alergeny.length ? `Doplněno včetně alergenů ${h.alergeny.join(', ')}` : 'Doplněno');
 }
@@ -203,30 +208,73 @@ Polévka: Hrachová s uzeným masem
 1. Hovězí guláš, houskový knedlík 149,-
 2. Smažený sýr, vařený brambor, tatarka (1,3,7) 149,-
 3. Pečené kuřecí stehno, rýže, kompot 145,-`;
+/* Rozpoznání vloženého textu (z Wordu, e-mailu, Facebooku…). Pozná víc dní najednou:
+   - den podle názvu („Pondělí“, „PO“, „Út:“, „Pondělí 30. 11.“, „30. 11. Pondělí“) nebo jen podle data („30. 11.“),
+   - na řádku dne může rovnou být polévka nebo jídlo („Pondělí: Kulajda“),
+   - polévka „Polévka:“, „Pol.“, jídla „1.“, „1)“, „Menu 1:“, „-“, „•“; cena na konci („145 Kč“, „145,-“), alergeny v závorce.
+   Text bez názvů dnů se vloží do právě otevřeného dne. */
 const DNY_KLICE = ['pond', 'uter', 'stred', 'ctvrt', 'pat'];
+const DNY_ZKRATKY = ['po', 'ut', 'st', 'ct', 'pa'];
+function rozpoznejDen(radek) {
+  let n = norm(radek).replace(/^[\s*#_>•\-–]+/, '');
+  let datum = null;
+  const md = n.match(/^(\d{1,2})\s*\.\s*(\d{1,2})\s*\.?\s*(?:\d{2,4})?\s*/);   // datum na začátku
+  if (md) { datum = [+md[1], +md[2]]; n = n.slice(md[0].length); }
+  // celý název dne (ne „Paté…“ ani „Pondělní…“) nebo zkratka jen se samotným datem či dvojtečkou („Po 30. 11.“, „ÚT:“)
+  const mn = n.match(/^(pondeli|utery|streda|ctvrtek|patek)(?![a-z])/);
+  let i = mn ? DNY_KLICE.findIndex((k) => mn[1].startsWith(k)) : -1;
+  let zbytek = '';
+  if (i >= 0) zbytek = n.slice(mn[0].length);
+  else {
+    const mz = n.match(/^(po|ut|st|ct|pa)(?=\s*($|[\d:.)\-–]))/);
+    if (mz) { i = DNY_ZKRATKY.indexOf(mz[1]); zbytek = n.slice(mz[0].length); }
+  }
+  if (i < 0 && datum) {
+    // jen datum: den podle otevřeného týdne
+    i = [0, 1, 2, 3, 4].find((k) => { const d = datumDne(tyden().od, k); return d.getDate() === datum[0] && d.getMonth() + 1 === datum[1]; });
+    if (i === undefined) return null;
+  }
+  if (i < 0) return null;
+  // datum za názvem dne a oddělovače pryč, co zbude, je obsah (polévka nebo jídlo)
+  zbytek = zbytek.replace(/^[\s.,]*(\d{1,2}\s*\.\s*\d{1,2}\s*\.?\s*(\d{2,4})?)?\s*[:\-–]?\s*/, '');
+  // zbytek vezmeme z původního textu (s diakritikou), ne z normalizovaného
+  const obsah = zbytek ? radek.trim().slice(radek.trim().length - zbytek.length).trim() : '';
+  return { i, obsah };
+}
 function rozpoznej(text) {
-  const out = []; let cur = null;
-  text.split(/\r?\n/).forEach((radek) => {
-    const r = radek.trim(); if (!r) return;
-    const n = norm(r);
-    const di = DNY_KLICE.findIndex((k) => n.startsWith(k));
-    if (di >= 0 && r.length < 40) { cur = { i: di, polevka: { nazev: '', alergeny: [] }, jidla: [] }; out.push(cur); return; }
-    if (!cur) return;
+  const dny = new Map(); let cur = null;
+  const doplnZHistorie = (nazev, typ) => HISTORIE.find((h) => h.typ === typ && norm(h.nazev) === norm(nazev));
+  const denIndex = (i) => { if (!dny.has(i)) dny.set(i, { i, polevka: { nazev: '', alergeny: [] }, jidla: [] }); return dny.get(i); };
+  const zpracujObsah = (r) => {
     let s = r, alergeny = [], cena = '';
     const ma = s.match(/\(\s*(?:a(?:lerg\w*)?[.:]?\s*)?(\d{1,2}(?:\s*,\s*\d{1,2})*)\s*\)/i);
     if (ma) { alergeny = ma[1].split(',').map((x) => +x.trim()).filter((x) => x >= 1 && x <= 14); s = s.replace(ma[0], ' '); }
     const mc = s.match(/(\d{2,4})\s*(?:,-|,–|,\s*-|kč|kc|czk)?\s*$/i);
     if (mc && /\D/.test(s.slice(0, mc.index))) { cena = +mc[1]; s = s.slice(0, mc.index); }
-    s = s.replace(/[.…\s\-–]+$/, '').trim();
-    const mp = s.match(/^pol[eé]vka\s*[:\-–]?\s*(.*)$/i);
-    const doplnZHistorie = (nazev, typ) => HISTORIE.find((h) => h.typ === typ && norm(h.nazev) === norm(nazev));
-    if (mp) { const h = doplnZHistorie(mp[1], 'polevka'); cur.polevka = { nazev: mp[1].trim(), alergeny: alergeny.length ? alergeny : h ? [...h.alergeny] : [] }; return; }
-    const mj = s.match(/^(?:\d+\s*[.)]|[-•*])\s*(.+)$/);
-    const nazev = (mj ? mj[1] : s).trim(); if (!nazev) return;
+    s = s.replace(/[.…\s\-–:]+$/, '').trim();
+    const mp = s.match(/^pol(?:[eé]vka|\.)\s*[:\-–]?\s*(.*)$/i);
+    const velke = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+    if (mp) { if (!mp[1].trim()) return; const h = doplnZHistorie(mp[1], 'polevka'); cur.polevka = { nazev: velke(mp[1].trim()), alergeny: alergeny.length ? alergeny : h ? [...h.alergeny] : [] }; return; }
+    // Bez nápisu „Polévka“: první položka dne bez ceny, která vypadá jako polévka (známá z historie, nebo „…ová“, „…ačka“, vývar, kulajda)
+    const kandidat = s.replace(/^(?:\d+\s*[.)]|[-•*–])\s*/, '').trim();
+    if (!cur.polevka.nazev && !cur.jidla.length && !cena && kandidat && (doplnZHistorie(kandidat, 'polevka') || /^[^,]{3,40}?(ová|ačka|vývar|kulajda|polévka|krém)(\s|$)/i.test(kandidat) && !/,/.test(kandidat))) {
+      const h = doplnZHistorie(kandidat, 'polevka');
+      cur.polevka = { nazev: velke(kandidat), alergeny: alergeny.length ? alergeny : h ? [...h.alergeny] : [] }; return;
+    }
+    const mj = s.match(/^(?:(?:menu|j[ií]dlo)\s*\d*\s*[:.)\-–]?|\d+\s*[.)]|[-•*–])\s*(.+)$/i);
+    const nazev = (mj ? mj[1] : s).trim(); if (!nazev || /^(menu|denn[ií] menu|j[ií]deln[ií] l[ií]stek)$/i.test(nazev)) return;
     const h = doplnZHistorie(nazev, 'jidlo');
-    cur.jidla.push({ nazev, alergeny: alergeny.length ? alergeny : h ? [...h.alergeny] : [], cena: cena || (h && h.cena) || '', bezMasa: h ? h.bezMasa : false, zHistorie: !!h && !alergeny.length });
+    cur.jidla.push({ nazev, alergeny: alergeny.length ? alergeny : h ? [...h.alergeny] : [], cena: cena || vychoziCena || (h && h.cena) || '', bezMasa: h ? h.bezMasa : false, zHistorie: !!h && !alergeny.length });
+  };
+  const radky = text.split(/\r?\n/).map((r) => r.trim()).filter(Boolean);
+  const nejakyDen = radky.some((r) => rozpoznejDen(r) && r.length < 80);
+  radky.forEach((r) => {
+    const d = r.length < 80 ? rozpoznejDen(r) : null;
+    if (d) { cur = denIndex(d.i); if (d.obsah) zpracujObsah(d.obsah); return; }
+    if (!cur) { if (nejakyDen) return; cur = denIndex(den); }   // bez názvů dnů: do otevřeného dne
+    zpracujObsah(r);
   });
-  return out;
+  return [...dny.values()].filter((d) => d.polevka.nazev || d.jidla.length).sort((a, b) => a.i - b.i);
 }
 function ukazRozpoznane() {
   const r = rozpoznej($('#paste-text').value);
@@ -235,17 +283,44 @@ function ukazRozpoznane() {
 }
 
 /* ---------- Návrh menu z historie ---------- */
-let nvSeed = 1, nvZamky = {}, nvNavrh = null;
+let nvSeed = 1, nvZamky = {}, nvNavrh = null, nvVymeny = {};
 const znamy = (nazev) => HISTORIE.find((h) => norm(h.nazev) === norm(nazev));
-function vykresliNavrh() {
+// Vymění jen jedno jídlo návrhu: ostatní zůstanou, jak jsou (dočasně se zamknou), a pro dané místo se hledá jiné jídlo
+function vymenJedno(klicMista) {
+  const t = tyden(), [di, poz] = klicMista.split('-');
+  const polozkaZ = (navrh) => { const den = navrh.tyden[+di]; return poz === 's' ? den.polevka : den.jidla[+poz - 1]; };
+  const puvodni = polozkaZ(nvNavrh);
+  const zamky = {};
+  nvNavrh.tyden.forEach((den, i) => {
+    if (den.polevka) zamky[`${i}-s`] = den.polevka.nazev;
+    den.jidla.forEach((j, n) => { zamky[`${i}-${n + 1}`] = j.nazev; });
+  });
+  delete zamky[klicMista];
+  // už nabídnutá jídla pro toto místo se vynechají, aby každé ↻ dalo něco nového; když dojdou, začne se znovu
+  const byla = nvVymeny[klicMista] = nvVymeny[klicMista] || [];
+  if (puvodni && !byla.includes(puvodni.nazev)) byla.push(puvodni.nazev);
+  for (let pokus = 0; pokus < 25; pokus++) {
+    nvSeed++;
+    const novy = NavrhTydne.navrhni(HISTORIE_MENU, t.od, { seed: nvSeed, zamcene: zamky, vynech: pokus < 3 ? byla : [puvodni ? puvodni.nazev : ''] });
+    const x = polozkaZ(novy);
+    // nové jídlo nesmí být stejné jako původní ani jako jiné jídlo v týdnu
+    if (x && puvodni && norm(x.nazev) !== norm(puvodni.nazev) && !Object.values(zamky).some((n) => norm(n) === norm(x.nazev))) {
+      // ostatním jídlům necháme jejich původní zdůvodnění (ne „zamčeno“)
+      if (poz === 's') nvNavrh.tyden[+di].polevka = x; else nvNavrh.tyden[+di].jidla[+poz - 1] = x;
+      return true;
+    }
+  }
+  return false;
+}
+function vykresliNavrh(prepocitat = true) {
   const t = tyden();
-  nvNavrh = NavrhTydne.navrhni(HISTORIE_MENU, t.od, { seed: nvSeed, zamcene: nvZamky });
+  if (prepocitat) nvNavrh = NavrhTydne.navrhni(HISTORIE_MENU, t.od, { seed: nvSeed, zamcene: nvZamky });
   const a = datumDne(t.od, 0), b = datumDne(t.od, 4);
   $('#nv-title').textContent = `Návrh menu na ${a.getDate()}.–${fmt(b)}`;
-  $('#nv-sub').textContent = 'Návrh vychází z toho, co se u vás opravdu vařilo: oblíbená jídla, roční období, co dlouho nebylo a pestrost týdne. Zamkněte, co se vám líbí, a zbytek nechte navrhnout znovu.';
+  $('#nv-sub').textContent = 'Návrh vychází z toho, co se u vás opravdu vařilo: oblíbená jídla, roční období, co dlouho nebylo a pestrost týdne. Zamkněte, co se vám líbí, a zbytek nechte navrhnout znovu. Nebo vyměňte jen jedno jídlo šipkou ↻.';
   const prvni = new Date(HISTORIE_MENU[0].datum + 'T12:00:00');
   $('#nv-info').innerHTML = `<span class="badge">${nvNavrh.dniHistorie} dní historie od ${prvni.getMonth() + 1}/${prvni.getFullYear()}</span><span class="badge green">jídlo č. 2 vždy bez masa</span><span class="badge gold">nic se v týdnu neopakuje</span>`;
-  const radek = (k, polozka, klic) => polozka ? `<div class="nv-row"><span class="k">${k}</span><div><b>${esc(polozka.nazev)}</b><small>${polozka.bezMasa ? '<span class="bm">bez masa · </span>' : ''}${esc(polozka.duvod)}</small></div><button type="button" class="lock${nvZamky[klic] ? ' on' : ''}" data-klic="${klic}" data-nazev="${esc(polozka.nazev)}" title="${nvZamky[klic] ? 'Odemknout' : 'Zamknout – při dalším návrhu zůstane'}">${nvZamky[klic] ? '🔒' : '🔓'}</button></div>` : '';
+  const radek = (k, polozka, klic) => polozka ? `<div class="nv-row"><span class="k">${k}</span><div><b>${esc(polozka.nazev)}</b><small>${polozka.bezMasa ? '<span class="bm">bez masa · </span>' : ''}${esc(polozka.duvod)}</small></div><span class="nv-akce"><button type="button" class="lock vymen" data-vymen="${klic}" title="Vyměnit jen tohle jídlo, ostatní zůstanou" aria-label="Vyměnit jen ${esc(polozka.nazev)}"${nvZamky[klic] ? ' disabled' : ''}>↻</button><button type="button" class="lock${nvZamky[klic] ? ' on' : ''}" data-klic="${klic}" data-nazev="${esc(polozka.nazev)}" title="${nvZamky[klic] ? 'Odemknout' : 'Zamknout – při dalším návrhu zůstane'}">${nvZamky[klic] ? '🔒' : '🔓'}</button></span></div>` : '';
   $('#nv-days').innerHTML = nvNavrh.tyden.map((d, i) => `<div class="nv-day"><h3>${DNY[i]} ${fmt(d.datum)}</h3>${radek('P', d.polevka, `${i}-s`)}${d.jidla.map((j, n) => radek(n + 1, j, `${i}-${n + 1}`)).join('')}</div>`).join('');
 }
 function pouzijNavrh() {
@@ -255,7 +330,7 @@ function pouzijNavrh() {
     const pol = z(d.polevka.nazev);
     tyden().dny[i] = {
       polevka: { nazev: d.polevka.nazev, alergeny: [...(pol.alergeny || [])] },
-      jidla: d.jidla.map((j) => { const h = z(j.nazev); if (!(h.alergeny || []).length) bezAlergenu++; return { nazev: j.nazev, alergeny: [...(h.alergeny || [])], cena: h.cena || '', bezMasa: j.bezMasa }; })
+      jidla: d.jidla.map((j) => { const h = z(j.nazev); if (!(h.alergeny || []).length) bezAlergenu++; return { nazev: j.nazev, alergeny: [...(h.alergeny || [])], cena: vychoziCena || h.cena || '', bezMasa: j.bezMasa }; })
     };
   });
   den = 0; otevrenyPicker = null; oznacZmenu(); vykresliEditor(); $('#dlg-navrh').close();
@@ -329,7 +404,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   body.addEventListener('click', (e) => {
     const el = e.target.closest('[data-k]'); if (!el) return;
     const k = el.dataset.k, box = el.closest('[data-m]'), d = denData();
-    if (k === 'add') { d.jidla.push({ nazev: '', alergeny: [], cena: '' }); oznacZmenu(); vykresliEditor(); $$('#ed-body .meal-ed input[data-k="name"]').pop().focus(); }
+    if (k === 'vymazat') {
+      if (!confirm(`Vymazat celý ${DNY[den].toLowerCase()} ${fmt(datumDne(tyden().od, den))}? Polévka i všechna jídla se smažou.`)) return;
+      tyden().dny[den] = prazdnyDen(); otevrenyPicker = null; oznacZmenu(); vykresliEditor();
+      toast('Den je vymazaný. Na webu se změna ukáže po uložení.'); return;
+    }
+    if (k === 'add') { d.jidla.push(noveJidlo()); oznacZmenu(); vykresliEditor(); $$('#ed-body .meal-ed input[data-k="name"]').pop().focus(); }
     if (k === 'del') { d.jidla.splice(+box.dataset.m, 1); otevrenyPicker = null; oznacZmenu(); vykresliEditor(); }
     if (k === 'algbtn') { otevrenyPicker = otevrenyPicker === box.dataset.m ? null : box.dataset.m; vykresliEditor(); }
     if (k === 'alg') {
@@ -348,7 +428,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#next').addEventListener('click', () => zmenTyden(1));
 
   $('#b-copy').addEventListener('click', () => {
-    const zdrojOd = posunDatum(aktualni, -7), zdroj = tydny[zdrojOd] || VYCHOZI_TYDEN;
+    const zdrojOd = posunDatum(aktualni, -7), zdroj = tydny[zdrojOd] || (RNM_SERVER ? null : VYCHOZI_TYDEN);
+    if (!zdroj) { toast('Minulý týden nemá žádné menu, není co kopírovat.'); return; }
+    const a = datumDne(aktualni, 0), b = datumDne(aktualni, 4);
+    const vyplneno = tyden().dny.some(vyplnenyDen);
+    if (!confirm(`Zkopírovat menu z týdne od ${fmt(datumDne(zdrojOd, 0))} do týdne ${a.getMonth() === b.getMonth() ? a.getDate() + '.' : fmt(a)}–${fmt(b)}?${vyplneno ? '\n\nCo už je v tomto týdnu vyplněné, se přepíše.' : ''}`)) return;
     tydny[aktualni].dny = clone(zdroj.dny); tydny[aktualni].cenaPoznamka = zdroj.cenaPoznamka;
     oznacZmenu(); vykresliEditor(); toast(`Zkopírováno z týdne od ${fmt(datumDne(zdrojOd, 0))} – upravte, co se mění`);
   });
@@ -362,14 +446,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast(`Vloženo: ${r.map((d) => DNY_KRATCE[d.i]).join(', ')}. Zkontrolujte a uložte.`);
   });
   $('#b-print').addEventListener('click', tisk);
-  $('#b-navrh').addEventListener('click', () => { nvZamky = {}; nvSeed = 1; vykresliNavrh(); $('#dlg-navrh').showModal(); });
+
+  // Výchozí cena menu: uloží se (server nebo prohlížeč) a doplní se do prázdných cen v otevřeném týdnu
+  if (!RNM_SERVER) { try { vychoziCena = (JSON.parse(localStorage.getItem(KLIC_NASTAVENI)) || {}).vychoziCena || ''; } catch (e) { /* nic */ } }
+  const vc = $('#vc-cena'); vc.value = vychoziCena;
+  let vcCasovac = null;
+  vc.addEventListener('input', () => {
+    vc.value = vc.value.replace(/\D/g, '').slice(0, 4);
+    clearTimeout(vcCasovac);
+    vcCasovac = setTimeout(async () => {
+      const nova = vc.value ? +vc.value : '';
+      try {
+        if (RNM_SERVER) await rnmApi('/api/admin/nastaveni', { vychoziCena: nova }, 'PUT');
+        else localStorage.setItem(KLIC_NASTAVENI, JSON.stringify({ vychoziCena: nova }));
+      } catch (e) { toast('Výchozí cenu se nepodařilo uložit: ' + e.message); return; }
+      vychoziCena = nova;
+      let doplneno = 0;
+      if (nova) tyden().dny.forEach((dd) => (dd.jidla || []).forEach((j) => { if (j.cena === '' || j.cena === undefined || j.cena === null) { j.cena = nova; doplneno++; } }));
+      if (doplneno) { oznacZmenu(); vykresliEditor(); }
+      toast(nova ? `✓ Výchozí cena ${nova} Kč uložena${doplneno ? `, doplněna k ${doplneno} jídlům bez ceny` : ''}.` : 'Výchozí cena zrušena.');
+    }, 700);
+  });
+  $('#b-navrh').addEventListener('click', () => { nvZamky = {}; nvVymeny = {}; nvSeed = 1; vykresliNavrh(); $('#dlg-navrh').showModal(); });
   $('#nv-again').addEventListener('click', () => { nvSeed++; vykresliNavrh(); });
   $('#nv-cancel').addEventListener('click', () => $('#dlg-navrh').close());
   $('#nv-ok').addEventListener('click', pouzijNavrh);
   $('#nv-days').addEventListener('click', (e) => {
+    const v = e.target.closest('[data-vymen]');
+    if (v) { if (!vymenJedno(v.dataset.vymen)) toast('Pro tohle místo už nemáme jiné vhodné jídlo z historie.'); vykresliNavrh(false); return; }
     const b = e.target.closest('.lock'); if (!b) return;
+    // zamknutí si pamatuje právě zobrazené jídlo, ostatní zůstanou stejná (nepřepočítává se celý návrh)
     if (nvZamky[b.dataset.klic]) delete nvZamky[b.dataset.klic]; else nvZamky[b.dataset.klic] = b.dataset.nazev;
-    vykresliNavrh();
+    vykresliNavrh(false);
   });
   $('#b-reset').addEventListener('click', () => { try { localStorage.removeItem(KLIC_ADMIN); localStorage.removeItem(KLIC_TYDNE); } catch (e) { /* nic */ } location.reload(); });
   $('#b-save').addEventListener('click', async () => {
