@@ -355,15 +355,85 @@ function vykresliTabuli(root) {
   }
 }
 
+/* ---------- Provoz: otevírací doba, výjimky (svátky, dovolená) a oznámení ----------
+   Ostrý web: data vloží server (window.RNM_PROVOZ). Ukázka: z administrace přes localStorage. Jinak výchozí doba. */
+const KLIC_PROVOZ = 'rnm-provoz-v1';
+const hhmm = (h) => `${String(h).padStart(2, '0')}:00`;
+const VYCHOZI_PROVOZ = { doba: Object.fromEntries(Object.entries(OTEVRENO).map(([d, [a, b]]) => [d, { od: hhmm(a), do: hhmm(b) }])), vyjimky: [], oznameni: { text: '', od: '', do: '' } };
+function aktualniProvoz() {
+  if (window.RNM_PROVOZ) return window.RNM_PROVOZ;
+  if (!RNM_SERVER) { try { const s = localStorage.getItem(KLIC_PROVOZ); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště */ } }
+  return VYCHOZI_PROVOZ;
+}
+const isoDen = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const naHodiny = (s) => { const [a, b] = s.split(':'); return +a + +b / 60; };
+const casText = (s) => s.replace(/^0/, '').replace(/:00$/, '');          // "10:00" → "10", "09:30" → "9:30"
+// Otevírací doba v konkrétní den: { od, do, text? } nebo null (zavřeno), výjimka má přednost
+function dobaDne(d, provoz = aktualniProvoz()) {
+  const v = (provoz.vyjimky || []).find((x) => x.datum === isoDen(d));
+  if (v) return v.zavreno ? null : { od: v.od, do: v.do, text: v.text, vyjimka: true };
+  return provoz.doba[d.getDay()] || null;
+}
+const casDlouze = (s) => s.replace(/^0/, '');                            // "09:30" → "9:30", "10:00" → "10:00"
 function vykresliStav() {
-  const now = ted(), [od, doo] = OTEVRENO[now.getDay()], h = now.getHours() + now.getMinutes() / 60;
-  const otevreno = h >= od && h < doo, obedy = now.getDay() >= 1 && now.getDay() <= 5 && h >= 11 && h < 14;
+  const now = ted(), h = now.getHours() + now.getMinutes() / 60, dnes = dobaDne(now);
+  const vDnes = (aktualniProvoz().vyjimky || []).find((x) => x.datum === isoDen(now));
+  const otevreno = !!dnes && h >= naHodiny(dnes.od) && h < naHodiny(dnes.do);
+  const obedy = otevreno && !vDnes && now.getDay() >= 1 && now.getDay() <= 5 && h >= 11 && h < 14;
+  // nejbližší otevření: dnes později, nebo některý z dalších 14 dní
+  let dalsi = '';
+  if (!otevreno) {
+    for (let i = 0; i <= 14 && !dalsi; i++) {
+      const d = new Date(now); d.setDate(d.getDate() + i);
+      const x = dobaDne(d);
+      if (!x || (i === 0 && h >= naHodiny(x.od))) continue;
+      dalsi = i === 0 ? `otevíráme v ${casDlouze(x.od)}` : i === 1 ? `otevíráme zítra v ${casDlouze(x.od)}` : `otevíráme ${V_DEN[d.getDay()]} ${d.getDate()}. ${d.getMonth() + 1}. v ${casDlouze(x.od)}`;
+    }
+  }
   $$('[data-stav]').forEach((el) => {
     el.classList.toggle('zavreno', !otevreno);
-    el.textContent = !otevreno ? `Teď zavřeno · otevíráme v ${OTEVRENO[h >= doo ? (now.getDay() + 1) % 7 : now.getDay()][0]}:00`
-      : obedy ? 'Teď vaříme obědy, menu do 14:00' : `Otevřeno, dnes do ${doo}:00`;
+    el.textContent = !otevreno ? `Teď zavřeno${vDnes && vDnes.text ? ` (${vDnes.text})` : ''}${dalsi ? ' · ' + dalsi : ''}`
+      : obedy ? 'Teď vaříme obědy, menu do 14:00' : `Otevřeno, dnes do ${casDlouze(dnes.do)}`;
   });
-  $$('.doba tr[data-d]').forEach((tr) => tr.classList.toggle('dnes', tr.dataset.d.split(',').includes(String(now.getDay()))));
+  vykresliDobu(now);
+  vykresliOznameni(now);
+}
+// Tabulka otevírací doby (sloučí po sobě jdoucí dny se stejnou dobou) a nejbližší výjimky
+function vykresliDobu(now) {
+  const provoz = aktualniProvoz(), poradi = [1, 2, 3, 4, 5, 6, 0];
+  const klic = (d) => (provoz.doba[d] ? provoz.doba[d].od + '–' + provoz.doba[d].do : 'zavřeno');
+  const skupiny = [];
+  poradi.forEach((d) => { const s = skupiny[skupiny.length - 1]; if (s && s.klic === klic(d)) s.dny.push(d); else skupiny.push({ klic: klic(d), dny: [d] }); });
+  const nazev = (dny) => (dny.length === 1 ? DNY[(dny[0] + 6) % 7] : `${DNY[(dny[0] + 6) % 7]} – ${DNY[(dny[dny.length - 1] + 6) % 7].toLowerCase()}`);
+  const radek = (s) => { const x = provoz.doba[s.dny[0]]; return x ? `${x.od} – ${x.do}` : 'zavřeno'; };
+  const zKratce = (dny) => (dny.length === 1 ? DNY_KRATCE[(dny[0] + 6) % 7] : `${DNY_KRATCE[(dny[0] + 6) % 7]}–${DNY_KRATCE[(dny[dny.length - 1] + 6) % 7]}`);
+  const dnesD = String(now.getDay());
+  $$('table.doba').forEach((t) => {
+    const dnesek = isoDen(now), za30 = isoDen(new Date(now.getTime() + 30 * 864e5));
+    const vyj = (provoz.vyjimky || []).filter((v) => v.datum >= dnesek && v.datum <= za30);
+    t.innerHTML = '<caption class="sr">Otevírací doba</caption>' + skupiny.map((s) => `<tr data-d="${s.dny.join(',')}"${s.dny.map(String).includes(dnesD) ? ' class="dnes"' : ''}><td>${nazev(s.dny)}</td><td>${radek(s)}</td></tr>`).join('')
+      + vyj.map((v) => { const d = new Date(v.datum + 'T12:00:00'); return `<tr class="vyjimka${v.datum === dnesek ? ' dnes' : ''}"><td>${d.getDate()}. ${d.getMonth() + 1}.${v.text ? ' ' + esc(v.text) : ''}</td><td>${v.zavreno ? 'zavřeno' : `${v.od} – ${v.do}`}</td></tr>`; }).join('');
+  });
+  $$('[data-doba-kratce]').forEach((el) => {
+    el.textContent = skupiny.map((s) => `${zKratce(s.dny)} ${s.klic === 'zavřeno' ? 'zavřeno' : `${casText(provoz.doba[s.dny[0]].od)}–${casText(provoz.doba[s.dny[0]].do)}`}`).join(', ');
+  });
+}
+// Oznámení nahoře na stránce (např. „24. 12. zavřeno“, „Dovolená 1.–7. 8.“), platí v zadaném rozsahu dnů
+function vykresliOznameni(now) {
+  const o = aktualniProvoz().oznameni || {}, dnes = isoDen(now);
+  const plati = o.text && (!o.od || o.od <= dnes) && (!o.do || o.do >= dnes);
+  let el = $('.oznameni');
+  if (!plati) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement('div'); el.className = 'oznameni'; el.setAttribute('role', 'status'); const h = $('.hlavicka'); if (h) h.after(el); else document.body.prepend(el); }
+  el.innerHTML = `<div class="wrap">${esc(o.text)}</div>`;
+}
+
+/* ---------- Galerie na úvodu (fotky z administrace) ---------- */
+function vykresliGalerii() {
+  const g = window.RNM_GALERIE || (!RNM_SERVER ? (() => { try { return JSON.parse(localStorage.getItem('rnm-galerie-v1')); } catch (e) { return null; } })() : null);
+  const box = $('.fotky[data-galerie]');
+  if (!g || !box) return;
+  box.innerHTML = g.map((f) => `<img src="${esc(f.src || '/foto/' + f.id + '.jpg')}" alt="${esc(f.alt || '')}" loading="lazy">`).join('');
 }
 
 /* Hodnocení hostů. V ostrém webu se čísla obnovují automaticky (Google Places API, Firmy.cz).
@@ -412,6 +482,9 @@ function vykresliKartu(root) {
     const d = datumDne(tyden.od, i), den = tyden.dny[i];
     const stitek = stejnyDen(d, dnes) ? '<span class="stitek">Dnes</span>' : stejnyDen(d, zitra) ? '<span class="stitek">Zítra</span>' : '';
     const hlava = `<div class="karta-den">${DNY[i]} ${fmt(d)} ${stitek}</div>`;
+    // Svátek nebo dovolená z administrace (Fotky a texty → výjimky) má přednost před menu
+    const vyj = (aktualniProvoz().vyjimky || []).find((v) => v.datum === isoDen(d) && v.zavreno);
+    if (vyj) { telo.innerHTML = hlava + `<p class="karta-prazdna">Tento den máme zavřeno${vyj.text ? ` (${esc(vyj.text)})` : ''}.</p>`; return; }
     if (!den || den.zavreno || !den.jidla || !den.jidla.length) {
       telo.innerHTML = hlava + `<p class="karta-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : 'Menu na tento den ještě připravujeme.'}</p>`;
       return;
@@ -429,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('[data-tabule]').forEach(vykresliTabuli);
   $$('[data-karta]').forEach(vykresliKartu);
   vykresliStav();
+  vykresliGalerii();
   vykresliHodnoceni();
   const t = $('.menu-tlacitko'), mn = $('.mobilni-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });

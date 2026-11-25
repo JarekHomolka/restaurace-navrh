@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Administrace – Na Městečku</title>
 <meta name="robots" content="noindex, nofollow">
-<script src="auth.js?v=20261125f"></script>
+<script src="auth.js?v=20261125g"></script>
 <script>Ucty.vyzadujPrihlaseni();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="styles.css?v=20261125f">
+<link rel="stylesheet" href="styles.css?v=20261125g">
 <style>
 /* Administrace: na telefonu jeden sloupec se spodní navigací, na počítači boční panel a živý náhled vpravo. */
 body { background: #f3f0e9; padding-bottom: 140px; }
@@ -152,6 +152,33 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 .lr-akce .smazat { margin-left: auto; color: var(--wine); }
 .list-cat .add-meal { margin-top: 6px; }
 #v-listek { padding-bottom: 76px; }
+/* Fotky a texty */
+#v-vice { padding-bottom: 76px; }
+#v-vice .list-cat { gap: 10px; }
+.field textarea { min-height: 72px; }
+.doba-ed { display: grid; }
+.doba-radek { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.doba-radek:last-child { border-bottom: 0; }
+.doba-radek b { font-size: 15px; }
+.doba-casy { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.doba-casy input[type="time"], .vyj input[type="time"], .vyj input[type="date"] { height: 44px; border-radius: 4px; border: 1px solid #d9ccbd; background: #fff; padding: 0 8px; font: inherit; font-size: 16px; color: var(--ink); min-width: 0; }
+.doba-radek.zavreno input[type="time"], .vyj.zavreno input[type="time"] { display: none; }
+.vyj-seznam { display: grid; gap: 8px; }
+.vyj { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 4px; background: #fdfaf6; }
+.vyj-radek { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vyj input[type="text"] { flex: 1 1 180px; height: 44px; border-radius: 4px; border: 1px solid #d9ccbd; background: #fff; padding: 0 12px; font: inherit; font-size: 16px; min-width: 0; }
+.vyj.minula { opacity: .6; }
+.gal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.gal-f { display: grid; gap: 6px; align-content: start; }
+.gal-f img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: #eee6da; }
+.gal-f:first-child img { outline: 3px solid var(--wine); outline-offset: -3px; }
+.gal-f input { height: 40px; border-radius: 4px; border: 1px solid #d9ccbd; padding: 0 10px; font: inherit; font-size: 14px; min-width: 0; }
+.gal-akce { display: flex; gap: 4px; }
+.gal-akce button { flex: 1; min-height: 38px; padding: 0 6px; }
+.gal-nahrat { justify-self: start; cursor: pointer; background: #fff; }
+.gal-nahrat:focus-within { outline: 2px solid var(--wine); outline-offset: 2px; }
+@media (min-width: 640px) { .gal { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { #v-vice { padding-bottom: 0; } .gal { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 640px) { .lr-2 { grid-template-columns: 160px minmax(0, 1fr); } }
 @media (min-width: 1000px) { #v-listek { padding-bottom: 0; } }
 .inq { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 14px; display: grid; gap: 6px; }
@@ -346,13 +373,39 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 
       <!-- ===== Fotky a texty ===== -->
       <section class="view-pane" id="v-vice">
-        <div class="adm-head"><h1>Fotky a texty</h1></div>
+        <div class="adm-head"><div style="display:grid;gap:6px"><h1>Fotky a texty</h1><span class="status" id="pv-stav">Zveřejněno</span></div></div>
         <div class="list-ed">
-          <div class="list-cat"><h2>Fotogalerie <button class="btn btn-primary btn-sm">Nahrát fotky</button></h2><p style="color:var(--muted);font-size:14px">Fotky z telefonu se samy zmenší pro rychlý web.</p>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px">
-              <img src="assets/foto/svatba-sal.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/predkrm.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/zahradka.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px"><img src="assets/foto/sladke-mameni.jpg" alt="" style="aspect-ratio:1;object-fit:cover;border-radius:8px">
-            </div></div>
-          <div class="list-cat"><h2>Otevírací doba a oznámení</h2><p style="color:var(--muted);font-size:14px">Např. „24. 12. zavřeno“ nebo „Tento týden máme dovolenou“. Oznámení se ukáže nahoře na webu.</p></div>
+          <div class="list-cat" id="oznameni-ed">
+            <h2>Oznámení nahoře na webu</h2>
+            <p class="lc-pozn">Např. „Na Štědrý den máme zavřeno“ nebo „1.–7. 8. dovolená, vaříme zase od pondělí 8. 8.“ Ukáže se na všech stránkách v zadaných dnech.</p>
+            <div class="field"><label for="oz-text">Text oznámení</label><textarea id="oz-text" maxlength="240" rows="2" placeholder="Nechte prázdné, když nic neoznamujete"></textarea></div>
+            <div class="lr-2 oz-dny">
+              <div class="field"><label for="oz-od">Ukázat od</label><input id="oz-od" type="date"></div>
+              <div class="field"><label for="oz-do">Ukázat do (včetně)</label><input id="oz-do" type="date"></div>
+            </div>
+          </div>
+          <div class="list-cat" id="doba-ed">
+            <h2>Otevírací doba</h2>
+            <div class="doba-ed" id="doba-dny"></div>
+          </div>
+          <div class="list-cat" id="vyjimky-ed">
+            <h2>Svátky, dovolená a jiné výjimky</h2>
+            <p class="lc-pozn">Dny, kdy je zavřeno nebo jiná doba. Na webu se ukážou 30 dní předem a stav „Teď otevřeno“ s nimi počítá.</p>
+            <div id="vyjimky-seznam" class="vyj-seznam"></div>
+            <button type="button" class="add-meal" id="vyj-pridat">+ Přidat výjimku</button>
+          </div>
+          <div class="list-cat" id="galerie-ed">
+            <h2>Fotky na úvodní stránce <span class="badge" id="gal-pocet"></span></h2>
+            <p class="lc-pozn">První fotka je na webu velká. Fotky z telefonu se před nahráním samy zmenší. Změny fotek se ukládají hned.</p>
+            <div class="gal" id="gal-seznam"></div>
+            <label class="btn btn-ghost gal-nahrat"><input type="file" id="gal-soubor" accept="image/*" multiple class="sr">Nahrát fotky</label>
+            <p class="lc-pozn" id="gal-zprava" role="status"></p>
+          </div>
+        </div>
+        <div class="save-bar pv-bar">
+          <small>Oznámení a otevírací doba se změní hned po uložení.</small>
+          <a class="btn btn-ghost" href="uvod.html#kontakt" target="_blank" style="background:#fff">Náhled</a>
+          <button class="btn btn-primary" id="pv-ulozit">Uložit a zveřejnit</button>
         </div>
       </section>
 
@@ -466,11 +519,12 @@ dialog::backdrop { background: rgba(36,21,15,.55); }
 <div class="toast" id="toast"></div>
 <div id="tisk"></div>
 
-<script src="app.js?v=20261125f"></script>
-<script src="historie-data.js?v=20261125f"></script>
-<script src="navrh-tydne.js?v=20261125f"></script>
-<script src="admin.js?v=20261125f"></script>
-<script src="admin-listek.js?v=20261125f"></script>
-<script src="admin-uzivatele.js?v=20261125f"></script>
+<script src="app.js?v=20261125g"></script>
+<script src="historie-data.js?v=20261125g"></script>
+<script src="navrh-tydne.js?v=20261125g"></script>
+<script src="admin.js?v=20261125g"></script>
+<script src="admin-listek.js?v=20261125g"></script>
+<script src="admin-provoz.js?v=20261125g"></script>
+<script src="admin-uzivatele.js?v=20261125g"></script>
 </body>
 </html>
