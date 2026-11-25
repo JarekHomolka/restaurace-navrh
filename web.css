@@ -382,3 +382,6 @@ body.lista-skryta .lista { transform: translateY(110%); }
 .nabidka-pozn { margin: 0; color: var(--tlumeny); }
 .nabidka-pozn:empty { display: none; }
 .nabidka-sk .btn { justify-self: start; }
+
+/* Úvodní věta stránky Zájezdy a oslavy */
+.skupiny-perex { font-size: 20px; line-height: 1.45; color: var(--inkoust); font-weight: 600; max-width: 640px; }
