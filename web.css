@@ -408,3 +408,6 @@ body.lista-skryta .lista { transform: translateY(110%); }
 .pizza-tel svg { width: 18px; height: 18px; }
 .pizza-odkaz:hover { border-color: var(--vino); }
 .uvod-prava { display: grid; gap: 12px; align-content: start; min-width: 0; }
+
+/* Rauty: zdůraznění „raut s sebou“ v úvodní větě */
+.zvyrazneni-dovoz { color: var(--vino); }

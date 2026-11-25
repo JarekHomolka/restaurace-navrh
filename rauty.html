@@ -8,8 +8,8 @@
 <meta name="description" content="Rauty s sebou na firemní večírky, oslavy, promoce a svatby: řízečky, špízy, žebra, tatarák, obložené mísy a saláty. Od 120 Kč na osobu. Restaurace Na Městečku, Lysice.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
-<link rel="stylesheet" href="web.css?v=20261125x">
-<script src="app.js?v=20261125x" defer></script>
+<link rel="stylesheet" href="web.css?v=20261125y">
+<script src="app.js?v=20261125y" defer></script>
 </head>
 <body>
 
@@ -38,10 +38,10 @@
 <main>
   <div class="wrap skupiny-uvod">
     <h1>Rauty</h1>
-    <p class="skupiny-perex">Připravíme raut s sebou na firemní večírek, oslavu, promoci, svatbu i jinou společenskou událost.</p>
-    <p>Napište nám termín, počet hostů a co si představujete. Rádi poradíme a vypracujeme individuální cenovou nabídku.</p>
+    <p class="skupiny-perex">Připravíme <span class="zvyrazneni-dovoz">raut s sebou</span> na firemní večírek, oslavu, promoci, svatbu i jinou společenskou událost.</p>
+    <p>Raut nachystáme na domluvený čas a vy si ho vyzvednete u nás v restauraci. Napište nám termín a počet hostů. Rádi poradíme a vypracujeme individuální cenovou nabídku.</p>
     <div class="akce-radek" style="margin-top:6px">
-      <a class="btn" href="skupiny.html?typ=raut#poptavka">Poptat raut</a>
+      <a class="btn" href="#poptavka">Poptat raut</a>
       <a class="btn obrys" href="tel:+420775206577">775 206 577</a>
     </div>
   </div>
@@ -50,7 +50,7 @@
   <section class="sekce">
     <div class="wrap dvoje">
       <div class="rauty-nabidka" data-rauty>
-        <div class="sekce-hlava"><h2>Nabídka rautů s sebou</h2></div>
+        <div class="sekce-hlava"><h2>Nabídka rautů s sebou</h2><p>Připravíme na domluvený čas, vyzvednete si v restauraci.</p></div>
         <div class="nabidka-karta">
           <ul class="rauty-seznam">
             <li>Kuřecí a vepřové rautové řízečky</li>
@@ -87,12 +87,41 @@
         <li><div><b>Pošlete poptávku</b><span>Termín, počet hostů a druh akce. Stačí formulář nebo telefon.</span></div></li>
         <li><div><b>Pošleme nabídku</b><span>Poradíme se složením a pošleme individuální cenovou nabídku.</span></div></li>
         <li><div><b>Potvrdíte</b><span>Počty hostů upřesníte před akcí.</span></div></li>
-        <li><div><b>Připravíme</b><span>Raut nachystáme na domluvený čas.</span></div></li>
+        <li><div><b>Vyzvednete si</b><span>Raut je nachystaný v domluvený čas, vyzvednete si ho u nás v restauraci.</span></div></li>
       </ol>
       <div class="akce-radek" style="margin-top:24px">
-        <a class="btn" href="skupiny.html?typ=raut#poptavka">Poptat raut</a>
+        <a class="btn" href="#poptavka">Poptat raut</a>
         <a class="btn obrys" href="tel:+420775206577">775 206 577</a>
       </div>
+    </div>
+  </section>
+  <section class="sekce" id="poptavka">
+    <div class="wrap dvoje">
+      <div class="kontakt-skupiny">
+        <div class="sekce-hlava" style="margin-bottom:6px"><h2>Poptat raut</h2><p>Napište termín, čas vyzvednutí a počet hostů. Ozveme se s nabídkou co nejdřív. Spěcháte? Zavolejte rovnou.</p></div>
+        <div class="telefony">
+          <a href="tel:+420775206577"><b>775 206 577</b><span>rauty, oslavy, firemní akce</span></a>
+          <a href="mailto:restaurace.namestecku@seznam.cz" style="font-weight:600;color:var(--vino)">restaurace.namestecku@seznam.cz</a>
+        </div>
+      </div>
+      <form class="form" id="poptavka-form" data-typ="Raut">
+        <div class="dve">
+          <div class="pole"><label for="f-datum">Datum</label><input id="f-datum" type="date"></div>
+          <div class="pole"><label for="f-cas">Čas vyzvednutí</label><input id="f-cas" type="time" value="17:00"></div>
+        </div>
+        <div class="pole"><label for="f-osob">Počet hostů</label><input id="f-osob" type="number" inputmode="numeric" min="1"></div>
+        <div class="pole"><label for="f-jmeno">Jméno nebo firma</label><input id="f-jmeno" autocomplete="name" required></div>
+        <div class="dve">
+          <div class="pole"><label for="f-tel">Telefon</label><input id="f-tel" type="tel" autocomplete="tel" required></div>
+          <div class="pole"><label for="f-mail">E-mail</label><input id="f-mail" type="email" autocomplete="email" required></div>
+        </div>
+        <div class="pole"><label for="f-zprava">Poznámka</label><textarea id="f-zprava"></textarea></div>
+        <div class="past" aria-hidden="true"><label for="f-web">Nevyplňujte</label><input id="f-web" tabindex="-1" autocomplete="off"></div>
+        <p class="poptavka-chyba" id="poptavka-chyba" role="alert"></p>
+        <button class="btn btn-plna" type="submit">Odeslat poptávku rautu</button>
+        <p class="dekujeme" role="status">Děkujeme, poptávka dorazila. Brzy se ozveme. (ukázka)</p>
+        <p class="pozn">Údaje použijeme jen k vyřízení poptávky.</p>
+      </form>
     </div>
   </section>
 </main>
@@ -110,7 +139,7 @@
 
 <div class="lista">
   <a class="btn" href="tel:+420775206577"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>775 206 577</a>
-  <a class="btn obrys" href="skupiny.html?typ=raut#poptavka">Poptávka</a>
+  <a class="btn obrys" href="#poptavka">Poptat raut</a>
 </div>
 </body>
 </html>

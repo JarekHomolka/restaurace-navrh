@@ -93,7 +93,7 @@ async function nactiPoptavky() {
   seznam.innerHTML = r.poptavky.length ? r.poptavky.map((p) => `
     <div class="inq" data-id="${p.id}"${p.stav === 'vyrizena' ? ' style="opacity:.7"' : ''}>
       <div class="inq-top"><h2>${esc(p.typ || 'Poptávka')}${p.osob ? ' · ' + esc(p.osob) + ' osob' : ''}</h2><span class="badge ${p.stav === 'nova' ? 'gold' : 'green'}">${p.stav === 'nova' ? 'Nová' : 'Vyřízeno'}</span></div>
-      <div class="meta">${p.datum ? `<span class="badge">${datumCz(p.datum)}</span>` : ''}${p.cas ? `<span class="badge">příjezd ${esc(p.cas)}</span>` : ''}<span class="badge">přišlo ${fmtKdy(p.prijato)}</span></div>
+      <div class="meta">${p.datum ? `<span class="badge">${datumCz(p.datum)}</span>` : ''}${p.cas ? `<span class="badge">${p.typ === 'Raut' ? 'čas' : 'příjezd'} ${esc(p.cas)}</span>` : ''}${p.doprava ? `<span class="badge gold">${p.doprava === 'Dovoz' ? 'dovoz' + (p.misto ? ': ' + esc(p.misto) : '') : 'vyzvednutí v restauraci'}</span>` : ''}<span class="badge">přišlo ${fmtKdy(p.prijato)}</span></div>
       <p><b>${esc(p.jmeno)}</b>${p.tel ? ' · ' + esc(p.tel) : ''}${p.mail ? ' · ' + esc(p.mail) : ''}</p>
       ${p.zprava ? `<p>„${esc(p.zprava)}“</p>` : ''}
       <div class="quick" style="margin-top:6px">${p.tel ? `<a class="btn btn-ghost btn-sm" href="tel:${esc(telOdkaz(p.tel))}">Zavolat</a>` : ''}${p.mail ? `<a class="btn btn-ghost btn-sm" href="mailto:${esc(p.mail)}">Odpovědět e-mailem</a>` : ''}<button class="btn btn-ghost btn-sm" data-stav="${p.stav === 'nova' ? 'vyrizena' : 'nova'}">${p.stav === 'nova' ? 'Označit jako vyřízenou' : 'Vrátit mezi nové'}</button></div>

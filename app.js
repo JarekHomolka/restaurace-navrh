@@ -598,16 +598,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const f = $('#poptavka-form');
   // Odkaz „Poptat raut“ (skupiny.html?typ=raut) rovnou vybere druh akce
   const predvyber = new URLSearchParams(location.search).get('typ');
+  // Rauty: pole „Kam raut dovézt“ jen při dovozu
+  if (f) { const prepniDovoz = () => { const d = f.querySelector('[name="doprava"]:checked'); $$('[data-jen-dovoz]', f).forEach((el) => { el.style.display = d && d.value === 'Dovoz' ? '' : 'none'; }); }; f.addEventListener('change', (e) => { if (e.target.name === 'doprava') prepniDovoz(); }); prepniDovoz(); }
   if (f && predvyber) { const r = f.querySelector(`[name="typ"][value="${CSS.escape(predvyber)}"]`); if (r) r.checked = true; }
   if (f) f.addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = $('.dekujeme'), chybaEl = $('#poptavka-chyba'), btn = f.querySelector('button[type="submit"]');
     if (RNM_SERVER) {
-      const typ = f.querySelector('[name="typ"]:checked');
+      const typ = f.querySelector('[name="typ"]:checked'), doprava = f.querySelector('[name="doprava"]:checked');
       const v = (id) => ($('#' + id) || {}).value || '';
       btn.disabled = true; if (chybaEl) chybaEl.textContent = '';
       try {
-        await rnmApi('/api/poptavka', { typ: typ ? typ.parentElement.textContent.trim() : '', datum: v('f-datum'), cas: v('f-cas'), osob: v('f-osob'), jmeno: v('f-jmeno'), tel: v('f-tel'), mail: v('f-mail'), zprava: v('f-zprava'), web: v('f-web') });
+        await rnmApi('/api/poptavka', { typ: typ ? typ.parentElement.textContent.trim() : (f.dataset.typ || ''), doprava: doprava ? doprava.value : '', misto: doprava && doprava.value === 'Dovoz' ? v('f-misto') : '', datum: v('f-datum'), cas: v('f-cas'), osob: v('f-osob'), jmeno: v('f-jmeno'), tel: v('f-tel'), mail: v('f-mail'), zprava: v('f-zprava'), web: v('f-web') });
       } catch (err) {
         btn.disabled = false;
         if (chybaEl) { chybaEl.textContent = err.message; chybaEl.scrollIntoView({ block: 'center', behavior: 'smooth' }); } else alert(err.message);
