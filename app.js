@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const polozky = [
     { typ: 'bus', ikona: 'B', nazev: `Zastávka ${M.zastavka.nazev}`, popis: 'vysazení skupiny před vchodem', poloha: M.zastavka.poloha, vzd: 30 },
     ...M.parkoviste.filter((p) => p.typ !== 'menší').sort((a, b) => a.vzdalenost - b.vzdalenost).map((p) => ({ typ: 'p', ikona: 'P', nazev: p.nazev, popis: p.vzdalenost <= 20 ? 'pár kroků od vchodu' : `${p.pesky} min pěšky`, poloha: p.stred, vzd: p.vzdalenost, obrys: p.obrys })),
-    { typ: 'p', ikona: 'P', nazev: `Další ${M.parkoviste.filter((p) => p.typ === 'menší').length} menší parkoviště`, popis: 'do 3 minut pěšky', poloha: null, vzd: null },
+    ...(() => { const n = M.parkoviste.filter((p) => p.typ === 'menší').length; return n ? [{ typ: 'p', ikona: 'P', nazev: n === 1 ? 'Další menší parkoviště' : `Další ${n} menší parkoviště`, popis: 'do 3 minut pěšky', poloha: null, vzd: null }] : []; })(),
     { typ: 'castle', ikona: '♜', nazev: M.zamek.nazev, popis: `${M.zamek.pesky} min pěšky`, poloha: M.zamek.poloha, vzd: M.zamek.vzdalenost }
   ];
   if (seznam) seznam.innerHTML = polozky.map((p, i) => `<li data-i="${i}"><span class="ico ${p.typ === 'p' ? '' : p.typ}">${p.ikona}</span><div><b>${esc(p.nazev)}</b><small>${esc(p.popis)}</small></div><span class="dist">${p.vzd ? p.vzd + ' m' : ''}</span></li>`).join('');
