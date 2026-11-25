@@ -40,14 +40,72 @@ const HISTORIE = (() => {
 const prazdnyDen = () => ({ polevka: { nazev: '', alergeny: [] }, jidla: [{ nazev: '', alergeny: [], cena: '' }, { nazev: '', alergeny: [], cena: '' }, { nazev: '', alergeny: [], cena: '' }] });
 const posunDatum = (od, dny) => { const d = datumDne(od, dny); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 let tydny, aktualni, den = 0, otevrenyPicker = null, zmeneno = false;
+const novyTyden = (od) => ({ od, cenaPoznamka: VYCHOZI_TYDEN.cenaPoznamka, dny: [0, 1, 2, 3, 4].map(prazdnyDen) });
+
+/* Ostrý web: týdny se načítají ze serveru, rozpracované změny se průběžně ukládají jako koncept
+   a na web jdou až tlačítkem „Uložit a zveřejnit“. */
+let stavy = {};                       // od -> { zverejneno, rozpracovano, zverejnenoKdy, upravil }
+const spinave = new Set();            // týdny se změnami, které ještě nejsou uložené jako koncept
+let konceptCasovac = null;
+async function nactiZeServeru() {
+  const r = await rnmApi('/api/admin/tydny');
+  tydny = {}; stavy = {};
+  r.tydny.forEach((t) => { tydny[t.od] = t.tyden; stavy[t.od] = t; });
+  const dnes = new Date(r.dnes + 'T12:00:00'), dt = dnes.getDay();
+  aktualni = posunDatum(r.dnes, -((dt + 6) % 7));
+  if (dt === 0 || dt === 6) aktualni = posunDatum(aktualni, 7);   // o víkendu se chystá příští týden
+  if (!tydny[aktualni]) tydny[aktualni] = novyTyden(aktualni);
+}
+async function ulozKonceptyNaServer() {
+  for (const od of Array.from(spinave)) {
+    spinave.delete(od);
+    try {
+      await rnmApi('/api/admin/tydny/' + od, { tyden: tydny[od] }, 'PUT');
+      stavy[od] = Object.assign({}, stavy[od] || {}, { rozpracovano: true });
+    } catch (e) { spinave.add(od); toast('Koncept se nepodařilo uložit: ' + e.message); return; }
+  }
+}
+const fmtKdy = (s) => { const d = new Date(s + (s.length <= 16 ? ':00Z' : '')); return `${d.getDate()}. ${d.getMonth() + 1}. v ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+function vykresliStavTydne() {
+  if (!RNM_SERVER) return;
+  const s = $('#status'), st = stavy[aktualni] || {};
+  const rozpr = zmeneno || st.rozpracovano;
+  s.textContent = rozpr ? (st.zverejneno ? 'Změny nejsou zveřejněné' : 'Koncept, zatím není na webu') : st.zverejneno ? `Zveřejněno${st.zverejnenoKdy ? ' ' + fmtKdy(st.zverejnenoKdy) : ''}` : 'Zatím není na webu';
+  s.classList.toggle('draft', !!rozpr || !st.zverejneno);
+}
+
+async function nactiPoptavky() {
+  if (!RNM_SERVER) return;
+  const pane = $('#v-poptavky'), seznam = $('.list-ed', pane), stav = $('.status', pane);
+  let r;
+  try { r = await rnmApi('/api/admin/poptavky'); } catch (e) { seznam.innerHTML = `<p class="tip">${esc(e.message)}</p>`; return; }
+  const nove = r.poptavky.filter((p) => p.stav === 'nova').length;
+  stav.textContent = nove ? `${nove} nov${nove === 1 ? 'á' : nove < 5 ? 'é' : 'ých'}` : 'Nic nového';
+  stav.classList.toggle('draft', !!nove);
+  $$('[data-view="poptavky"] .cnt').forEach((c) => { c.textContent = nove; c.hidden = !nove; });
+  const datumCz = (s) => { if (!s) return ''; const d = new Date(s + 'T12:00:00'); return `${DNY_KRATCE[(d.getDay() + 6) % 7]} ${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()}`; };
+  const telOdkaz = (t) => t.replace(/[^0-9+]/g, '');
+  seznam.innerHTML = r.poptavky.length ? r.poptavky.map((p) => `
+    <div class="inq" data-id="${p.id}"${p.stav === 'vyrizena' ? ' style="opacity:.7"' : ''}>
+      <div class="inq-top"><h2>${esc(p.typ || 'Poptávka')}${p.osob ? ' · ' + esc(p.osob) + ' osob' : ''}</h2><span class="badge ${p.stav === 'nova' ? 'gold' : 'green'}">${p.stav === 'nova' ? 'Nová' : 'Vyřízeno'}</span></div>
+      <div class="meta">${p.datum ? `<span class="badge">${datumCz(p.datum)}</span>` : ''}${p.cas ? `<span class="badge">příjezd ${esc(p.cas)}</span>` : ''}<span class="badge">přišlo ${fmtKdy(p.prijato)}</span></div>
+      <p><b>${esc(p.jmeno)}</b>${p.tel ? ' · ' + esc(p.tel) : ''}${p.mail ? ' · ' + esc(p.mail) : ''}</p>
+      ${p.zprava ? `<p>„${esc(p.zprava)}“</p>` : ''}
+      <div class="quick" style="margin-top:6px">${p.tel ? `<a class="btn btn-ghost btn-sm" href="tel:${esc(telOdkaz(p.tel))}">Zavolat</a>` : ''}${p.mail ? `<a class="btn btn-ghost btn-sm" href="mailto:${esc(p.mail)}">Odpovědět e-mailem</a>` : ''}<button class="btn btn-ghost btn-sm" data-stav="${p.stav === 'nova' ? 'vyrizena' : 'nova'}">${p.stav === 'nova' ? 'Označit jako vyřízenou' : 'Vrátit mezi nové'}</button></div>
+    </div>`).join('') : '<p class="tip"><span>📭</span><span>Zatím žádné poptávky. Jakmile někdo vyplní formulář na stránce Zájezdy a oslavy, objeví se tady.</span></p>';
+}
+
 function nacti() {
   try { const s = localStorage.getItem(KLIC_ADMIN); if (s) { const o = JSON.parse(s); tydny = o.tydny; aktualni = o.aktualni; return; } } catch (e) { /* bez úložiště */ }
   const t = clone(nactiTyden()); tydny = { [t.od]: t }; aktualni = t.od;
 }
-function ulozKoncept() { try { localStorage.setItem(KLIC_ADMIN, JSON.stringify({ tydny, aktualni })); } catch (e) { /* ignorujeme */ } }
+function ulozKoncept() {
+  if (RNM_SERVER) { clearTimeout(konceptCasovac); if (spinave.size) konceptCasovac = setTimeout(ulozKonceptyNaServer, 1200); return; }
+  try { localStorage.setItem(KLIC_ADMIN, JSON.stringify({ tydny, aktualni })); } catch (e) { /* ignorujeme */ }
+}
 const tyden = () => tydny[aktualni];
 const denData = () => tyden().dny[den];
-function oznacZmenu() { zmeneno = true; const s = $('#status'); s.textContent = 'Neuložené změny'; s.classList.add('draft'); ulozKoncept(); }
+function oznacZmenu() { zmeneno = true; spinave.add(aktualni); const s = $('#status'); s.textContent = 'Neuložené změny'; s.classList.add('draft'); ulozKoncept(); vykresliStavTydne(); }
 function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('show'), 2600); }
 const vyplnenyDen = (d) => d.zavreno || (d.jidla || []).some((j) => j.nazev.trim());
 
@@ -225,8 +283,20 @@ function prepniPohled(v) {
   $('.save-bar').style.display = v === 'menu' ? '' : 'none';
   window.scrollTo(0, 0);
 }
-document.addEventListener('DOMContentLoaded', () => {
-  nacti(); vykresliEditor(); vykresliListekAdmin();
+document.addEventListener('DOMContentLoaded', async () => {
+  if (RNM_SERVER) {
+    try { await nactiZeServeru(); } catch (e) { $('#ed-body').innerHTML = `<p class="tip"><span>⚠️</span><span>${esc(e.message)}</span></p>`; return; }
+    $('#b-reset').hidden = true;
+    nactiPoptavky();
+    $('#v-poptavky').addEventListener('click', async (e) => {
+      const b = e.target.closest('button[data-stav]'); if (!b) return;
+      b.disabled = true;
+      try { await rnmApi('/api/admin/poptavky/' + b.closest('[data-id]').dataset.id, { stav: b.dataset.stav }, 'PATCH'); } catch (err) { toast(err.message); }
+      nactiPoptavky();
+    });
+    window.addEventListener('beforeunload', (e) => { if (spinave.size) { ulozKonceptyNaServer(); e.preventDefault(); } });
+  } else nacti();
+  vykresliEditor(); vykresliStavTydne(); vykresliListekAdmin();
   $$('[data-view]').forEach((b) => b.addEventListener('click', () => prepniPohled(b.dataset.view)));
 
   $('#ed-tabs').addEventListener('click', (e) => { const b = e.target.closest('.day-tab'); if (!b) return; den = +b.dataset.i; otevrenyPicker = null; vykresliEditor(); });
@@ -274,8 +344,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const zmenTyden = (o) => {
     aktualni = posunDatum(aktualni, o * 7);
-    if (!tydny[aktualni]) tydny[aktualni] = { od: aktualni, cenaPoznamka: VYCHOZI_TYDEN.cenaPoznamka, dny: [0, 1, 2, 3, 4].map(prazdnyDen) };
-    den = 0; otevrenyPicker = null; ulozKoncept(); vykresliEditor();
+    if (!tydny[aktualni]) tydny[aktualni] = novyTyden(aktualni);
+    den = 0; otevrenyPicker = null; zmeneno = false; ulozKoncept(); vykresliEditor(); vykresliStavTydne();
   };
   $('#prev').addEventListener('click', () => zmenTyden(-1));
   $('#next').addEventListener('click', () => zmenTyden(1));
@@ -305,9 +375,20 @@ document.addEventListener('DOMContentLoaded', () => {
     vykresliNavrh();
   });
   $('#b-reset').addEventListener('click', () => { try { localStorage.removeItem(KLIC_ADMIN); localStorage.removeItem(KLIC_TYDNE); } catch (e) { /* nic */ } location.reload(); });
-  $('#b-save').addEventListener('click', () => {
+  $('#b-save').addEventListener('click', async () => {
     const t = clone(tyden());
     t.dny.forEach((d) => { d.jidla = d.jidla.filter((j) => j.nazev.trim()); });
+    if (RNM_SERVER) {
+      const b = $('#b-save'); b.disabled = true;
+      try {
+        const r = await rnmApi(`/api/admin/tydny/${aktualni}/zverejnit`, { tyden: t });
+        spinave.delete(aktualni); clearTimeout(konceptCasovac); if (spinave.size) ulozKonceptyNaServer();
+        stavy[aktualni] = Object.assign({}, stavy[aktualni] || {}, { zverejneno: true, rozpracovano: false, zverejnenoKdy: r.zverejnenoKdy });
+        zmeneno = false; vykresliStavTydne(); toast('✓ Uloženo. Menu je na webu.');
+      } catch (e) { toast('Nepodařilo se zveřejnit: ' + e.message); }
+      b.disabled = false;
+      return;
+    }
     try { localStorage.setItem(KLIC_TYDNE, JSON.stringify(t)); } catch (e) { /* nic */ }
     zmeneno = false; const s = $('#status'); s.textContent = 'Zveřejněno právě teď'; s.classList.remove('draft'); ulozKoncept();
     if (typeof Ucty !== 'undefined') Ucty.zapis(`Zveřejnění denního menu na ${$('#week-label').textContent}`);

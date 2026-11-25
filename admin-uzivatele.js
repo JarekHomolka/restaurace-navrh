@@ -1,7 +1,8 @@
 /* Administrace: můj účet, odhlášení a správa uživatelů (sekce Uživatelé jen pro super admina, tedy IT).
    Data a pravidla jsou v auth.js, tady je jen obrazovka. */
 
-(function () {
+(async function () {
+  await Ucty.pripravit();
   const ja = Ucty.aktualni();
   if (!ja) return;   // auth.js už přesměrovává na přihlášení
   const jeSpravce = ja.role === 'superadmin';
@@ -20,7 +21,7 @@
     dUcet.showModal();
   });
   $('#ucet-zavrit').addEventListener('click', () => dUcet.close());
-  $('#b-odhlasit').addEventListener('click', () => { Ucty.odhlasit(); location.replace('prihlaseni.html?odhlaseno=1'); });
+  $('#b-odhlasit').addEventListener('click', async () => { await Ucty.odhlasit(); location.replace('prihlaseni.html?odhlaseno=1'); });
   $('#heslo-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const b = $('#h-ulozit'); b.disabled = true;
@@ -33,8 +34,8 @@
     b.disabled = false;
   });
   // Odhlášení i v jiné záložce (nebo zablokování super adminem) se projeví hned
-  // (v ostrém webu to hlídá server u každého uložení)
-  const hlidej = () => { const u = Ucty.aktualni(); if (!u || u.id !== ja.id || u.role !== ja.role) location.replace('prihlaseni.html'); };
+  // (v ostrém webu se stav přihlášení ověří u serveru)
+  const hlidej = async () => { if (Ucty.obnov) { try { await Ucty.obnov(); } catch (e) { return; } } const u = Ucty.aktualni(); if (!u || u.id !== ja.id || u.role !== ja.role) location.replace('prihlaseni.html'); };
   window.addEventListener('storage', (e) => { if (/^rnm-(relace|ucty)-/.test(e.key || '')) hlidej(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) hlidej(); });
   setInterval(hlidej, 60000);
@@ -88,7 +89,7 @@
     $('#uz-zaznam').innerHTML = Ucty.zaznam(8).map((z) => `<li><time datetime="${esc(z.kdy)}">${datum(z.kdy)} · ${esc(z.kdo)}</time>${esc(z.co)}</li>`).join('');
   }
 
-  const zkus = (fn, ok) => { try { const r = fn(); vykresli(); if (ok) toast(ok); return r; } catch (err) { toast(err.message); vykresli(); return null; } };
+  const zkus = async (fn, ok) => { try { const r = await fn(); vykresli(); if (ok) toast(ok); return r; } catch (err) { toast(err.message); vykresli(); return null; } };
 
   $('#v-uzivatele').addEventListener('change', (e) => {
     if (e.target.dataset.a !== 'role') return;
@@ -111,7 +112,7 @@
     if (pz) {
       const token = pz.dataset.token;
       if (a === 'kopirovat') kopiruj(Ucty.seznam().pozvanky.find((p) => p.token === token).odkaz, 'Odkaz');
-      if (a === 'znovu') { const r = zkus(() => Ucty.obnovitPozvanku(token)); if (r) ukazOdkaz({ nadpis: 'Nový odkaz pozvánky', odkaz: r.odkaz, text: 'Starý odkaz už neplatí. Nový platí 7 dní.' }); }
+      if (a === 'znovu') zkus(() => Ucty.obnovitPozvanku(token)).then((r) => { if (r) ukazOdkaz({ nadpis: 'Nový odkaz pozvánky', odkaz: r.odkaz, text: 'Starý odkaz už neplatí. Nový platí 7 dní.' }); });
       if (a === 'zrusit' && confirm('Zrušit pozvánku? Odkaz přestane platit.')) zkus(() => Ucty.zrusitPozvanku(token), 'Pozvánka je zrušená.');
     }
   });
@@ -171,22 +172,23 @@
         vykresli();
         ukazVysledek({ nadpis: `Účet pro ${u.jmeno} je připravený`, hodnota: heslo, kopirovat: 'heslo', text: `Přihlašuje se e-mailem ${u.email}. Heslo se ukáže jen teď, uložené je jen jako otisk. Předejte ho osobně nebo telefonem.${zmenitText}` });
       } else if (rezim === 'novy') {
-        const p = Ucty.pozvat({ email: $('#pz-email').value, jmeno: $('#pz-jmeno').value, role: $('#pozvat-form').querySelector('[name="pz-role"]:checked').value });
+        const p = await Ucty.pozvat({ email: $('#pz-email').value, jmeno: $('#pz-jmeno').value, role: $('#pozvat-form').querySelector('[name="pz-role"]:checked').value });
         vykresli();
-        ukazOdkaz({ nadpis: 'Pozvánka je připravená', odkaz: p.odkaz, text: `Pro ${p.email}, platí 7 dní. V ostrém webu ji pošleme e-mailem automaticky. V ukázce odkaz zkopírujte a otevřete třeba v anonymním okně.` });
+        ukazOdkaz({ nadpis: 'Pozvánka je připravená', odkaz: p.odkaz, text: Ucty.UKAZKA ? `Pro ${p.email}, platí 7 dní. V ostrém webu ji pošleme e-mailem automaticky. V ukázce odkaz zkopírujte a otevřete třeba v anonymním okně.` : `Pro ${p.email}, platí 7 dní. Zkopírujte odkaz a pošlete ho dotyčnému (SMS, e-mail). Automatické e-maily zapneme po přepnutí domény.` });
       } else if (z === 'heslo') {
         const u = await Ucty.nastavitHesloUzivateli(cil.id, heslo, zmenit);
         vykresli();
         ukazVysledek({ nadpis: `Nové heslo pro ${u.jmeno}`, hodnota: heslo, kopirovat: 'heslo', text: `Staré heslo přestalo platit a ${u.jmeno} je odhlášen na všech zařízeních. Heslo se ukáže jen teď.${zmenitText}` });
       } else {
-        const r = Ucty.odkazNaNoveHeslo(cil.id);
+        const r = await Ucty.odkazNaNoveHeslo(cil.id);
         vykresli();
-        ukazOdkaz({ nadpis: `Odkaz na nové heslo pro ${cil.jmeno}`, odkaz: r.odkaz, text: 'Platí 24 hodin a jde použít jen jednou. V ostrém webu ho pošleme e-mailem automaticky.' });
+        ukazOdkaz({ nadpis: `Odkaz na nové heslo pro ${cil.jmeno}`, odkaz: r.odkaz, text: Ucty.UKAZKA ? 'Platí 24 hodin a jde použít jen jednou. V ostrém webu ho pošleme e-mailem automaticky.' : 'Platí 24 hodin a jde použít jen jednou. Zkopírujte ho a pošlete dotyčnému.' });
       }
     } catch (err) { $('#pozvat-chyba').textContent = err.message; }
     b.disabled = false;
   });
 
+  if (!Ucty.UKAZKA) $('#b-reset-ucty').closest('p').hidden = true;
   $('#b-reset-ucty').addEventListener('click', () => {
     if (!confirm('Vrátit ukázku do začátku? Zůstane jen účet IT, všechny přidané účty zmizí a odhlásíte se.')) return;
     Ucty.resetUkazky(); location.replace('prihlaseni.html');

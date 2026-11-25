@@ -9,10 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="web.css?v=20261116g">
+<link rel="stylesheet" href="web.css?v=20261125e">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="parkoviste-data.js?v=20261116g" defer></script>
-<script src="app.js?v=20261116g" defer></script>
+<script src="parkoviste-data.js?v=20261125e" defer></script>
+<script src="app.js?v=20261125e" defer></script>
 </head>
 <body>
 
@@ -144,6 +144,8 @@
           <div class="pole"><label for="f-mail">E-mail</label><input id="f-mail" type="email" autocomplete="email"></div>
         </div>
         <div class="pole"><label for="f-zprava">Co si představujete?</label><textarea id="f-zprava" placeholder="Např. oběd po prohlídce zámku, 2 vegetariáni, platba fakturou"></textarea></div>
+        <div class="past" aria-hidden="true"><label for="f-web">Nevyplňujte</label><input id="f-web" tabindex="-1" autocomplete="off"></div>
+        <p class="poptavka-chyba" id="poptavka-chyba" role="alert"></p>
         <button class="btn btn-plna" type="submit">Odeslat poptávku</button>
         <p class="dekujeme" role="status">Děkujeme, poptávka dorazila. Brzy se ozveme. (ukázka)</p>
         <p class="pozn">Údaje použijeme jen k vyřízení poptávky.</p>

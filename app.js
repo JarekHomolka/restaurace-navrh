@@ -106,9 +106,26 @@ function alergenyHtml(a) {
   if (!a || !a.length) return '';
   return `<span class="alg" title="Alergeny: ${a.map((n) => `${n} ${ALERGENY[n - 1]}`).join(', ')}">${a.map((n) => `<span>${n}</span>`).join('')}</span>`;
 }
+/* Ostrý web (Cloudflare): stránky mají <html data-server>, data jdou přes /api/*.
+   Ukázka na GitHub Pages: všechno v prohlížeči (localStorage). */
+const RNM_SERVER = document.documentElement.hasAttribute('data-server');
+async function rnmApi(cesta, data, metoda) {
+  const m = metoda || (data === undefined ? 'GET' : 'POST');
+  let r;
+  try {
+    r = await fetch(cesta, { method: m, credentials: 'same-origin', headers: m === 'GET' ? {} : { 'content-type': 'application/json', 'x-rnm': '1' }, body: m === 'GET' ? undefined : JSON.stringify(data || {}) });
+  } catch (e) { throw new Error('Nepodařilo se spojit se serverem. Zkontrolujte připojení k internetu.'); }
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401 && location.pathname.indexOf('admin') >= 0) location.replace('prihlaseni.html?zpet=admin.html');
+  if (!r.ok) throw new Error(j.chyba || 'Něco se nepovedlo. Zkuste to prosím znovu.');
+  return j;
+}
 function nactiTyden() {
   // ?nahled=1: živý náhled z administrace (rozpracovaný, ještě neuložený týden)
-  const klic = new URLSearchParams(location.search).has('nahled') ? 'rnm-tyden-nahled' : KLIC_TYDNE;
+  const nahled = new URLSearchParams(location.search).has('nahled');
+  // Ostrý web: zveřejněné menu vloží server rovnou do stránky
+  if (!nahled && window.RNM_TYDEN) return window.RNM_TYDEN;
+  const klic = nahled ? 'rnm-tyden-nahled' : KLIC_TYDNE;
   try { const s = localStorage.getItem(klic); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště jedeme z výchozích dat */ }
   return VYCHOZI_TYDEN;
 }
@@ -423,7 +440,24 @@ document.addEventListener('DOMContentLoaded', () => {
     L.marker(pos, { icon: L.divIcon({ className: '', html: '<div class="pin rest">★</div>', iconSize: [36, 36], iconAnchor: [18, 18] }) }).addTo(m).bindPopup('<b>Restaurace Na Městečku</b><br>Komenského 589, Lysice');
   };
   if (mk) { if (typeof L !== 'undefined') startMapky(); else window.addEventListener('load', startMapky); }
-  // Formulář poptávky (ukázka)
+  // Formulář poptávky: v ostrém webu se uloží na server a objeví se v administraci
   const f = $('#poptavka-form');
-  if (f) f.addEventListener('submit', (e) => { e.preventDefault(); const d = $('.dekujeme'); d.classList.add('show'); d.scrollIntoView({ block: 'center', behavior: 'smooth' }); });
+  if (f) f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = $('.dekujeme'), chybaEl = $('#poptavka-chyba'), btn = f.querySelector('button[type="submit"]');
+    if (RNM_SERVER) {
+      const typ = f.querySelector('[name="typ"]:checked');
+      const v = (id) => ($('#' + id) || {}).value || '';
+      btn.disabled = true; if (chybaEl) chybaEl.textContent = '';
+      try {
+        await rnmApi('/api/poptavka', { typ: typ ? typ.parentElement.textContent.trim() : '', datum: v('f-datum'), cas: v('f-cas'), osob: v('f-osob'), jmeno: v('f-jmeno'), tel: v('f-tel'), mail: v('f-mail'), zprava: v('f-zprava'), web: v('f-web') });
+      } catch (err) {
+        btn.disabled = false;
+        if (chybaEl) { chybaEl.textContent = err.message; chybaEl.scrollIntoView({ block: 'center', behavior: 'smooth' }); } else alert(err.message);
+        return;
+      }
+      f.reset(); btn.disabled = false;
+    }
+    d.classList.add('show'); d.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
 });

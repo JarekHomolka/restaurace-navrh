@@ -353,3 +353,8 @@ body.lista-skryta .lista { transform: translateY(110%); }
   .uvod-fakta dd a { color: inherit; text-decoration-color: var(--linka); text-underline-offset: 3px; }
   .uvod-fakta dd a:hover { color: var(--vino); text-decoration-color: currentColor; }
 }
+
+/* Formulář poptávky: past na roboty (skryté pole) a chybová hláška ze serveru */
+.past { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.poptavka-chyba { margin: 0; color: var(--vino); font-weight: 600; }
+.poptavka-chyba:empty { display: none; }

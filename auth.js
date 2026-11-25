@@ -291,7 +291,9 @@ const Ucty = (() => {
   function resetUkazky() { try { localStorage.removeItem(KLIC); localStorage.removeItem(KLIC_RELACE); } catch (e) { /* nic */ } }
   const ukazkoveHeslo = (role) => (UKAZKA ? (UKAZKOVE_UCTY.find((u) => u.role === role) || {}) : {});
 
-  return { UKAZKA, ROLE, MIN_DELKA_HESLA, POZVANKA_DNI, pripravit, prihlasit, odhlasit, aktualni, vyzadujPrihlaseni, bezpecnyNavrat,
+  const obnov = async () => {};   // v ukázce jsou data přímo v prohlížeči
+
+  return { UKAZKA, ROLE, MIN_DELKA_HESLA, POZVANKA_DNI, pripravit, obnov, prihlasit, odhlasit, aktualni, vyzadujPrihlaseni, bezpecnyNavrat,
     seznam, pozvat, vytvorit, nastavitHesloUzivateli, vygenerujHeslo, obnovitPozvanku, zrusitPozvanku, zmenRoli, zablokovat, odebrat, odkazNaNoveHeslo, zaznam, zapis,
     najdiOdkaz, nastavitHeslo, zmenHeslo, kontrolaHesla, resetUkazky, ukazkoveHeslo };
 })();
