@@ -90,10 +90,10 @@ main { padding-bottom: calc(var(--lista) + env(safe-area-inset-bottom)); }
 .zajezdy-odkaz:hover { border-color: var(--vino); }
 @media (max-width: 899px) { .uvod .akce-radek { display: none; } }
 @media (min-width: 900px) {
-  .uvod { padding-block: 56px 72px; }
+  .uvod { padding-block: 28px 48px; }
   .uvod .wrap { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: 64px; align-items: start; }
   .uvod h1 { font-size: 56px; }
-  .uvod-text { padding-top: 12px; gap: 16px; }
+  .uvod-text { padding-top: 4px; gap: 12px; }
   .zajezdy-odkaz { display: none; }
 }
 
@@ -349,8 +349,8 @@ body.lista-skryta .lista { transform: translateY(110%); }
 /* ---------- Fakta pod úvodem (jen počítač, na mobilu je místo nich karta Zájezdy) ---------- */
 .uvod-fakta { display: none; }
 @media (min-width: 900px) {
-  .uvod-fakta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 28px 0 0; border-top: 1px solid var(--linka); }
-  .uvod-fakta div { padding: 18px 16px 0 0; }
+  .uvod-fakta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 18px 0 0; border-top: 1px solid var(--linka); }
+  .uvod-fakta div { padding: 14px 16px 0 0; }
   .uvod-fakta div + div { padding-left: 18px; border-left: 1px solid var(--linka); }
   .uvod-fakta dt { font: 800 34px/1 var(--f-nadpis); letter-spacing: -.02em; color: var(--vino); white-space: nowrap; }
   .uvod-fakta dd { margin: 6px 0 0; font-size: 15px; color: var(--tlumeny); }
@@ -413,4 +413,4 @@ body.lista-skryta .lista { transform: translateY(110%); }
 .zvyrazneni-dovoz { color: var(--vino); }
 /* Pizza s sebou: na počítači vlevo pod tlačítky a nad hodnocením, na mobilu pod kartou denního menu */
 .pizza-pc { display: none; }
-@media (min-width: 900px) { .pizza-pc { display: flex; margin-top: 20px; max-width: 460px; } .pizza-mobil { display: none; } }
+@media (min-width: 900px) { .pizza-pc { display: flex; margin-top: 8px; max-width: 460px; } .pizza-mobil { display: none; } }
