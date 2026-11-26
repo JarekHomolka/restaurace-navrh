@@ -446,8 +446,9 @@ button.zajezdy-odkaz { width: 100%; font: inherit; text-align: left; cursor: poi
 .text-stranka ul { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; }
 
 /* Patička: provozovatel; formulář: informace o údajích */
-.paticka .provozovatel { font-size: 13px; color: rgba(255,255,255,.6); border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; margin: 0; }
-.paticka .provozovatel a { color: rgba(255,255,255,.85); display: inline; min-height: 0; }
+.paticka .paticka-spodek { grid-column: 1 / -1; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,.6); text-align: center; border-top: 1px solid rgba(255,255,255,.14); padding-top: 16px; margin: 6px 0 0; }
+.paticka .paticka-spodek a { color: rgba(255,255,255,.85); display: inline; min-height: 0; }
+.text-stranka .platnost { margin-top: 32px; color: var(--tlumeny); font-size: 15px; }
 .gdpr-info { font-size: 14px; color: var(--tlumeny); margin: 4px 0 0; }
 
 /* Patička nad spodní lištou na mobilu: poslední řádek (provozovatel) nesmí zůstat pod lištou */

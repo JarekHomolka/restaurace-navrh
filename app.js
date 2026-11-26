@@ -605,6 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
   vykresliStav();
   vykresliGalerii();
   vykresliSkupinyMenu();
+  $$('[data-rok]').forEach((el) => { el.textContent = new Date().getFullYear(); });
   // Pizza s sebou: okno s volbou (seznam pizz, nebo rovnou zavolat)
   const pv = $('#pizza-volba');
   if (pv) {
