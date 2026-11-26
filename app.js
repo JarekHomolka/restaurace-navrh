@@ -526,7 +526,7 @@ function vykresliSkupinyMenu() {
    Na úvod jde vždy zdroj s vyšší známkou; při shodě ten s víc hodnoceními.
    Zdroj s méně než MIN_HODNOCENI recenzemi se nebere, aby číslo bylo reprezentativní. */
 const HODNOCENI = [
-  { zdroj: 'Googlu', hvezdy: 4.1, pocet: 642, url: 'https://www.google.com/maps/search/?api=1&query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice' },
+  { zdroj: 'Googlu', hvezdy: 4.1, pocet: 654, url: 'https://www.google.com/maps/search/?api=1&query=Restaurace+Na+M%C4%9Bste%C4%8Dku+Lysice' },
   { zdroj: 'Mapy.cz', hvezdy: 4.3, pocet: 121, url: 'https://www.firmy.cz/detail/565171-restaurace-na-mestecku-lysice.html' },
 ];
 const MIN_HODNOCENI = 50;
