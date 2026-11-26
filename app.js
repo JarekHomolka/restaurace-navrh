@@ -44,7 +44,7 @@ const LISTEK = [
     { g: '200 g', nazev: 'Smažené DUO', popis: '100 g vepřový řízek + 100 g kuřecí řízek', en: 'pork schnitzel + chicken schnitzel', a: [1, 3], cena: 160 },
     { g: '150 g', nazev: 'Grilovaný vepřový steak se smaženými cibulovými kroužky (5 ks)', en: 'pork steak, onion rings', a: [1, 3], cena: 160 } ] },
   { id: 'vikend', nazev: 'Víkendová nabídka', pozn: 'Sobota a neděle', polozky: [
-    { g: '', nazev: 'Hovězí vývar s játrovými knedlíčky a nudlemi', en: 'beef broth with liver dumplings and noodles', a: [], cena: 60, polevka: true },
+    { g: '', nazev: 'Hovězí vývar s játrovými knedlíčky a nudlemi', en: 'beef broth with liver dumplings and noodles', a: [1, 3, 9], cena: 60, polevka: true },
     { g: '150 g', nazev: 'Moravský vrabec, zelí, houskový knedlík', en: 'Moravian roast pork, cabbage, dumplings', a: [1, 3, 7], cena: 180 },
     { g: '100 g', nazev: 'Vepřový guláš, houskový knedlík', en: 'pork goulash, dumplings', a: [1, 3, 7], cena: 180 },
     { g: '100 g', nazev: 'Labužnický guláš, bramboráčky', en: 'gourmet goulash, potato pancakes', a: [1, 3, 7], cena: 195 },
@@ -80,8 +80,8 @@ const LISTEK = [
     { g: '10 ks', nazev: 'Smažené cibulové kroužky', en: 'fried onion rings', a: [1, 3], cena: 55, bezMasa: true },
     { g: '1 ks', nazev: 'Pečivo (rohlík, chléb)', en: 'bread', a: [1], cena: 5, bezMasa: true },
     { g: '', nazev: 'Zeleninová obloha', en: 'vegetable garnish', a: [], cena: 25, bezMasa: true },
-    { g: '50 g', nazev: 'Tatarská omáčka, kečup', en: 'tartar sauce, ketchup', a: [3], cena: 25, bezMasa: true },
-    { g: '50 g', nazev: 'BBQ omáčka, sladká chilli omáčka', a: [], cena: 30, bezMasa: true } ] },
+    { g: '50 g', nazev: 'Tatarská omáčka, kečup', en: 'tartar sauce, ketchup', a: [3, 10], cena: 25, bezMasa: true },
+    { g: '50 g', nazev: 'BBQ omáčka, sladká chilli omáčka', en: 'BBQ sauce, sweet chilli sauce', a: [10], cena: 30, bezMasa: true } ] },
   { id: 'salaty', nazev: 'Saláty', polozky: [
     { g: '200 g', nazev: 'Míchaný salát', popis: 'podle sezonní nabídky', en: 'mixed seasonal salad', a: [], cena: 65, bezMasa: true },
     { g: '200 g', nazev: 'Zelný salát s cibulí', en: 'cabbage salad with onion', a: [], cena: 50, bezMasa: true } ] },
@@ -90,6 +90,34 @@ const LISTEK = [
     { g: '', nazev: 'Zmrzlina se šlehačkou', en: 'ice-cream with cream', a: [7], cena: 60, bezMasa: true } ],
     pozn2: 'Za poloviční porce účtujeme 2/3 z ceny pokrmu.' }
 ];
+
+/* Návrh alergenů podle názvu jídla (typický recept). Používá administrace: návrh se předvyplní a obsluha ho zkontroluje. */
+const ALG_PRAVIDLA = [
+  [/rizek|rizk|smaz|obal|kapsa|duo\b/, [1, 3]], [/knedl/, [1, 3, 7]], [/testovin|spaget|lasagn|noky|nudl|pizza|toast|topink|pecivo|chleb|housk|bageta|tortil|wrap|burger|langos|palacink|kolac|zakusk|dort/, [1]],
+  [/syr|smetan|masl|kase|eidam|hermelin|mozzarel|parmaz|jogurt|mlek|tvaroh|niva|gorgonz|bechamel/, [7]], [/tatar(ska|ka)|majonez|coleslaw|bramborov\w* salat|vlassk/, [3, 10]],
+  [/tatarak/, [3, 10]], [/horcic/, [10]], [/celer|vyvar|polevk/, [9]], [/ryb|losos|pstruh|tunak|treska|kapr|filet z/, [4]], [/kreve|krab/, [2]], [/slavk|mekk|chobot/, [14]],
+  [/orech|mandl|pistac|kesu/, [8]], [/arasid/, [5]], [/sezam/, [11]], [/soj/, [6]], [/vejc|vajic|omelet|hemenex/, [3]], [/gulas|svickov|rajsk|koprov|segedin|stroganov|(smetanov|houbov|pepr|knedlikov)\w* omack/, [1, 7, 9]],
+  [/pizza/, [1, 7]], [/vino|na vine/, [12]],
+  // polévky a běžná jídla denního menu
+  [/kulajd/, [1, 3, 7, 9]], [/bramborac|gulasov|frankfurt|drstk|cesnec|zelnac|kminov|hovezi polevk/, [1, 9]], [/hrach|cockov|fazol|zeleninov/, [9]],
+  [/rajsk\w* polevk|krem|kremov/, [1, 7, 9]], [/nudl/, [1, 3]], [/spenat|kase/, [7]], [/omack/, [1]], [/strouhank|trojobal|parizsk|sekan|karbanat|fasirk/, [1, 3]], [/syrem|sypan\w* syr/, [7]],
+  // běžná jídla poledního menu (typický recept – obsluha vždy zkontroluje)
+  [/na pepri|pepr/, [1, 7]], [/flamendr/, [1, 10]], [/na paprice|paprikov/, [1, 7]], [/kari|curry/, [1, 7]], [/cin(a|sk)|kung|sojov/, [1, 6]],
+  [/rizot/, [7, 9]], [/bolonsk|bolognes/, [1, 9]], [/halusk/, [1, 3, 7]], [/francouzsk\w* brambor|zapekan|zapecen/, [3, 7]], [/bramborak/, [1, 3, 7]],
+  [/spanelsk\w* ptac|plnen\w* paprik|moravsk\w* vrabec|veprova pecen/, [1]], [/znojemsk|okurkov\w* omack/, [1, 10]], [/lecho|zelenin\w* smes/, []],
+  [/kotlet|plnen\w* kure|cordon/, [1, 3, 7]], [/livanc|livance|vdolk|buchtick|knedliky ovocn|ovocne knedl|kynute/, [1, 3, 7]], [/lasagn|gnocchi|carbonar/, [1, 3, 7]],
+  [/fazolk|cuketov|dyn/, [7]], [/hamburg|cheeseburg/, [1, 3, 7, 10, 11]], [/tortill|burrito|quesadill/, [1, 7]],
+];
+function navrhAlergenu(nazev, typ) {
+  const t = String(nazev || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), a = new Set();
+  ALG_PRAVIDLA.forEach(([re, cisla]) => { if (re.test(t)) cisla.forEach((c) => a.add(c)); });
+  if (typ === 'polevka' && t.trim()) a.add(9);
+  return [...a].sort((x, y) => x - y);
+}
+/* Alergeny z políčka „1, 3, 7“ */
+const alergenyZTextu = (s) => [...new Set(String(s || '').split(/[^0-9]+/).map(Number).filter((n) => n >= 1 && n <= 14))].sort((x, y) => x - y);
+/* U položky bez alergenů ukážeme „bez alergenů“, ať je jasné, že je to zkontrolované */
+const alergenyNeboBez = (a) => (a && a.length ? alergenyHtml(a) : '<span class="alg-bez">bez alergenů</span>');
 
 /* Otevírací doba: index 0 = neděle (jako Date.getDay) */
 const OTEVRENO = { 0: [10, 21], 1: [10, 22], 2: [10, 22], 3: [10, 22], 4: [10, 22], 5: [10, 22], 6: [10, 22] };
@@ -221,7 +249,7 @@ function vykresliListek(root) {
           <div class="item-price num">${kc(p.cena)}</div>
           ${p.popis ? `<div class="item-desc">${esc(p.popis)}</div>` : ''}
           ${p.en ? `<div class="item-en" lang="en">${esc(p.en)}</div>` : ''}
-          <div class="item-meta">${p.g ? `<span>${esc(p.g)}</span>` : ''}${p.bezMasa ? '<span class="badge green">Bez masa</span>' : ''}${alergenyHtml(p.a)}</div>
+          <div class="item-meta">${p.g ? `<span>${esc(p.g)}</span>` : ''}${p.bezMasa ? '<span class="badge green">Bez masa</span>' : ''}${alergenyNeboBez(p.a)}</div>
         </li>`).join('')}
       </ul>
       ${k.pozn2 ? `<p class="cat-note">${esc(k.pozn2)}</p>` : ''}
@@ -477,6 +505,7 @@ const VYCHOZI_RAUTY = {
   polozky: ['Kuřecí a vepřové rautové řízečky', 'Sýrové smažáčky', 'Pečené kuřecí malé špízy', 'Pečené kuřecí paličky', 'Grilovaný kuřecí kebab',
     'Guláš (vepřový/hovězí)', 'Pečená vepřová žebra na medu', 'Pečené vepřové maso na česneku', 'Hovězí tatarák + topinky',
     'Studené obložené mísy (uzeninová, sýrová, zeleninová)', 'Saláty – šopský, coleslaw, bramborový atd.'],
+  polozkyA: [[1, 3], [1, 3, 7], [], [], [1, 7], [1, 9], [6, 10], [], [1, 3, 10], [1, 3, 7, 10], [3, 7, 10]],
   cenaOd: 120, cenaDo: 400, poznamka: 'Rádi poradíme a vypracujeme individuální cenovou nabídku.',
 };
 function aktualniRauty() {
@@ -486,12 +515,12 @@ function aktualniRauty() {
 }
 function vykresliRauty() {
   const box = $('[data-rauty]');
-  if (!box || (!window.RNM_RAUTY && RNM_SERVER)) return;   // bez dat zůstává text ze stránky
+  if (!box) return;
   const n = aktualniRauty();
   const cena = n.cenaOd && n.cenaDo ? `Cena od <b>${kc(n.cenaOd)}</b> do <b>${kc(n.cenaDo)}</b> na osobu podle velikosti rautu`
     : n.cenaOd ? `Cena od <b>${kc(n.cenaOd)}</b> na osobu` : '';
   $('h2', box).textContent = n.nadpis;
-  $('.nabidka-karta', box).innerHTML = `<ul class="rauty-seznam">${n.polozky.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${cena ? `<p class="nabidka-cena"><span>${cena}</span></p>` : ''}`;
+  $('.nabidka-karta', box).innerHTML = `<ul class="rauty-seznam">${n.polozky.map((x, i) => `<li>${esc(x)} ${n.polozkyA ? alergenyNeboBez(n.polozkyA[i]) : ''}</li>`).join('')}</ul>${cena ? `<p class="nabidka-cena"><span>${cena}</span></p>` : ''}`;
   $('.nabidka-pozn', box).textContent = n.poznamka || '';
 }
 
@@ -501,6 +530,7 @@ const VYCHOZI_SKUPINY = {
   nadpis: 'Naše nabídka pro skupinové zájezdy',
   polevka: 'Hovězí vývar s játrovými knedlíčky a nudlemi',
   jidla: ['Moravský vrabec, zelí, houskový knedlík', 'Kuřecí steak z grilu, šťouchaný brambor, zeleninová obloha', 'Smažený vepřový řízek, bramborový salát'],
+  polevkaA: [1, 3, 9], jidlaA: [[1, 3, 7], [7], [1, 3, 10]],
   cenaBez: 180, cenaS: 200, poznamka: 'Menu upravíme podle vás, i pro vegetariány a děti.',
 };
 function aktualniSkupiny() {
@@ -510,14 +540,14 @@ function aktualniSkupiny() {
 }
 function vykresliSkupinyMenu() {
   const box = $('[data-skupiny-menu]');
-  if (!box || (!window.RNM_SKUPINY && RNM_SERVER)) return;   // bez dat zůstává text ze stránky
+  if (!box) return;
   const n = aktualniSkupiny(), ceny = [];
   if (n.cenaBez) ceny.push(`<span><b>${kc(n.cenaBez)}</b> za porci${n.polevka ? ' bez polévky' : ''}</span>`);
   if (n.cenaS && n.polevka) ceny.push(`<span><b>${kc(n.cenaS)}</b> za porci s polévkou</span>`);
   $('h2, h3', box).textContent = n.nadpis;
   $('.nabidka-karta', box).innerHTML = `
-    ${n.polevka ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(n.polevka)}</b></div>` : ''}
-    <ol class="jidla">${n.jidla.map((j, i) => `<li><span class="c">${i + 1}</span><span class="n">${esc(j)}</span></li>`).join('')}</ol>
+    ${n.polevka ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(n.polevka)}</b> ${n.polevkaA ? alergenyNeboBez(n.polevkaA) : ''}</div>` : ''}
+    <ol class="jidla">${n.jidla.map((j, i) => `<li><span class="c">${i + 1}</span><span class="n">${esc(j)} ${n.jidlaA ? alergenyNeboBez(n.jidlaA[i]) : ''}</span></li>`).join('')}</ol>
     ${ceny.length ? `<p class="nabidka-cena">${ceny.join('')}</p>` : ''}`;
   $('.nabidka-pozn', box).textContent = n.poznamka || '';
 }

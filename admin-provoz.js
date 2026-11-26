@@ -129,18 +129,21 @@
   function vykresliSkupinyEd() {
     $('#sk-nadpis').value = skupiny.nadpis || '';
     $('#sk-polevka').value = skupiny.polevka || '';
+    $('#sk-polevka-a').value = (skupiny.polevkaA || []).join(', ');
     $('#sk-cena-bez').value = skupiny.cenaBez || '';
     $('#sk-cena-s').value = skupiny.cenaS || '';
     $('#sk-pozn').value = skupiny.poznamka || '';
     $('#sk-jidla').innerHTML = (skupiny.jidla || []).map((j, i) => `
       <div class="vyj-radek" data-i="${i}">
         <input type="text" data-f="jidlo" value="${esc(j)}" maxlength="160" aria-label="Jídlo ${i + 1}" placeholder="Název jídla a přílohy">
+        <input type="text" class="alg-pole" data-f="alg" value="${esc(((skupiny.jidlaA || [])[i] || []).join(', '))}" inputmode="numeric" aria-label="Alergeny jídla ${i + 1}" placeholder="alergeny" title="Čísla alergenů, např. 1, 3, 7">
         <button type="button" class="del" data-a="smazat" title="Odebrat jídlo" aria-label="Odebrat jídlo ${i + 1}">×</button>
       </div>`).join('');
   }
   const ctiSkupiny = (iPrazdne) => ({
     nadpis: $('#sk-nadpis').value, polevka: $('#sk-polevka').value,
-    jidla: $$('#sk-jidla [data-f="jidlo"]').map((i) => i.value).filter((x) => iPrazdne || x.trim()),
+    ...(() => { const r = $$('#sk-jidla .vyj-radek').map((d) => [$('[data-f="jidlo"]', d).value, alergenyZTextu($('[data-f="alg"]', d).value)]).filter((p) => iPrazdne || p[0].trim()); return { jidla: r.map((p) => p[0]), jidlaA: r.map((p) => p[1]) }; })(),
+    polevkaA: alergenyZTextu($('#sk-polevka-a').value),
     cenaBez: $('#sk-cena-bez').value.replace(/\D/g, ''), cenaS: $('#sk-cena-s').value.replace(/\D/g, ''), poznamka: $('#sk-pozn').value,
   });
   $('#skupiny-ed').addEventListener('input', (e) => {
@@ -149,10 +152,10 @@
   });
   $('#sk-jidla').addEventListener('click', (e) => {
     const b = e.target.closest('[data-a="smazat"]'); if (!b) return;
-    skupiny = ctiSkupiny(true); skupiny.jidla.splice(+b.closest('[data-i]').dataset.i, 1); oznac(); vykresliSkupinyEd();
+    skupiny = ctiSkupiny(true); const ix = +b.closest('[data-i]').dataset.i; skupiny.jidla.splice(ix, 1); skupiny.jidlaA.splice(ix, 1); oznac(); vykresliSkupinyEd();
   });
   $('#sk-pridat').addEventListener('click', () => {
-    skupiny = ctiSkupiny(true); skupiny.jidla.push(''); oznac(); vykresliSkupinyEd();
+    skupiny = ctiSkupiny(true); skupiny.jidla.push(''); skupiny.jidlaA.push([]); oznac(); vykresliSkupinyEd();
     const i = $$('#sk-jidla [data-f="jidlo"]').pop(); if (i) i.focus();
   });
 
@@ -165,12 +168,13 @@
     $('#ra-polozky').innerHTML = (rauty.polozky || []).map((j, i) => `
       <div class="vyj-radek" data-i="${i}">
         <input type="text" data-f="polozka" value="${esc(j)}" maxlength="160" aria-label="Položka ${i + 1}" placeholder="Např. Sýrové smažáčky">
+        <input type="text" class="alg-pole" data-f="alg" value="${esc(((rauty.polozkyA || [])[i] || []).join(', '))}" inputmode="numeric" aria-label="Alergeny položky ${i + 1}" placeholder="alergeny" title="Čísla alergenů, např. 1, 3, 7">
         <button type="button" class="del" data-a="smazat" title="Odebrat položku" aria-label="Odebrat položku ${i + 1}">×</button>
       </div>`).join('');
   }
   const ctiRauty = (iPrazdne) => ({
     nadpis: $('#ra-nadpis').value,
-    polozky: $$('#ra-polozky [data-f="polozka"]').map((i) => i.value).filter((x) => iPrazdne || x.trim()),
+    ...(() => { const r = $$('#ra-polozky .vyj-radek').map((d) => [$('[data-f="polozka"]', d).value, alergenyZTextu($('[data-f="alg"]', d).value)]).filter((p) => iPrazdne || p[0].trim()); return { polozky: r.map((p) => p[0]), polozkyA: r.map((p) => p[1]) }; })(),
     cenaOd: $('#ra-cena-od').value.replace(/\D/g, ''), cenaDo: $('#ra-cena-do').value.replace(/\D/g, ''), poznamka: $('#ra-pozn').value,
   });
   $('#rauty-ed').addEventListener('input', (e) => {
@@ -179,12 +183,23 @@
   });
   $('#ra-polozky').addEventListener('click', (e) => {
     const b = e.target.closest('[data-a="smazat"]'); if (!b) return;
-    rauty = ctiRauty(true); rauty.polozky.splice(+b.closest('[data-i]').dataset.i, 1); oznac(); vykresliRautyEd();
+    rauty = ctiRauty(true); const ix = +b.closest('[data-i]').dataset.i; rauty.polozky.splice(ix, 1); rauty.polozkyA.splice(ix, 1); oznac(); vykresliRautyEd();
   });
   $('#ra-pridat').addEventListener('click', () => {
-    rauty = ctiRauty(true); rauty.polozky.push(''); oznac(); vykresliRautyEd();
+    rauty = ctiRauty(true); rauty.polozky.push(''); rauty.polozkyA.push([]); oznac(); vykresliRautyEd();
     const i = $$('#ra-polozky [data-f="polozka"]').pop(); if (i) i.focus();
   });
+
+  /* Po napsání názvu (zájezdy, rauty) předvyplníme alergeny, pokud je políčko prázdné. Obsluha je zkontroluje. */
+  ['#skupiny-ed', '#rauty-ed'].forEach((sel) => $(sel).addEventListener('change', (e) => {
+    const f = e.target.dataset.f;
+    let pole = null, typ = 'jidlo';
+    if (f === 'jidlo' || f === 'polozka') pole = $('[data-f="alg"]', e.target.closest('.vyj-radek'));
+    else if (e.target.id === 'sk-polevka') { pole = $('#sk-polevka-a'); typ = 'polevka'; }
+    if (!pole || pole.value.trim() || !e.target.value.trim()) return;
+    const a = navrhAlergenu(e.target.value, typ);
+    if (a.length) { pole.value = a.join(', '); oznac(); }
+  }));
 
   /* ---------- galerie ---------- */
   const zprava = (t) => { $('#gal-zprava').textContent = t || ''; };

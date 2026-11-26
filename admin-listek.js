@@ -129,22 +129,7 @@
   /* ---------- Návrh alergenů a anglického názvu pro nové jídlo ----------
      1) stejné jídlo už v lístku nebo v historii denního menu, 2) jinak podle slov v názvu (slovník níže).
      Je to jen návrh: doplní se do prázdných polí a obsluha ho zkontroluje. */
-  const ALG_PRAVIDLA = [
-    [/rizek|rizk|smaz|obal|kapsa|duo\b/, [1, 3]], [/knedl/, [1, 3, 7]], [/testovin|spaget|lasagn|noky|nudl|pizza|toast|topink|pecivo|chleb|housk|bageta|tortil|wrap|burger|langos|palacink|kolac|zakusk|dort/, [1]],
-    [/syr|smetan|masl|kase|eidam|hermelin|mozzarel|parmaz|jogurt|mlek|tvaroh|niva|gorgonz|bechamel/, [7]], [/tatar(ska|ka)|majonez|coleslaw|bramborov\w* salat|vlassk/, [3, 10]],
-    [/tatarak/, [3, 10]], [/horcic/, [10]], [/celer|vyvar|polevk/, [9]], [/ryb|losos|pstruh|tunak|treska|kapr|filet z/, [4]], [/kreve|krab/, [2]], [/slavk|mekk|chobot/, [14]],
-    [/orech|mandl|pistac|kesu/, [8]], [/arasid/, [5]], [/sezam/, [11]], [/soj/, [6]], [/vejc|vajic|omelet|hemenex/, [3]], [/gulas|svickov|rajsk|koprov|segedin|stroganov|(smetanov|houbov|pepr|knedlikov)\w* omack/, [1, 7, 9]],
-    [/pizza/, [1, 7]], [/vino|na vine/, [12]],
-    // polévky a běžná jídla denního menu
-    [/kulajd/, [1, 3, 7, 9]], [/bramborac|gulasov|frankfurt|drstk|cesnec|zelnac|kminov|hovezi polevk/, [1, 9]], [/hrach|cockov|fazol|zeleninov/, [9]],
-    [/rajsk\w* polevk|krem|kremov/, [1, 7, 9]], [/nudl/, [1, 3]], [/spenat|kase/, [7]], [/omack/, [1]], [/strouhank|trojobal|parizsk|sekan|karbanat|fasirk/, [1, 3]], [/syrem|sypan\w* syr/, [7]],
-    // běžná jídla poledního menu (typický recept – obsluha vždy zkontroluje)
-    [/na pepri|pepr/, [1, 7]], [/flamendr/, [1, 10]], [/na paprice|paprikov/, [1, 7]], [/kari|curry/, [1, 7]], [/cin(a|sk)|kung|sojov/, [1, 6]],
-    [/rizot/, [7, 9]], [/bolonsk|bolognes/, [1, 9]], [/halusk/, [1, 3, 7]], [/francouzsk\w* brambor|zapekan|zapecen/, [3, 7]], [/bramborak/, [1, 3, 7]],
-    [/spanelsk\w* ptac|plnen\w* paprik|moravsk\w* vrabec|veprova pecen/, [1]], [/znojemsk|okurkov\w* omack/, [1, 10]], [/lecho|zelenin\w* smes/, []],
-    [/kotlet|plnen\w* kure|cordon/, [1, 3, 7]], [/livanc|livance|vdolk|buchtick|knedliky ovocn|ovocne knedl|kynute/, [1, 3, 7]], [/lasagn|gnocchi|carbonar/, [1, 3, 7]],
-    [/fazolk|cuketov|dyn/, [7]], [/hamburg|cheeseburg/, [1, 3, 7, 10, 11]], [/tortill|burrito|quesadill/, [1, 7]],
-  ];
+  // Slovník alergenů je v app.js (ALG_PRAVIDLA, navrhAlergenu) – sdílí ho celá administrace
   const EN_FRAZE = [
     ['houskovy knedlik', 'bread dumplings'], ['bramborovy knedlik', 'potato dumplings'], ['tatarska omacka', 'tartar sauce'], ['stouchany brambor', 'mashed potatoes'],
     ['vareny brambor', 'boiled potatoes'], ['bramborova kase', 'mashed potatoes'], ['bramborovy salat', 'potato salad'], ['cibulove krouzky', 'onion rings'],
@@ -179,18 +164,13 @@
     }).join('').replace(/\s+,/g, ',').replace(/\s+/g, ' ').trim();
     return slov && znamych / slov >= 0.6 ? out : '';
   }
-  function navrhniAlergeny(nazev, popis) {
-    const t = bezDiak(nazev + ' ' + (popis || '')), a = new Set();
-    ALG_PRAVIDLA.forEach(([re, cisla]) => { if (re.test(t)) cisla.forEach((c) => a.add(c)); });
-    return [...a].sort((x, y) => x - y);
-  }
+  const navrhniAlergeny = (nazev, popis) => navrhAlergenu(nazev + ' ' + (popis || ''));
   /* Návrh alergenů pro denní menu (polévka, jídla): historie, pak slova v názvu. Polévky skoro vždy obsahují celer. */
   window.navrhAlergenuDenni = (nazev, typ) => {
     const n = bezDiak(nazev).trim(); if (!n) return [];
     if (typeof HISTORIE !== 'undefined') { const h = HISTORIE.find((x) => bezDiak(x.nazev).trim() === n && x.alergeny && x.alergeny.length); if (h) return [...h.alergeny]; }
     let x = null; listek.forEach((k) => k.polozky.forEach((q) => { if (!x && bezDiak(q.nazev).trim() === n && q.a && q.a.length) x = [...q.a]; })); if (x) return x;
-    const a = new Set(navrhniAlergeny(nazev)); if (typ === 'polevka') a.add(9);
-    return [...a].sort((p, q) => p - q);
+    return navrhAlergenu(nazev, typ);
   };
   function navrhPro(p) {
     const n = bezDiak(p.nazev).trim(); if (!n) return null;
