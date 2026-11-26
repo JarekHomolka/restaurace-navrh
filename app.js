@@ -188,7 +188,7 @@ function vykresliDenniMenu(root) {
       <ol class="meals">${den.jidla.map((j, n) => `
         <li class="meal"><span class="meal-no">${n + 1}</span>
           <div><div class="meal-name">${esc(j.nazev)}</div>
-            <div class="meal-meta">${j.bezMasa ? '<span class="badge green">Bez masa</span>' : ''}${alergenyHtml(j.alergeny)}</div></div>
+            <div class="meal-meta">${alergenyHtml(j.alergeny)}</div></div>
           <span class="meal-price num">${kc(j.cena)}</span></li>`).join('')}
       </ol>`;
   };
@@ -388,7 +388,7 @@ function vykresliTabuli(root) {
   } else {
     obsah = `<ol>
       ${den.polevka && den.polevka.nazev ? `<li class="polevka"><span class="jidlo">Polévka: <b>${esc(den.polevka.nazev)}</b></span><span class="cena"></span>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="drobne">${algText(den.polevka.alergeny)}</span>` : ''}</li>` : ''}
-      ${den.jidla.map((j, n) => `<li><span class="jidlo"><span class="poradi">${n + 1}</span>${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="drobne">${j.bezMasa ? '<span class="bezmasa">bez masa</span>' : ''}${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}
+      ${den.jidla.map((j, n) => `<li><span class="jidlo"><span class="poradi">${n + 1}</span>${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="drobne">${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}
     </ol>`;
   }
   // Na úvodu je nadpis velký nad menu („Dnes vaříme“) a tlačítko u nadpisu; jinde (lístek) má tabule vlastní hlavičku
@@ -623,9 +623,10 @@ function vykresliKartu(root) {
       return;
     }
     telo.innerHTML = hlava + `
-      ${den.polevka && den.polevka.nazev ? `<div class="polevka-radek"><span class="k">Polévka</span><b>${esc(den.polevka.nazev)}</b>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="a">${algText(den.polevka.alergeny)}</span>` : ''}</div>` : ''}
-      <ol class="jidla">${den.jidla.map((j, n) => `<li><span class="c">${n + 1}</span><span class="n">${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="i">${j.bezMasa ? '<span class="bezmasa">bez masa</span>' : ''}${j.alergeny && j.alergeny.length ? `<span>${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}</ol>`;
+      ${den.polevka && den.polevka.nazev ? `<div class="polevka-radek s-alg" tabindex="0"><span class="k">Polévka</span><b>${esc(den.polevka.nazev)}</b>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="a alg-skryte">${algText(den.polevka.alergeny)}</span>` : ''}</div>` : ''}
+      <ol class="jidla">${den.jidla.map((j, n) => `<li class="s-alg" tabindex="0"><span class="c">${n + 1}</span><span class="n">${esc(j.nazev)}</span><span class="cena">${kc(j.cena)}</span><span class="i">${j.alergeny && j.alergeny.length ? `<span class="alg-skryte">${algText(j.alergeny)}</span>` : ''}</span></li>`).join('')}</ol>`;
   };
+  telo.addEventListener('click', (e) => { const r = e.target.closest('.s-alg'); if (r) r.classList.toggle('ukaz-alg'); });
   $('.dny', root).addEventListener('click', (e) => { const btn = e.target.closest('.den-btn'); if (btn) ukaz(+btn.dataset.i); });
   ukaz(vybrany);
 }
