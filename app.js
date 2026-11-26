@@ -190,6 +190,24 @@ function aktualniListek() {
   if (!RNM_SERVER) { try { const s = localStorage.getItem(KLIC_LISTEK); if (s) return JSON.parse(s); } catch (e) { /* bez úložiště */ } }
   return LISTEK;
 }
+/* Lístek pro vyhledávače (schema.org Menu): Google z něj pozná jídla a ceny */
+function listekProVyhledavace() {
+  const data = {
+    '@context': 'https://schema.org', '@type': 'Menu', name: 'Jídelní lístek – Restaurace Na Městečku Lysice', inLanguage: 'cs',
+    url: 'https://restauracenamestecku.cz/listek',
+    hasMenuSection: aktualniListek().map((k) => ({ ...k, polozky: k.polozky.filter((p) => !p.skryto && p.nazev) })).filter((k) => k.polozky.length).map((k) => ({
+      '@type': 'MenuSection', name: k.nazev,
+      hasMenuItem: k.polozky.map((p) => ({
+        '@type': 'MenuItem', name: p.nazev,
+        ...(p.popis ? { description: p.popis } : {}),
+        ...(p.bezMasa ? { suitableForDiet: 'https://schema.org/VegetarianDiet' } : {}),
+        ...(p.cena ? { offers: { '@type': 'Offer', price: String(p.cena), priceCurrency: 'CZK' } } : {}),
+      })),
+    })),
+  };
+  const s = document.createElement('script'); s.type = 'application/ld+json'; s.textContent = JSON.stringify(data);
+  document.head.appendChild(s);
+}
 function vykresliListek(root) {
   // Skrytá jídla (dočasně se nevaří) se nezobrazují, prázdná kategorie taky ne
   const listek = aktualniListek().map((k) => ({ ...k, polozky: k.polozky.filter((p) => !p.skryto) })).filter((k) => k.polozky.length);
@@ -255,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const t = $('.menu-toggle'), mn = $('.mobile-nav');
   if (t && mn) t.addEventListener('click', () => { const o = mn.classList.toggle('open'); t.setAttribute('aria-expanded', String(o)); });
   $$('[data-daily]').forEach(vykresliDenniMenu);
-  const l = $('#listek'); if (l) vykresliListek(l);
+  const l = $('#listek'); if (l) { vykresliListek(l); listekProVyhledavace(); }
   stavOtevreni();
   // Přepínač variant úvodu (jen v návrhu)
   const vb = $('.variant-bar');
