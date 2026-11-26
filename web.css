@@ -437,3 +437,19 @@ button.zajezdy-odkaz { width: 100%; font: inherit; text-align: left; cursor: poi
 /* Jídelní lístek: u pizzy tlačítko pro objednání telefonem */
 .pizza-volat { justify-self: start; margin: 10px 0 4px; }
 @media (max-width: 599px) { .pizza-volat { justify-self: stretch; width: 100%; } }
+
+/* Textová stránka (ochrana osobních údajů) */
+.text-stranka { max-width: 720px; padding-block: 8px 56px; }
+.text-stranka h2 { font-size: 22px; margin: 32px 0 10px; }
+.text-stranka p, .text-stranka li { line-height: 1.6; }
+.text-stranka p { margin: 0 0 12px; }
+.text-stranka ul { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; }
+
+/* Patička: provozovatel; formulář: informace o údajích */
+.paticka .provozovatel { font-size: 13px; color: rgba(255,255,255,.6); border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; margin: 0; }
+.paticka .provozovatel a { color: rgba(255,255,255,.85); display: inline; min-height: 0; }
+.gdpr-info { font-size: 14px; color: var(--tlumeny); margin: 4px 0 0; }
+
+/* Patička nad spodní lištou na mobilu: poslední řádek (provozovatel) nesmí zůstat pod lištou */
+.paticka { padding-bottom: calc(32px + var(--lista) + env(safe-area-inset-bottom)); }
+@media (min-width: 900px) { .paticka { padding-bottom: 32px; } }
