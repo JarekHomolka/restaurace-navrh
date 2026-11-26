@@ -381,8 +381,10 @@ function vykresliTabuli(root) {
   const idx = tyden.dny.findIndex((_, i) => stejnyDen(datumDne(tyden.od, i), cil));
   const den = tyden.dny[idx];
   let obsah;
+  // Od pátku 17:00 do neděle 17:00 je načtený ještě dosavadní týden a pondělí v něm není
+  const dalsiTyden = idx < 0 && cil > datumDne(tyden.od, 6);
   if (!den || !den.jidla || !den.jidla.length || den.zavreno) {
-    obsah = `<p class="tabule-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : 'Menu na tento den ještě připravujeme. Zavolejte nám, rádi poradíme.'}</p>`;
+    obsah = `<p class="tabule-prazdna">${den && den.zavreno ? esc(den.poznamka || 'Tento den máme zavřeno.') : dalsiTyden ? 'Menu na další týden zveřejníme v neděli od 17:00.' : 'Menu na tento den ještě připravujeme. Zavolejte nám, rádi poradíme.'}</p>`;
   } else {
     obsah = `<ol>
       ${den.polevka && den.polevka.nazev ? `<li class="polevka"><span class="jidlo">Polévka: <b>${esc(den.polevka.nazev)}</b></span><span class="cena"></span>${den.polevka.alergeny && den.polevka.alergeny.length ? `<span class="drobne">${algText(den.polevka.alergeny)}</span>` : ''}</li>` : ''}
@@ -592,7 +594,7 @@ function vykresliKartu(root) {
   const vikend = maObsah(tyden.dny[VIKEND]);
   const dlazdice = [0, 1, 2, 3, 4].concat(vikend ? [VIKEND] : []);
   let vybrany = [0, 1, 2, 3, 4].find((i) => stejnyDen(datumDne(tyden.od, i), cil));
-  if (vybrany === undefined) { const dalsi = [0, 1, 2, 3, 4].find((i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi !== undefined ? dalsi : 0; }
+  if (vybrany === undefined) { const dalsi = [0, 1, 2, 3, 4].find((i) => datumDne(tyden.od, i) >= dnes); vybrany = dalsi !== undefined ? dalsi : 4; }
   // V pátek po 17:00 a o víkendu se ukáže víkendová nabídka, pokud je
   const so = datumDne(tyden.od, 5), ne = datumDne(tyden.od, 6), pa = datumDne(tyden.od, 4);
   const vikendDnes = stejnyDen(dnes, so) || stejnyDen(dnes, ne);
