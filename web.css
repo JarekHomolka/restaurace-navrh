@@ -233,7 +233,7 @@ main { padding-bottom: calc(var(--lista) + env(safe-area-inset-bottom)); }
 .paticka .nazev b { color: #fff; }
 .paticka .nazev span { color: rgba(255,255,255,.65); }
 .odkazy { display: flex; flex-wrap: wrap; gap: 6px 18px; }
-@media (min-width: 900px) { .paticka .wrap { grid-template-columns: 1.4fr 1fr 1fr; align-items: start; } }
+@media (min-width: 900px) { .paticka .wrap { grid-template-columns: auto 1fr; align-items: start; } .paticka .odkazy { justify-content: flex-end; } }
 
 /* ---------- Jídelní lístek ---------- */
 .stranka-hlava { padding-block: 26px 14px; display: grid; gap: 8px; }
