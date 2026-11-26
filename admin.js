@@ -393,6 +393,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const el = e.target, k = el.dataset.k, d = denData();
     if (k === 'zavreno') { d.zavreno = el.checked; oznacZmenu(); vykresliEditor(); }
     if (k === 'veg') { d.jidla[+el.closest('[data-m]').dataset.m].bezMasa = el.checked; oznacZmenu(); vykresliNahled(); }
+    // Po napsání názvu navrhneme alergeny, pokud ještě nejsou vyplněné (obsluha je zkontroluje)
+    if (k === 'name' && window.navrhAlergenuDenni) {
+      const m = el.closest('[data-m]').dataset.m, o = m === 's' ? d.polevka : d.jidla[+m];
+      if (o && o.nazev.trim() && !(o.alergeny || []).length) {
+        const a = window.navrhAlergenuDenni(o.nazev, m === 's' ? 'polevka' : 'jidlo');
+        if (a.length) { o.alergeny = a; oznacZmenu(); vykresliEditor(); toast(`Navrženy alergeny ${a.join(', ')} – zkontrolujte je`); }
+      }
+    }
   });
   body.addEventListener('focusin', (e) => { if (e.target.dataset.k === 'name') ukazNavrhy(e.target); });
   body.addEventListener('focusout', (e) => { if (e.target.dataset.k === 'name') { const l = e.target.nextElementSibling; setTimeout(() => l.classList.remove('open'), 160); } });
@@ -453,6 +461,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast(`Vloženo: ${r.map((d) => DNY_KRATCE[d.i]).join(', ')}. Zkontrolujte a uložte.`);
   });
   $('#b-print').addEventListener('click', tisk);
+  $('#b-alergeny').addEventListener('click', () => {
+    if (!window.navrhAlergenuDenni) return;
+    let n = 0;
+    tyden().dny.forEach((d) => {
+      if (!d || d.zavreno) return;
+      const zkus = (o, typ) => { if (o && o.nazev && o.nazev.trim() && !(o.alergeny || []).length) { const x = window.navrhAlergenuDenni(o.nazev, typ); if (x.length) { o.alergeny = x; n++; } } };
+      zkus(d.polevka, 'polevka'); (d.jidla || []).forEach((j) => zkus(j, 'jidlo'));
+    });
+    if (!n) { toast('Všechna jídla už alergeny mají, nebo je nedokážeme odhadnout.'); return; }
+    oznacZmenu(); vykresliEditor(); toast(`Doplněny alergeny u ${n} ${n === 1 ? 'položky' : n < 5 ? 'položek' : 'položek'} – zkontrolujte je a zveřejněte`);
+  });
   $('#tyden-pozn').addEventListener('input', (e) => { tyden().cenaPoznamka = e.target.value; oznacZmenu(); vykresliNahled(); });
 
   // Výchozí cena menu: uloží se (server nebo prohlížeč) a doplní se do prázdných cen v otevřeném týdnu

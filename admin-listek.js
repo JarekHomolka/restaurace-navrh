@@ -135,6 +135,9 @@
     [/tatarak/, [3, 10]], [/horcic/, [10]], [/celer|vyvar|polevk/, [9]], [/ryb|losos|pstruh|tunak|treska|kapr|filet z/, [4]], [/kreve|krab/, [2]], [/slavk|mekk|chobot/, [14]],
     [/orech|mandl|pistac|kesu/, [8]], [/arasid/, [5]], [/sezam/, [11]], [/soj/, [6]], [/vejc|vajic|omelet|hemenex/, [3]], [/gulas|svickov|rajsk|koprov|segedin|stroganov|(smetanov|houbov|pepr|knedlikov)\w* omack/, [1, 7, 9]],
     [/pizza/, [1, 7]], [/vino|na vine/, [12]],
+    // polévky a běžná jídla denního menu
+    [/kulajd/, [1, 3, 7, 9]], [/bramborac|gulasov|frankfurt|drstk|cesnec|zelnac|kminov|hovezi polevk/, [1, 9]], [/hrach|cockov|fazol|zeleninov/, [9]],
+    [/rajsk\w* polevk|krem|kremov/, [1, 7, 9]], [/nudl/, [1, 3]], [/spenat|kase/, [7]], [/omack/, [1]], [/strouhank|trojobal|parizsk|sekan|karbanat|fasirk/, [1, 3]], [/syrem|sypan\w* syr/, [7]],
   ];
   const EN_FRAZE = [
     ['houskovy knedlik', 'bread dumplings'], ['bramborovy knedlik', 'potato dumplings'], ['tatarska omacka', 'tartar sauce'], ['stouchany brambor', 'mashed potatoes'],
@@ -175,6 +178,14 @@
     ALG_PRAVIDLA.forEach(([re, cisla]) => { if (re.test(t)) cisla.forEach((c) => a.add(c)); });
     return [...a].sort((x, y) => x - y);
   }
+  /* Návrh alergenů pro denní menu (polévka, jídla): historie, pak slova v názvu. Polévky skoro vždy obsahují celer. */
+  window.navrhAlergenuDenni = (nazev, typ) => {
+    const n = bezDiak(nazev).trim(); if (!n) return [];
+    if (typeof HISTORIE !== 'undefined') { const h = HISTORIE.find((x) => bezDiak(x.nazev).trim() === n && x.alergeny && x.alergeny.length); if (h) return [...h.alergeny]; }
+    let x = null; listek.forEach((k) => k.polozky.forEach((q) => { if (!x && bezDiak(q.nazev).trim() === n && q.a && q.a.length) x = [...q.a]; })); if (x) return x;
+    const a = new Set(navrhniAlergeny(nazev)); if (typ === 'polevka') a.add(9);
+    return [...a].sort((p, q) => p - q);
+  };
   function navrhPro(p) {
     const n = bezDiak(p.nazev).trim(); if (!n) return null;
     let a = null, en = '';
