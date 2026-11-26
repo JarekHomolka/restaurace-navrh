@@ -138,6 +138,12 @@
     // polévky a běžná jídla denního menu
     [/kulajd/, [1, 3, 7, 9]], [/bramborac|gulasov|frankfurt|drstk|cesnec|zelnac|kminov|hovezi polevk/, [1, 9]], [/hrach|cockov|fazol|zeleninov/, [9]],
     [/rajsk\w* polevk|krem|kremov/, [1, 7, 9]], [/nudl/, [1, 3]], [/spenat|kase/, [7]], [/omack/, [1]], [/strouhank|trojobal|parizsk|sekan|karbanat|fasirk/, [1, 3]], [/syrem|sypan\w* syr/, [7]],
+    // běžná jídla poledního menu (typický recept – obsluha vždy zkontroluje)
+    [/na pepri|pepr/, [1, 7]], [/flamendr/, [1, 10]], [/na paprice|paprikov/, [1, 7]], [/kari|curry/, [1, 7]], [/cin(a|sk)|kung|sojov/, [1, 6]],
+    [/rizot/, [7, 9]], [/bolonsk|bolognes/, [1, 9]], [/halusk/, [1, 3, 7]], [/francouzsk\w* brambor|zapekan|zapecen/, [3, 7]], [/bramborak/, [1, 3, 7]],
+    [/spanelsk\w* ptac|plnen\w* paprik|moravsk\w* vrabec|veprova pecen/, [1]], [/znojemsk|okurkov\w* omack/, [1, 10]], [/lecho|zelenin\w* smes/, []],
+    [/kotlet|plnen\w* kure|cordon/, [1, 3, 7]], [/livanc|livance|vdolk|buchtick|knedliky ovocn|ovocne knedl|kynute/, [1, 3, 7]], [/lasagn|gnocchi|carbonar/, [1, 3, 7]],
+    [/fazolk|cuketov|dyn/, [7]], [/hamburg|cheeseburg/, [1, 3, 7, 10, 11]], [/tortill|burrito|quesadill/, [1, 7]],
   ];
   const EN_FRAZE = [
     ['houskovy knedlik', 'bread dumplings'], ['bramborovy knedlik', 'potato dumplings'], ['tatarska omacka', 'tartar sauce'], ['stouchany brambor', 'mashed potatoes'],
